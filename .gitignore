@@ -2,6 +2,7 @@
 .godot/
 game/bin/lib*
 .sconsign*.dblite
+*build/
 
 # Binaries
 *.o
