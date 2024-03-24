@@ -3,6 +3,7 @@
 game/bin/lib*
 .sconsign*.dblite
 *build/
+.cache/
 
 # Binaries
 *.o

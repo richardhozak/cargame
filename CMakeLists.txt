@@ -105,6 +105,8 @@ elseif ("${CMAKE_SYSTEM_NAME}" STREQUAL "Linux" OR "${CMAKE_SYSTEM_NAME}" STREQU
 		# Also disable -Wstringop-overflow or it will generate false positives that can't be disabled from code when link-time optimizations are enabled
 		# Also turn off automatic fused multiply add contractions, there doesn't seem to be a way to do this selectively through the macro JPH_PRECISE_MATH_OFF
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-comment -Wno-stringop-overflow -ffp-contract=off")
+
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-gnu-unique")
 	else()
 		# Do not use -ffast-math since it cannot be turned off in a single compilation unit under clang, see Core.h
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-model=precise")
@@ -139,13 +141,16 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(JoltPhysics)
 
-# Include Jolt
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHOT_RELOAD_ENABLED")
+
+# Include godot-cpp
 FetchContent_Declare(
         godot-cpp
         GIT_REPOSITORY "https://github.com/godotengine/godot-cpp"
         GIT_TAG "4.2"
 )
 FetchContent_MakeAvailable(godot-cpp)
+
 
 # Compile the physics library
 # add_library(physics STATIC physics.cpp physics.h "${CMAKE_CURRENT_BINARY_DIR}/include/rust/cxx.h" "${CMAKE_CURRENT_BINARY_DIR}/${cxx_source}" "${CMAKE_CURRENT_BINARY_DIR}/${cxx_header}")
@@ -163,3 +168,7 @@ target_link_libraries(physics Jolt godot::cpp)
 
 install(TARGETS physics DESTINATION .)
 install(TARGETS Jolt DESTINATION .)
+
+add_custom_command(TARGET physics POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:physics> ${CMAKE_SOURCE_DIR}/game/bin/$<TARGET_FILE_NAME:physics>
+)
