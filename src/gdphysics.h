@@ -2,13 +2,13 @@
 #define GDPHYSICS_H
 
 #include <godot_cpp/classes/label.hpp>
-#include <godot_cpp/classes/sprite2d.hpp>
+#include <godot_cpp/classes/node.hpp>
 
 namespace godot {
 
-class GDPhysics : public Sprite2D
+class GDPhysics : public Node
 {
-    GDCLASS(GDPhysics, Sprite2D)
+    GDCLASS(GDPhysics, Node)
 
 private:
     double time_passed;

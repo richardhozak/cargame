@@ -13,11 +13,11 @@ void GDPhysics::_bind_methods()
 {
     ClassDB::bind_method(D_METHOD("get_amplitude"), &GDPhysics::get_amplitude);
     ClassDB::bind_method(D_METHOD("set_amplitude", "p_amplitude"), &GDPhysics::set_amplitude);
-    ClassDB::add_property("GDExample", PropertyInfo(Variant::FLOAT, "amplitude"), "set_amplitude", "get_amplitude");
+    ClassDB::add_property("GDPhysics", PropertyInfo(Variant::FLOAT, "amplitude"), "set_amplitude", "get_amplitude");
 
     ClassDB::bind_method(D_METHOD("get_label"), &GDPhysics::get_label);
     ClassDB::bind_method(D_METHOD("set_label", "p_label"), &GDPhysics::set_label);
-    ClassDB::add_property("GDExample", PropertyInfo(Variant::NODE_PATH, "label", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Label"), "set_label", "get_label");
+    ClassDB::add_property("GDPhysics", PropertyInfo(Variant::NODE_PATH, "label", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Label"), "set_label", "get_label");
 }
 
 GDPhysics::GDPhysics()
@@ -70,11 +70,13 @@ void GDPhysics::_process(double delta)
         amplitude + (amplitude * sin(time_passed * 2.0)),
         amplitude + (amplitude * cos(time_passed * 1.5)));
 
-    set_position(new_position);
-
-    Label* label = get_node<Label>(label_path);
-    if (label)
+    if (Node* label_node = get_node_or_null(label_path))
     {
-        label->set_text(String::num_real(time_passed));
+        Label* label = cast_to<Label>(label_node);
+        if (label)
+        {
+            label->set_position(new_position);
+            label->set_text(String::num_real(time_passed));
+        }
     }
 }
