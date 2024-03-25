@@ -167,9 +167,9 @@ FetchContent_MakeAvailable(godot-cpp)
 # Compile the physics library
 # add_library(physics STATIC physics.cpp physics.h "${CMAKE_CURRENT_BINARY_DIR}/include/rust/cxx.h" "${CMAKE_CURRENT_BINARY_DIR}/${cxx_source}" "${CMAKE_CURRENT_BINARY_DIR}/${cxx_header}")
 add_library(physics SHARED
-	src/gdexample.cpp
+	src/gdphysics.cpp
 	src/register_types.cpp
-    src/gdexample.h
+    src/gdphysics.h
 	src/register_types.h
 	src/Tests/Vehicle/VehicleTest.cpp
 	src/Tests/Vehicle/VehicleConstraintTest.cpp

@@ -1,4 +1,4 @@
-#include "gdexample.h"
+#include "gdphysics.h"
 
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/classes/label.hpp>
@@ -9,40 +9,40 @@
 
 using namespace godot;
 
-void GDExample::_bind_methods()
+void GDPhysics::_bind_methods()
 {
-    ClassDB::bind_method(D_METHOD("get_amplitude"), &GDExample::get_amplitude);
-    ClassDB::bind_method(D_METHOD("set_amplitude", "p_amplitude"), &GDExample::set_amplitude);
+    ClassDB::bind_method(D_METHOD("get_amplitude"), &GDPhysics::get_amplitude);
+    ClassDB::bind_method(D_METHOD("set_amplitude", "p_amplitude"), &GDPhysics::set_amplitude);
     ClassDB::add_property("GDExample", PropertyInfo(Variant::FLOAT, "amplitude"), "set_amplitude", "get_amplitude");
 
-    ClassDB::bind_method(D_METHOD("get_label"), &GDExample::get_label);
-    ClassDB::bind_method(D_METHOD("set_label", "p_label"), &GDExample::set_label);
+    ClassDB::bind_method(D_METHOD("get_label"), &GDPhysics::get_label);
+    ClassDB::bind_method(D_METHOD("set_label", "p_label"), &GDPhysics::set_label);
     ClassDB::add_property("GDExample", PropertyInfo(Variant::NODE_PATH, "label", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Label"), "set_label", "get_label");
 }
 
-GDExample::GDExample()
+GDPhysics::GDPhysics()
 {
     // Initialize any variables here.
     time_passed = 0.0;
     amplitude = 10.0;
 }
 
-GDExample::~GDExample()
+GDPhysics::~GDPhysics()
 {
     // Add your cleanup here.
 }
 
-void GDExample::set_amplitude(const double p_amplitude)
+void GDPhysics::set_amplitude(const double p_amplitude)
 {
     amplitude = p_amplitude;
 }
 
-double GDExample::get_amplitude() const
+double GDPhysics::get_amplitude() const
 {
     return amplitude;
 }
 
-void GDExample::set_label(const NodePath& p_label)
+void GDPhysics::set_label(const NodePath& p_label)
 {
     if (label_path == p_label)
     {
@@ -52,17 +52,17 @@ void GDExample::set_label(const NodePath& p_label)
     label_path = p_label;
 }
 
-NodePath GDExample::get_label() const
+NodePath GDPhysics::get_label() const
 {
     return label_path;
 }
 
-void GDExample::_ready()
+void GDPhysics::_ready()
 {
     UtilityFunctions::print("test");
 }
 
-void GDExample::_process(double delta)
+void GDPhysics::_process(double delta)
 {
     time_passed += delta;
 

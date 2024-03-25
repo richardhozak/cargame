@@ -1,14 +1,14 @@
-#ifndef GDEXAMPLE_H
-#define GDEXAMPLE_H
+#ifndef GDPHYSICS_H
+#define GDPHYSICS_H
 
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/sprite2d.hpp>
 
 namespace godot {
 
-class GDExample : public Sprite2D
+class GDPhysics : public Sprite2D
 {
-    GDCLASS(GDExample, Sprite2D)
+    GDCLASS(GDPhysics, Sprite2D)
 
 private:
     double time_passed;
@@ -19,8 +19,8 @@ protected:
     static void _bind_methods();
 
 public:
-    GDExample();
-    ~GDExample();
+    GDPhysics();
+    ~GDPhysics();
 
     void _ready() override;
     void _process(double delta) override;
