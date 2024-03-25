@@ -6,9 +6,33 @@
 
 [node name="Node3D" type="Node3D" parent="."]
 
-[node name="Wheel" type="Node3D" parent="Node3D"]
+[node name="Wheel1" type="Node3D" parent="Node3D"]
 
-[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel"]
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel1"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.3
+height = 0.1
+sides = 18
+
+[node name="Wheel2" type="Node3D" parent="Node3D"]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel2"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.3
+height = 0.1
+sides = 18
+
+[node name="Wheel3" type="Node3D" parent="Node3D"]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel3"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.3
+height = 0.1
+sides = 18
+
+[node name="Wheel4" type="Node3D" parent="Node3D"]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel4"]
 transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 radius = 0.3
 height = 0.1
@@ -20,3 +44,19 @@ sides = 18
 size = Vector3(1.8, 0.4, 4)
 
 [node name="track1" parent="." instance=ExtResource("1_y204r")]
+
+[node name="GDPhysics" type="GDPhysics" parent="."]
+label = NodePath("../Label")
+wheel1 = NodePath("../Node3D/Wheel1")
+wheel2 = NodePath("../Node3D/Wheel2")
+wheel3 = NodePath("../Node3D/Wheel3")
+wheel4 = NodePath("../Node3D/Wheel4")
+body = NodePath("../Node3D/Body")
+track = NodePath("../track1")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 19.9998
+offset_top = 19.2553
+offset_right = 88.9998
+offset_bottom = 42.2555
+text = "3.929887"
