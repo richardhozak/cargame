@@ -5,6 +5,7 @@
 #include <godot_cpp/classes/material.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/node_path.hpp>
+#include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
@@ -56,6 +57,11 @@ NodePath GDExample::get_label() const
     return label_path;
 }
 
+void GDExample::_ready()
+{
+    UtilityFunctions::print("test");
+}
+
 void GDExample::_process(double delta)
 {
     time_passed += delta;
@@ -66,5 +72,9 @@ void GDExample::_process(double delta)
 
     set_position(new_position);
 
-    get_node<Label>(label_path)->set_text(String::num_real(time_passed));
+    Label* label = get_node<Label>(label_path);
+    if (label)
+    {
+        label->set_text(String::num_real(time_passed));
+    }
 }

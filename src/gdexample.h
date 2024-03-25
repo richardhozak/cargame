@@ -22,6 +22,7 @@ public:
     GDExample();
     ~GDExample();
 
+    void _ready() override;
     void _process(double delta) override;
 
     void set_amplitude(const double p_amplitude);

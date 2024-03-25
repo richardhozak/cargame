@@ -169,6 +169,9 @@ add_library(physics SHARED
 	src/register_types.cpp
     src/gdexample.h
 	src/register_types.h
+	src/Tests/Vehicle/VehicleTest.cpp
+	src/Tests/Vehicle/VehicleConstraintTest.cpp
+	src/Tests/Vehicle/VehicleSixDOFTest.cpp
 )
 target_include_directories(physics PUBLIC
 	${JoltPhysics_SOURCE_DIR}/..
