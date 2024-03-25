@@ -12,6 +12,8 @@ if (${FORCE_COLORED_OUTPUT})
     endif()
 endif()
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 include(FetchContent)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -172,6 +174,8 @@ add_library(physics SHARED
 	src/Tests/Vehicle/VehicleTest.cpp
 	src/Tests/Vehicle/VehicleConstraintTest.cpp
 	src/Tests/Vehicle/VehicleSixDOFTest.cpp
+	src/physics.h
+	src/physics.cpp
 )
 target_include_directories(physics PUBLIC
 	${JoltPhysics_SOURCE_DIR}/..

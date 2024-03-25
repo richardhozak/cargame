@@ -39,7 +39,6 @@
 #include "Layers.h"
 #include "Tests/Vehicle/VehicleConstraintTest.h"
 // #include "Tests/Vehicle/VehicleSixDOFTest.h"
-#include "rust/cxx.h"
 
 // STL includes
 #include <iostream>
@@ -50,6 +49,9 @@
 #include <optional>
 #include <thread>
 #include <array>
+
+#include "physics.h"
+#include "configuration.h"
 
 // Disable common warnings triggered by Jolt, you can use JPH_SUPPRESS_WARNING_PUSH / JPH_SUPPRESS_WARNING_POP to store and restore the warning state
 JPH_SUPPRESS_WARNINGS
@@ -120,7 +122,6 @@ struct Initialization
     }
 };
 
-#include "physics.rs.h"
 #include <algorithm>
 #include <functional>
 #include <set>
@@ -234,7 +235,7 @@ class Physics::impl : public ContactListener
     std::unique_ptr<VehicleConstraintTest> vehicle_test;
     // std::unique_ptr<VehicleSixDOFTest> vehicle_test;
     const Configuration configuration;
-    rust::Vec<uint8_t> start_state;
+    std::string start_state;
 
     Mat44 starting_transform = Mat44::sIdentity();
 
@@ -478,7 +479,7 @@ Physics::Physics(const Track& track, const Configuration& configuration)
     impl->start_state = save_state();
 }
 
-rust::Vec<uint8_t> Physics::save_state() const
+std::string Physics::save_state() const
 {
     StateRecorderImpl recorder;
 
@@ -502,19 +503,10 @@ rust::Vec<uint8_t> Physics::save_state() const
         recorder.Write(impl->last_collected_checkpoint->GetIndexAndSequenceNumber());
     }
 
-    auto data = recorder.GetData();
-
-    rust::Vec<uint8_t> bytes;
-    bytes.reserve(data.size());
-    for (const auto ch : data)
-    {
-        bytes.push_back(ch);
-    }
-
-    return bytes;
+    return recorder.GetData();
 }
 
-void Physics::load_state(rust::Slice<const uint8_t> bytes)
+void Physics::load_state(const std::string& bytes)
 {
     StateRecorderImpl recorder;
     recorder.WriteBytes(bytes.data(), bytes.size());
@@ -562,8 +554,7 @@ State Physics::simulate(const Input& input)
 
     if (input.restart)
     {
-        rust::Slice<const uint8_t> start_state{impl->start_state.data(), impl->start_state.size()};
-        load_state(start_state);
+        load_state(impl->start_state);
         return impl->current_simulation_state();
     }
     else
