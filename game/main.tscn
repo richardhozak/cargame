@@ -1,15 +1,22 @@
 [gd_scene load_steps=2 format=3 uid="uid://cadk3rrmdrx4t"]
 
-[ext_resource type="Texture2D" uid="uid://dgywhf0jfo6b7" path="res://icon.svg" id="1_xvtyf"]
+[ext_resource type="PackedScene" uid="uid://carl0mcgdyymp" path="res://track1.glb" id="1_y204r"]
 
 [node name="Main" type="Node"]
 
-[node name="GDExample" type="GDExample" parent="."]
-label = NodePath("Label")
-position = Vector2(19.9017, 1.21428)
-texture = ExtResource("1_xvtyf")
-centered = false
+[node name="Node3D" type="Node3D" parent="."]
 
-[node name="Label" type="Label" parent="GDExample"]
-offset_right = 40.0
-offset_bottom = 23.0
+[node name="Wheel" type="Node3D" parent="Node3D"]
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+radius = 0.3
+height = 0.1
+sides = 18
+
+[node name="Body" type="Node3D" parent="Node3D"]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Node3D/Body"]
+size = Vector3(1.8, 0.4, 4)
+
+[node name="track1" parent="." instance=ExtResource("1_y204r")]

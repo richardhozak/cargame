@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://d28puplyj3ftc"]
+
+[ext_resource type="Script" path="res://track_mesh.gd" id="1_mx77y"]
+
+[resource]
+script = ExtResource("1_mx77y")
+vertices = Array[PackedVector3Array]([])
+indices = Array[PackedInt32Array]([])
