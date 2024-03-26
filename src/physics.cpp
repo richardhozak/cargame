@@ -375,7 +375,8 @@ class Physics::impl : public ContactListener
             IndexedTriangleList indexed_triangle_list;
             for (size_t i = 0; i < mesh.indices.size(); i += 3)
             {
-                indexed_triangle_list.emplace_back(IndexedTriangle(mesh.indices[i], mesh.indices[i + 1], mesh.indices[i + 2]));
+                std::cerr << "indices " << mesh.indices[i] << ", " << mesh.indices[i + 2] << ", " << mesh.indices[i + 1] << "\n";
+                indexed_triangle_list.emplace_back(IndexedTriangle(mesh.indices[i], mesh.indices[i + 2], mesh.indices[i + 1]));
             }
 
             RefConst<MeshShapeSettings> mesh_shape = new MeshShapeSettings(vertex_list, indexed_triangle_list);
