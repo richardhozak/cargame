@@ -1,7 +1,11 @@
 #include "gdphysics.h"
+#include "configuration.h"
+#include "physics.h"
 
 #include <cstdlib>
+#include <godot_cpp/classes/base_material3d.hpp>
 #include <godot_cpp/classes/global_constants.hpp>
+#include <godot_cpp/classes/input.hpp>
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/material.hpp>
 #include <godot_cpp/classes/mesh_instance3d.hpp>
@@ -13,9 +17,12 @@
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/packed_string_array.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
+#include <godot_cpp/variant/projection.hpp>
+#include <godot_cpp/variant/quaternion.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include <cassert>
+#include <vector>
 
 using namespace godot;
 
@@ -93,31 +100,97 @@ NodePath GDPhysics::get_label() const
     return label_path;
 }
 
+physics::MeshKind mesh_kind_from_color(const Color& color)
+{
+    if (color.is_equal_approx(Color{1.0, 0.0, 0.0, 1.0}))
+    {
+        UtilityFunctions::print("finish");
+        return physics::MeshKind::Finish;
+    }
+
+    if (color.is_equal_approx(Color{0.0, 1.0, 0.0, 1.0}))
+    {
+        UtilityFunctions::print("start");
+        return physics::MeshKind::Start;
+    }
+
+    if (color.is_equal_approx(Color{0.0, 0.0, 1.0, 1.0}))
+    {
+        UtilityFunctions::print("checkpoint");
+        return physics::MeshKind::Checkpoint;
+    }
+
+    UtilityFunctions::print("road ", color.r, " ", color.g, " ", color.b, " ", color.a);
+    return physics::MeshKind::Road;
+}
+
 void GDPhysics::initialize()
 {
     UtilityFunctions::print("initialize");
     Node3D* track_node = get_node<Node3D>(track);
     const TypedArray<Node> children = track_node->get_children(true);
 
-    TypedArray<PackedVector3Array> vertex_arrays;
-    TypedArray<PackedInt32Array> index_arrays;
+    // Vector3 scale = track_node->get_scale();
+    // (void)scale;  // TODO: use scale in track.scale
+
+    physics::Track track;
+    // track.scale = physics::Vector3{1.0, 1.0, 1.0};
+    track.scale = physics::Vector3{10.0, 10.0, 10.0};
+    // track.scale = physics::Vector3{scale.x, scale.y, scale.z};
 
     for (int64_t child_idx = 0; child_idx < children.size(); ++child_idx)
     {
         Object* child_obj = static_cast<Object*>(children[child_idx]);
         MeshInstance3D* child_mesh = cast_to<MeshInstance3D>(child_obj);
+        Node3D* child_node = cast_to<Node3D>(child_obj);
         UtilityFunctions::print("child ", child_idx, " ", children[child_idx], " ", static_cast<bool>(child_mesh));
         if (child_mesh)
         {
             Ref<Mesh> mesh = child_mesh->get_mesh();
             for (int32_t surface_idx = 0; surface_idx < mesh->get_surface_count(); ++surface_idx)
             {
+                Ref<Material> surface_material = mesh->surface_get_material(surface_idx);
+                BaseMaterial3D* material = cast_to<BaseMaterial3D>(surface_material.ptr());
+
+                physics::MeshKind mesh_kind = mesh_kind_from_color(material->get_albedo());
+                if (mesh_kind != physics::MeshKind::Road)
+                {
+                    child_node->set_visible(false);
+                }
+
                 Array surface_arrays = mesh->surface_get_arrays(surface_idx);
                 PackedVector3Array vertices = static_cast<PackedVector3Array>(surface_arrays[Mesh::ARRAY_VERTEX]);
                 PackedInt32Array indices = static_cast<PackedInt32Array>(surface_arrays[Mesh::ARRAY_INDEX]);
 
-                vertex_arrays.append(vertices);
-                index_arrays.append(indices);
+                Vector3 scale = child_node->get_scale();
+                UtilityFunctions::print("scale ", scale);
+
+                Vector3 position = child_node->get_position();
+                Quaternion rotation = child_node->get_quaternion();
+                if (rotation.y == 1.0)
+                {
+                    rotation.y = -1.0;
+                    rotation.w = -rotation.w;
+                }
+
+                physics::Mesh physics_mesh;
+
+                physics_mesh.kind = mesh_kind;
+                physics_mesh.scale = physics::Vector3{scale.x, scale.y, scale.z};
+                physics_mesh.position = physics::Vector3{position.x, position.y, position.z};
+                physics_mesh.rotation = physics::Vector4{rotation.x, rotation.y, rotation.z, rotation.w};
+
+                for (Vector3 vertex : vertices)
+                {
+                    physics_mesh.vertices.push_back({vertex.x, vertex.y, vertex.z});
+                }
+
+                for (int32_t index : indices)
+                {
+                    physics_mesh.indices.push_back(index);
+                }
+
+                track.meshes.push_back(std::move(physics_mesh));
             }
         }
         else
@@ -126,7 +199,10 @@ void GDPhysics::initialize()
         }
     }
 
-    UtilityFunctions::print("initialized", vertex_arrays.size(), index_arrays.size());
+    // track_node->set_scale(Vector3{10.0, 10.0, 10.0});
+    UtilityFunctions::print("initialized", track.meshes.size());
+    physics::Configuration cfg;
+    physics = physics::new_physics(track, cfg);
 }
 
 void GDPhysics::_notification(int p_what)
@@ -155,6 +231,51 @@ void GDPhysics::_process(double delta)
         {
             label->set_position(new_position);
             label->set_text(String::num_real(time_passed));
+        }
+    }
+}
+
+Transform3D physics_matrix_to_transform(const physics::Matrix4& mat)
+{
+    Projection projection{
+        {mat.x_axis[0], mat.x_axis[1], mat.x_axis[2], mat.x_axis[3]},
+        {mat.y_axis[0], mat.y_axis[1], mat.y_axis[2], mat.y_axis[3]},
+        {mat.z_axis[0], mat.z_axis[1], mat.z_axis[2], mat.z_axis[3]},
+        {mat.w_axis[0], mat.w_axis[1], mat.w_axis[2], mat.w_axis[3]}};
+
+    return static_cast<Transform3D>(projection);
+}
+
+void GDPhysics::_physics_process(double delta)
+{
+    Input* input = Input::get_singleton();
+
+    if (physics)
+    {
+        physics::Input physics_input{
+            .up = input->is_key_pressed(KEY_UP),
+            .down = input->is_key_pressed(KEY_DOWN),
+            .left = input->is_key_pressed(KEY_LEFT),
+            .right = input->is_key_pressed(KEY_RIGHT),
+            .brake = input->is_key_pressed(KEY_Z),
+            .restart = input->is_key_pressed(KEY_BACKSPACE),
+            .respawn = input->is_key_pressed(KEY_ENTER),
+        };
+
+        physics::State state = physics->simulate(physics_input);
+        Node3D* body_node = get_node<Node3D>(body);
+        Node3D* wheel1_node = get_node<Node3D>(wheel1);
+        Node3D* wheel2_node = get_node<Node3D>(wheel2);
+        Node3D* wheel3_node = get_node<Node3D>(wheel3);
+        Node3D* wheel4_node = get_node<Node3D>(wheel4);
+        body_node->set_transform(physics_matrix_to_transform(state.body_transform));
+        wheel1_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[0]));
+        wheel2_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[1]));
+        wheel3_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[2]));
+        wheel4_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[3]));
+        if (state.finished)
+        {
+            // UtilityFunctions::print("finished");
         }
     }
 }

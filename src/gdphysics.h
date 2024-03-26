@@ -4,6 +4,8 @@
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/node.hpp>
 
+#include "physics.h"
+
 namespace godot {
 
 class GDPhysics : public Node
@@ -20,6 +22,7 @@ private:
     NodePath wheel4;
     NodePath body;
     NodePath track;
+    std::unique_ptr<physics::Physics> physics;
 
     static const int NOTIFICATION_EXTENSION_RELOADED = 2;
 
@@ -34,6 +37,7 @@ public:
 
     void _notification(int p_what);
     void _process(double delta) override;
+    void _physics_process(double delta) override;
 
     void set_amplitude(const double p_amplitude);
     double get_amplitude() const;
