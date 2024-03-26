@@ -176,6 +176,23 @@ RMat44 matrix_from_trs(Vec3Arg translation, QuatArg rotation, Vec3Arg scale)
     return mat_local;
 }
 
+std::string mesh_kind_name(physics::MeshKind kind)
+{
+    switch (kind)
+    {
+        case physics::MeshKind::Start:
+            return "Start";
+        case physics::MeshKind::Road:
+            return "Road";
+        case physics::MeshKind::Finish:
+            return "Finish";
+        case physics::MeshKind::Checkpoint:
+            return "Checkpoint";
+        default:
+            return "";
+    }
+}
+
 namespace physics {
 // Toy implementation of an in-memory blobstore.
 //
@@ -330,15 +347,24 @@ class Physics::impl : public ContactListener
 
         const Vec3 track_scale = physics_vec3(track.scale);
 
+        std::cerr << "track scale " << track_scale << "\n";
+
         BodyInterface& body_interface = physics_system.GetBodyInterface();
 
         Ref<StaticCompoundShapeSettings> compound_shape = new StaticCompoundShapeSettings;
 
+        int i = 0;
         for (const auto& mesh : track.meshes)
         {
+            i++;
+            std::cerr << "mesh " << i << " " << mesh_kind_name(mesh.kind) << "\n";
             const auto translation = physics_vec3(mesh.position);
             const auto rotation = Quat(physics_vec4(mesh.rotation));
             const auto scale = physics_vec3(mesh.scale);
+
+            std::cerr << "translation " << translation << "\n";
+            std::cerr << "rotation    " << rotation << "\n";
+            std::cerr << "scale       " << scale << "\n";
 
             VertexList vertex_list;
             for (const auto& vertex : mesh.vertices)
