@@ -55,8 +55,8 @@ body = NodePath("../Node3D/Body")
 track = NodePath("../track1")
 
 [node name="Label" type="Label" parent="."]
-offset_left = 19.9998
-offset_top = 19.2553
-offset_right = 88.9998
-offset_bottom = 42.2555
-text = "3.929887"
+offset_left = 15.4576
+offset_top = 5.80429
+offset_right = 84.4576
+offset_bottom = 28.8044
+text = "34.84617"

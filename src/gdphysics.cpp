@@ -1,11 +1,21 @@
 #include "gdphysics.h"
 
+#include <cstdlib>
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/material.hpp>
+#include <godot_cpp/classes/mesh_instance3d.hpp>
+#include <godot_cpp/classes/mesh.hpp>
+#include <godot_cpp/classes/node3d.hpp>
+#include <godot_cpp/classes/wrapped.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/node_path.hpp>
+#include <godot_cpp/variant/packed_int32_array.hpp>
+#include <godot_cpp/variant/packed_string_array.hpp>
+#include <godot_cpp/variant/packed_vector3_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
+
+#include <cassert>
 
 using namespace godot;
 
@@ -86,6 +96,37 @@ NodePath GDPhysics::get_label() const
 void GDPhysics::initialize()
 {
     UtilityFunctions::print("initialize");
+    Node3D* track_node = get_node<Node3D>(track);
+    const TypedArray<Node> children = track_node->get_children(true);
+
+    TypedArray<PackedVector3Array> vertex_arrays;
+    TypedArray<PackedInt32Array> index_arrays;
+
+    for (int64_t child_idx = 0; child_idx < children.size(); ++child_idx)
+    {
+        Object* child_obj = static_cast<Object*>(children[child_idx]);
+        MeshInstance3D* child_mesh = cast_to<MeshInstance3D>(child_obj);
+        UtilityFunctions::print("child ", child_idx, " ", children[child_idx], " ", static_cast<bool>(child_mesh));
+        if (child_mesh)
+        {
+            Ref<Mesh> mesh = child_mesh->get_mesh();
+            for (int32_t surface_idx = 0; surface_idx < mesh->get_surface_count(); ++surface_idx)
+            {
+                Array surface_arrays = mesh->surface_get_arrays(surface_idx);
+                PackedVector3Array vertices = static_cast<PackedVector3Array>(surface_arrays[Mesh::ARRAY_VERTEX]);
+                PackedInt32Array indices = static_cast<PackedInt32Array>(surface_arrays[Mesh::ARRAY_INDEX]);
+
+                vertex_arrays.append(vertices);
+                index_arrays.append(indices);
+            }
+        }
+        else
+        {
+            UtilityFunctions::printerr("does not have mesh");
+        }
+    }
+
+    UtilityFunctions::print("initialized", vertex_arrays.size(), index_arrays.size());
 }
 
 void GDPhysics::_notification(int p_what)
