@@ -1,62 +1,59 @@
 [gd_scene load_steps=2 format=3 uid="uid://cadk3rrmdrx4t"]
 
-[ext_resource type="PackedScene" uid="uid://carl0mcgdyymp" path="res://track1.glb" id="1_y204r"]
+[ext_resource type="PackedScene" uid="uid://cicnstbqx5k4" path="res://track_straight.glb" id="1_xqf7f"]
 
-[node name="Main" type="Node"]
+[node name="Main" type="Node3D"]
 
 [node name="Node3D" type="Node3D" parent="."]
 
 [node name="Wheel1" type="Node3D" parent="Node3D"]
+transform = Transform3D(-4.64716e-05, 1, 9.69473e-08, 1, 4.64716e-05, 8.06524e-06, 8.06524e-06, 9.73221e-08, -1, -0.899952, 1.30056, -1.4)
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel1"]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 radius = 0.3
 height = 0.1
 sides = 18
 
 [node name="Wheel2" type="Node3D" parent="Node3D"]
+transform = Transform3D(-4.64716e-05, 1, 9.6944e-08, 1, 4.64716e-05, 8.13461e-06, 8.13461e-06, 9.73221e-08, -1, 0.900048, 1.30052, -1.4)
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel2"]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 radius = 0.3
 height = 0.1
 sides = 18
 
 [node name="Wheel3" type="Node3D" parent="Node3D"]
+transform = Transform3D(-4.64716e-05, 1, 9.697e-08, 1, 4.64716e-05, 7.57555e-06, 7.57555e-06, 9.73221e-08, -1, -0.899952, 1.30053, 1.4)
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel3"]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 radius = 0.3
 height = 0.1
 sides = 18
 
 [node name="Wheel4" type="Node3D" parent="Node3D"]
+transform = Transform3D(-4.64716e-05, 1, 9.69534e-08, 1, 4.64716e-05, 7.93227e-06, 7.93227e-06, 9.73221e-08, -1, 0.900048, 1.30053, 1.4)
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel4"]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 radius = 0.3
 height = 0.1
 sides = 18
 
 [node name="Body" type="Node3D" parent="Node3D"]
+transform = Transform3D(-1, -4.64716e-05, 9.79262e-08, -4.64716e-05, 1, -1.29998e-05, -9.73221e-08, -1.29998e-05, -1, 2.2458e-05, 1.84764, -5.5447e-06)
 
 [node name="CSGBox3D" type="CSGBox3D" parent="Node3D/Body"]
 size = Vector3(1.8, 0.4, 4)
 
-[node name="track1" parent="." instance=ExtResource("1_y204r")]
+[node name="Camera3D" type="Camera3D" parent="Node3D/Body"]
+transform = Transform3D(-0.999927, -0.0120564, 0.00071735, -0.0104678, 0.894741, 0.446463, -0.00602456, 0.446423, -0.894802, -0.0604441, 3.81004, -5.20259)
 
 [node name="GDPhysics" type="GDPhysics" parent="."]
-label = NodePath("../Label")
 wheel1 = NodePath("../Node3D/Wheel1")
 wheel2 = NodePath("../Node3D/Wheel2")
 wheel3 = NodePath("../Node3D/Wheel3")
 wheel4 = NodePath("../Node3D/Wheel4")
 body = NodePath("../Node3D/Body")
-track = NodePath("../track1")
+track = NodePath("../track_straight")
 
-[node name="Label" type="Label" parent="."]
-offset_left = 15.4576
-offset_top = 5.80429
-offset_right = 84.4576
-offset_bottom = 28.8044
-text = "34.84617"
+[node name="track_straight" parent="." instance=ExtResource("1_xqf7f")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
