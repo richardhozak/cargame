@@ -18,7 +18,7 @@ class GDPhysicsMesh : public RefCounted
     GDCLASS(GDPhysicsMesh, RefCounted)
 public:
     static void _bind_methods();
-    void add_mesh(
+    bool add_mesh(
         Vector3 position,
         Quaternion rotation,
         Vector3 scale,

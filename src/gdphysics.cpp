@@ -274,6 +274,12 @@ void GDPhysics::_notification(int p_what)
 
 void GDPhysics::_ready()
 {
+    if (!get_parent()->has_meta("mesh"))
+    {
+        UtilityFunctions::printerr("does not have meta");
+        return;
+    }
+
     UtilityFunctions::print("ready", get_parent());
     GDPhysicsMesh* mesh = Object::cast_to<GDPhysicsMesh>(static_cast<Object*>(get_parent()->get_meta("mesh")));
     UtilityFunctions::print(mesh->meshes.size());
