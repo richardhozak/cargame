@@ -34,11 +34,10 @@ void GDPhysicsMesh::_bind_methods()
 {
     UtilityFunctions::print("bind methods physics mesh");
 
-    ClassDB::bind_method(D_METHOD("add_mesh", "position", "rotation"), &GDPhysicsMesh::add_mesh);
-    // ClassDB::bind_method(D_METHOD("add_mesh", "p_amplitude"), &GDPhysicsMesh::add_mesh);
+    ClassDB::bind_method(D_METHOD("add_mesh", "position", "rotation", "scale", "vertices", "indices", "color"), &GDPhysicsMesh::add_mesh);
 }
 
-void GDPhysicsMesh::add_mesh(
+bool GDPhysicsMesh::add_mesh(
     Vector3 position,
     Quaternion rotation,
     Vector3 scale,
@@ -68,6 +67,8 @@ void GDPhysicsMesh::add_mesh(
     }
 
     meshes.push_back(std::move(physics_mesh));
+
+    return kind == physics::MeshKind::Road;
 }
 
 void GDPhysics::_bind_methods()

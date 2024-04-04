@@ -30,7 +30,9 @@ func load_track() -> void:
 					var arrays := mesh.get_surface_arrays(surface_idx)
 					var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 					var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-					physics_mesh.add_mesh(node.position, node.rotation, node.scale, vertices, indices, material.albedo_color)
+					if !physics_mesh.add_mesh(node.position, node.rotation, node.scale, vertices, indices, material.albedo_color):
+						# TODO: this generates errors, try to make start and finish invisible different way
+						mesh.clear()
 
 		var scene_node := document.generate_scene(state)
 		scene_node.scale = Vector3(10.0, 10.0, 10.0)
