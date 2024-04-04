@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://8w67xbxm66t5"]
+
+[node name="GDPhysics" type="GDPhysics"]
+wheel1 = NodePath("Node3D/Wheel1")
+wheel2 = NodePath("Node3D/Wheel2")
+wheel3 = NodePath("Node3D/Wheel3")
+wheel4 = NodePath("Node3D/Wheel4")
+body = NodePath("Node3D/Body")
+track = NodePath("../track_straight")
+
+[node name="Node3D" type="Node3D" parent="."]
+
+[node name="Wheel1" type="Node3D" parent="Node3D"]
+transform = Transform3D(-4.64716e-05, 1, 9.69473e-08, 1, 4.64716e-05, 8.06524e-06, 8.06524e-06, 9.73221e-08, -1, -0.899952, 1.30056, -1.4)
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel1"]
+radius = 0.3
+height = 0.1
+sides = 18
+
+[node name="Wheel2" type="Node3D" parent="Node3D"]
+transform = Transform3D(-4.64716e-05, 1, 9.6944e-08, 1, 4.64716e-05, 8.13461e-06, 8.13461e-06, 9.73221e-08, -1, 0.900048, 1.30052, -1.4)
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel2"]
+radius = 0.3
+height = 0.1
+sides = 18
+
+[node name="Wheel3" type="Node3D" parent="Node3D"]
+transform = Transform3D(-4.64716e-05, 1, 9.697e-08, 1, 4.64716e-05, 7.57555e-06, 7.57555e-06, 9.73221e-08, -1, -0.899952, 1.30053, 1.4)
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel3"]
+radius = 0.3
+height = 0.1
+sides = 18
+
+[node name="Wheel4" type="Node3D" parent="Node3D"]
+transform = Transform3D(-4.64716e-05, 1, 9.69534e-08, 1, 4.64716e-05, 7.93227e-06, 7.93227e-06, 9.73221e-08, -1, 0.900048, 1.30053, 1.4)
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Node3D/Wheel4"]
+radius = 0.3
+height = 0.1
+sides = 18
+
+[node name="Body" type="Node3D" parent="Node3D"]
+transform = Transform3D(-1, -4.64716e-05, 9.79262e-08, -4.64716e-05, 1, -1.29998e-05, -9.73221e-08, -1.29998e-05, -1, 2.2458e-05, 1.84764, -5.5447e-06)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Node3D/Body"]
+size = Vector3(1.8, 0.4, 4)

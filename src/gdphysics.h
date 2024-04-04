@@ -3,14 +3,34 @@
 
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/classes/node3d.hpp>
+#include <godot_cpp/classes/ref_counted.hpp>
+#include <godot_cpp/variant/packed_int32_array.hpp>
+#include <godot_cpp/variant/packed_vector3_array.hpp>
+#include <godot_cpp/variant/quaternion.hpp>
 
 #include "physics.h"
 
 namespace godot {
 
-class GDPhysics : public Node
+class GDPhysicsMesh : public RefCounted
 {
-    GDCLASS(GDPhysics, Node)
+    GDCLASS(GDPhysicsMesh, RefCounted)
+public:
+    static void _bind_methods();
+    void add_mesh(
+        Vector3 position,
+        Quaternion rotation,
+        Vector3 scale,
+        PackedVector3Array vertices,
+        PackedInt32Array indices,
+        Color color);
+    std::vector<physics::Mesh> meshes;
+};
+
+class GDPhysics : public Node3D
+{
+    GDCLASS(GDPhysics, Node3D)
 
 private:
     double time_passed;
@@ -23,19 +43,20 @@ private:
     NodePath body;
     NodePath track;
     std::unique_ptr<physics::Physics> physics;
+    physics::State last_state;
 
     static const int NOTIFICATION_EXTENSION_RELOADED = 2;
 
-    void initialize();
+    // void initialize();
 
 protected:
-    static void _bind_methods();
-
 public:
+    static void _bind_methods();
     GDPhysics();
     ~GDPhysics();
 
     void _notification(int p_what);
+    void _ready() override;
     void _process(double delta) override;
     void _physics_process(double delta) override;
 

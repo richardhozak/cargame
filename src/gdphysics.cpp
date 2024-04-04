@@ -13,6 +13,7 @@
 #include <godot_cpp/classes/node3d.hpp>
 #include <godot_cpp/classes/wrapped.hpp>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/core/object.hpp>
 #include <godot_cpp/variant/node_path.hpp>
 #include <godot_cpp/variant/packed_int32_array.hpp>
 #include <godot_cpp/variant/packed_string_array.hpp>
@@ -22,12 +23,57 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include <cassert>
+#include <godot_cpp/variant/vector3.hpp>
 #include <vector>
 
 using namespace godot;
 
+physics::MeshKind mesh_kind_from_color(const Color& color);
+
+void GDPhysicsMesh::_bind_methods()
+{
+    UtilityFunctions::print("bind methods physics mesh");
+
+    ClassDB::bind_method(D_METHOD("add_mesh", "position", "rotation"), &GDPhysicsMesh::add_mesh);
+    // ClassDB::bind_method(D_METHOD("add_mesh", "p_amplitude"), &GDPhysicsMesh::add_mesh);
+}
+
+void GDPhysicsMesh::add_mesh(
+    Vector3 position,
+    Quaternion rotation,
+    Vector3 scale,
+    PackedVector3Array vertices,
+    PackedInt32Array indices,
+    Color color)
+{
+    UtilityFunctions::print("add mesh", position, rotation, scale, color);
+
+    physics::MeshKind kind = mesh_kind_from_color(color);
+
+    physics::Mesh physics_mesh;
+
+    physics_mesh.kind = kind;
+    physics_mesh.scale = physics::Vector3{scale.x, scale.y, scale.z};
+    physics_mesh.position = physics::Vector3{position.x, position.y, position.z};
+    physics_mesh.rotation = physics::Vector4{rotation.x, rotation.y, rotation.z, rotation.w};
+
+    for (Vector3 vertex : vertices)
+    {
+        physics_mesh.vertices.push_back({vertex.x, vertex.y, vertex.z});
+    }
+
+    for (int32_t index : indices)
+    {
+        physics_mesh.indices.push_back(index);
+    }
+
+    meshes.push_back(std::move(physics_mesh));
+}
+
 void GDPhysics::_bind_methods()
 {
+    UtilityFunctions::print("bind methods");
+
     ClassDB::bind_method(D_METHOD("get_amplitude"), &GDPhysics::get_amplitude);
     ClassDB::bind_method(D_METHOD("set_amplitude", "p_amplitude"), &GDPhysics::set_amplitude);
     ClassDB::add_property("GDPhysics", PropertyInfo(Variant::FLOAT, "amplitude"), "set_amplitude", "get_amplitude");
@@ -124,96 +170,118 @@ physics::MeshKind mesh_kind_from_color(const Color& color)
     return physics::MeshKind::Road;
 }
 
-void GDPhysics::initialize()
-{
-    UtilityFunctions::print("initialize");
-    Node3D* track_node = get_node<Node3D>(track);
-    const TypedArray<Node> children = track_node->get_children(true);
+// void GDPhysics::initialize()
+// {
+//     UtilityFunctions::print("initialize");
 
-    // Vector3 scale = track_node->get_scale();
-    // (void)scale;  // TODO: use scale in track.scale
+//     Node* node = get_node_or_null(track);
 
-    physics::Track track;
-    // track.scale = physics::Vector3{1.0, 1.0, 1.0};
-    track.scale = physics::Vector3{10.0, 10.0, 10.0};
-    // track.scale = physics::Vector3{scale.x, scale.y, scale.z};
+//     if (!node)
+//     {
+//         UtilityFunctions::printerr("could not get track node");
+//         return;
+//     }
 
-    for (int64_t child_idx = 0; child_idx < children.size(); ++child_idx)
-    {
-        Object* child_obj = static_cast<Object*>(children[child_idx]);
-        MeshInstance3D* child_mesh = cast_to<MeshInstance3D>(child_obj);
-        Node3D* child_node = cast_to<Node3D>(child_obj);
-        UtilityFunctions::print("child ", child_idx, " ", children[child_idx], " ", static_cast<bool>(child_mesh));
-        if (child_mesh)
-        {
-            Ref<Mesh> mesh = child_mesh->get_mesh();
-            for (int32_t surface_idx = 0; surface_idx < mesh->get_surface_count(); ++surface_idx)
-            {
-                Ref<Material> surface_material = mesh->surface_get_material(surface_idx);
-                BaseMaterial3D* material = cast_to<BaseMaterial3D>(surface_material.ptr());
+//     Node3D* track_node = cast_to<Node3D>(node);
 
-                physics::MeshKind mesh_kind = mesh_kind_from_color(material->get_albedo());
-                if (mesh_kind != physics::MeshKind::Road)
-                {
-                    child_node->set_visible(false);
-                }
+//     const TypedArray<Node> children = track_node->get_children(true);
 
-                Array surface_arrays = mesh->surface_get_arrays(surface_idx);
-                PackedVector3Array vertices = static_cast<PackedVector3Array>(surface_arrays[Mesh::ARRAY_VERTEX]);
-                PackedInt32Array indices = static_cast<PackedInt32Array>(surface_arrays[Mesh::ARRAY_INDEX]);
+//     // Vector3 scale = track_node->get_scale();
+//     // (void)scale;  // TODO: use scale in track.scale
 
-                Vector3 scale = child_node->get_scale();
-                UtilityFunctions::print("scale ", scale);
+//     physics::Track track;
+//     // track.scale = physics::Vector3{1.0, 1.0, 1.0};
+//     track.scale = physics::Vector3{10.0, 10.0, 10.0};
+//     // track.scale = physics::Vector3{scale.x, scale.y, scale.z};
 
-                Vector3 position = child_node->get_position();
-                Quaternion rotation = child_node->get_quaternion();
-                if (rotation.y == 1.0)
-                {
-                    rotation.y = -1.0;
-                    rotation.w = -rotation.w;
-                }
+//     for (int64_t child_idx = 0; child_idx < children.size(); ++child_idx)
+//     {
+//         Object* child_obj = static_cast<Object*>(children[child_idx]);
+//         MeshInstance3D* child_mesh = cast_to<MeshInstance3D>(child_obj);
+//         Node3D* child_node = cast_to<Node3D>(child_obj);
+//         UtilityFunctions::print("child ", child_idx, " ", children[child_idx], " ", static_cast<bool>(child_mesh));
+//         if (child_mesh)
+//         {
+//             Ref<Mesh> mesh = child_mesh->get_mesh();
+//             for (int32_t surface_idx = 0; surface_idx < mesh->get_surface_count(); ++surface_idx)
+//             {
+//                 Ref<Material> surface_material = mesh->surface_get_material(surface_idx);
+//                 BaseMaterial3D* material = cast_to<BaseMaterial3D>(surface_material.ptr());
 
-                physics::Mesh physics_mesh;
+//                 physics::MeshKind mesh_kind = mesh_kind_from_color(material->get_albedo());
+//                 if (mesh_kind != physics::MeshKind::Road)
+//                 {
+//                     child_node->set_visible(false);
+//                 }
 
-                physics_mesh.kind = mesh_kind;
-                physics_mesh.scale = physics::Vector3{scale.x, scale.y, scale.z};
-                physics_mesh.position = physics::Vector3{position.x, position.y, position.z};
-                physics_mesh.rotation = physics::Vector4{rotation.x, rotation.y, rotation.z, rotation.w};
+//                 Array surface_arrays = mesh->surface_get_arrays(surface_idx);
+//                 PackedVector3Array vertices = static_cast<PackedVector3Array>(surface_arrays[Mesh::ARRAY_VERTEX]);
+//                 PackedInt32Array indices = static_cast<PackedInt32Array>(surface_arrays[Mesh::ARRAY_INDEX]);
 
-                for (Vector3 vertex : vertices)
-                {
-                    physics_mesh.vertices.push_back({vertex.x, vertex.y, vertex.z});
-                }
+//                 Vector3 scale = child_node->get_scale();
+//                 UtilityFunctions::print("scale ", scale);
 
-                for (int32_t index : indices)
-                {
-                    physics_mesh.indices.push_back(index);
-                }
+//                 Vector3 position = child_node->get_position();
+//                 Quaternion rotation = child_node->get_quaternion();
+//                 if (rotation.y == 1.0)
+//                 {
+//                     rotation.y = -1.0;
+//                     rotation.w = -rotation.w;
+//                 }
 
-                track.meshes.push_back(std::move(physics_mesh));
-            }
-        }
-        else
-        {
-            UtilityFunctions::printerr("does not have mesh");
-        }
-    }
+//                 physics::Mesh physics_mesh;
 
-    // track_node->set_scale(Vector3{10.0, 10.0, 10.0});
-    UtilityFunctions::print("initialized", track.meshes.size());
-    physics::Configuration cfg;
-    physics = physics::new_physics(track, cfg);
-}
+//                 physics_mesh.kind = mesh_kind;
+//                 physics_mesh.scale = physics::Vector3{scale.x, scale.y, scale.z};
+//                 physics_mesh.position = physics::Vector3{position.x, position.y, position.z};
+//                 physics_mesh.rotation = physics::Vector4{rotation.x, rotation.y, rotation.z, rotation.w};
+
+//                 for (Vector3 vertex : vertices)
+//                 {
+//                     physics_mesh.vertices.push_back({vertex.x, vertex.y, vertex.z});
+//                 }
+
+//                 for (int32_t index : indices)
+//                 {
+//                     physics_mesh.indices.push_back(index);
+//                 }
+
+//                 track.meshes.push_back(std::move(physics_mesh));
+//             }
+//         }
+//         else
+//         {
+//             UtilityFunctions::printerr("does not have mesh");
+//         }
+//     }
+
+//     // track_node->set_scale(Vector3{10.0, 10.0, 10.0});
+//     UtilityFunctions::print("initialized", track.meshes.size());
+//     physics::Configuration cfg;
+//     physics = physics::new_physics(track, cfg);
+// }
 
 void GDPhysics::_notification(int p_what)
 {
     switch (p_what)
     {
-        case NOTIFICATION_READY:
         case NOTIFICATION_EXTENSION_RELOADED:
-            initialize();
+            UtilityFunctions::print("reloaded");
             break;
     }
+}
+
+void GDPhysics::_ready()
+{
+    UtilityFunctions::print("ready", get_parent());
+    GDPhysicsMesh* mesh = Object::cast_to<GDPhysicsMesh>(static_cast<Object*>(get_parent()->get_meta("mesh")));
+    UtilityFunctions::print(mesh->meshes.size());
+
+    physics::Configuration cfg;
+    physics::Track track;
+    track.scale = physics::Vector3{10.0, 10.0, 10.0};
+    track.meshes = mesh->meshes;
+    physics = physics::new_physics(track, cfg);
 }
 
 void GDPhysics::_process(double delta)
@@ -273,10 +341,11 @@ void GDPhysics::_physics_process(double delta)
         wheel2_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[1]));
         wheel3_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[2]));
         wheel4_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[3]));
-        if (state.finished)
+        if (!last_state.finished && state.finished)
         {
-            // UtilityFunctions::print("finished");
+            UtilityFunctions::print("finished");
         }
+        last_state = state;
     }
 }
 
@@ -332,7 +401,7 @@ NodePath GDPhysics::get_body() const
 
 void GDPhysics::set_track(const NodePath& p_track)
 {
-    UtilityFunctions::print("set_track");
+    UtilityFunctions::print("set_track", p_track);
     track = p_track;
 }
 NodePath GDPhysics::get_track() const
