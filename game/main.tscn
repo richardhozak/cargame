@@ -1,8 +1,24 @@
-[gd_scene load_steps=4 format=3 uid="uid://cadk3rrmdrx4t"]
+[gd_scene load_steps=9 format=3 uid="uid://cadk3rrmdrx4t"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_p3uq5"]
 [ext_resource type="PackedScene" uid="uid://cicnstbqx5k4" path="res://track_straight.glb" id="2_7htmg"]
-[ext_resource type="PackedScene" uid="uid://carl0mcgdyymp" path="res://track1.glb" id="3_56r6c"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_m8wjj"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_m11bp"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3D_resource.gd" id="5_c2vil"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3D.gd" id="5_m8fvt"]
+
+[sub_resource type="Resource" id="Resource_u3ywf"]
+script = ExtResource("4_m11bp")
+duration = 1.0
+transition = 0
+ease = 2
+
+[sub_resource type="Resource" id="Resource_4kke7"]
+script = ExtResource("5_c2vil")
+cull_mask = 1048575
+h_offset = 0.0
+v_offset = 0.0
+fov = 75.0
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_p3uq5")
@@ -15,12 +31,20 @@ offset_bottom = 8.0
 text = "Load track"
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.855744, 0.5174, 0, -0.5174, 0.855744, 0, 10.0283, 8.66784)
+
+[node name="PhantomCameraHost" type="Node" parent="Camera3D"]
+script = ExtResource("2_m8wjj")
+
+[node name="PhantomCamera3D" type="Node3D" parent="."]
+script = ExtResource("5_m8fvt")
+follow_mode = 1
+look_at_mode = 1
+tween_resource = SubResource("Resource_u3ywf")
+tween_onload = false
+camera_3d_resource = SubResource("Resource_4kke7")
+follow_damping = true
+follow_damping_value = 25.0
 
 [node name="track_straight" parent="." instance=ExtResource("2_7htmg")]
-transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
-visible = false
-
-[node name="track1" parent="." instance=ExtResource("3_56r6c")]
-transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.02)
 visible = false

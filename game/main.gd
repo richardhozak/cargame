@@ -36,11 +36,11 @@ func load_track() -> void:
 
 		var scene_node := document.generate_scene(state)
 		scene_node.scale = Vector3(10.0, 10.0, 10.0)
-		scene_node.ready.connect(track_ready)
 		scene_node.set_meta("mesh", physics_mesh)
 		
 		var player := Player.instantiate()
 		player.set_disable_scale(true)
+		player.ready.connect(player_ready.bind(player))
 		
 		loaded_track = scene_node
 		loaded_mesh = physics_mesh
@@ -50,6 +50,8 @@ func load_track() -> void:
 	else:
 		printerr("Couldn't load glTF scene (error code: %s)." % error_string(error))
 
-func track_ready():
-	print("track ready")
-	#loaded_track.add_child(Player.instantiate())
+func player_ready(player):
+	$PhantomCamera3D.set_follow_target(player.camera_eye)
+	$PhantomCamera3D.set_look_at_target(player.camera_target)
+	#$PhantomCamera3D.set_look_at_target_offset(Vector3(0.0, 0.0, -5.0))
+	print("player ready", player.camera_target, $PhantomCamera3D.is_active())

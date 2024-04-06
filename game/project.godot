@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 gdscript/warnings/untyped_declaration=1
 
+[editor_plugins]
+
+enabled=PackedStringArray()
+
 [filesystem]
 
 import/blender/enabled=false
