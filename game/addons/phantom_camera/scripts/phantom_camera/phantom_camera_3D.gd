@@ -510,7 +510,7 @@ func _ready():
 			_current_rotation = global_rotation
 
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if not _is_active:
 		match inactive_update_mode:
 			InactiveUpdateMode.NEVER:
@@ -708,13 +708,20 @@ func _get_position_offset_distance() -> Vector3:
 	get_transform().basis.z * Vector3(follow_distance, follow_distance, follow_distance)
 
 
+func eerp(from: float, to: float, weight: float) -> float:
+	return from + (to - from) * (1.0 - exp(-weight))
+
+func eerp_vector3(from: Vector3, to: Vector3, weight: float) -> Vector3:
+	return Vector3(eerp(from.x, to.x, weight), eerp(from.y, to.y, weight), eerp(from.z, to.z, weight))
+
 func _interpolate_position(_global_position: Vector3, delta: float, target: Node3D = self) -> void:
 	if follow_damping:
-		target.global_position = \
-			target.global_position.lerp(
-				_global_position,
-				delta * follow_damping_value
-			)
+		#target.global_position = eerp_vector3(target.global_position, target.global_position.lerp( \
+				#_global_position, \
+				#delta * follow_damping_value \
+			#), delta)
+			
+		target.global_position = eerp_vector3(target.global_position, _global_position, delta * follow_damping_value)
 	else:
 		target.global_position = _global_position
 
