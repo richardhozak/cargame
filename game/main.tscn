@@ -37,8 +37,8 @@ script = ExtResource("2_m8wjj")
 
 [node name="PhantomCamera3D" type="Node3D" parent="."]
 script = ExtResource("5_m8fvt")
-follow_mode = 1
-look_at_mode = 1
+follow_mode = 2
+look_at_mode = 2
 tween_resource = SubResource("Resource_u3ywf")
 tween_onload = false
 camera_3d_resource = SubResource("Resource_4kke7")
