@@ -43,7 +43,6 @@ tween_resource = SubResource("Resource_u3ywf")
 tween_onload = false
 camera_3d_resource = SubResource("Resource_4kke7")
 follow_damping = true
-follow_damping_value = 25.0
 
 [node name="track_straight" parent="." instance=ExtResource("2_7htmg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.02)
