@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cadk3rrmdrx4t"]
+[gd_scene load_steps=14 format=3 uid="uid://cadk3rrmdrx4t"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_p3uq5"]
 [ext_resource type="PackedScene" uid="uid://cicnstbqx5k4" path="res://track_straight.glb" id="2_7htmg"]
@@ -6,6 +6,8 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_m11bp"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3D_resource.gd" id="5_c2vil"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3D.gd" id="5_m8fvt"]
+[ext_resource type="PackedScene" uid="uid://carl0mcgdyymp" path="res://track1.glb" id="6_p8y0n"]
+[ext_resource type="Texture2D" uid="uid://bdau8ntkwx6cp" path="res://evening_road_01_puresky_4k.hdr" id="7_pdd3v"]
 
 [sub_resource type="Resource" id="Resource_u3ywf"]
 script = ExtResource("4_m11bp")
@@ -19,6 +21,17 @@ cull_mask = 1048575
 h_offset = 0.0
 v_offset = 0.0
 fov = 75.0
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j14pt"]
+panorama = ExtResource("7_pdd3v")
+
+[sub_resource type="Sky" id="Sky_5oy6w"]
+sky_material = SubResource("PanoramaSkyMaterial_j14pt")
+
+[sub_resource type="Environment" id="Environment_rychs"]
+background_mode = 2
+sky = SubResource("Sky_5oy6w")
+tonemap_exposure = 0.5
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_p3uq5")
@@ -44,6 +57,17 @@ tween_onload = false
 camera_3d_resource = SubResource("Resource_4kke7")
 follow_damping = true
 
-[node name="track_straight" parent="." instance=ExtResource("2_7htmg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.02)
+[node name="track1" parent="." instance=ExtResource("6_p8y0n")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 visible = false
+
+[node name="track_straight" parent="." instance=ExtResource("2_7htmg")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 5.02)
+visible = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_rychs")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.239452, 0.840832, -0.485452, -6.86016e-09, 0.499998, 0.866027, 0.970908, 0.207372, -0.119726, 0, 30, 0)
+shadow_enabled = true
