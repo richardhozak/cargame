@@ -22,7 +22,7 @@ void initialize_physics_module(ModuleInitializationLevel p_level)
     UtilityFunctions::print("register class");
     ClassDB::register_class<GDPhysics>();
     ClassDB::register_class<GDPhysicsMesh>();
-    // GDPhysics::_bind_methods();
+    ClassDB::register_class<PhysicsInput>();
 }
 
 void uninitialize_physics_module(ModuleInitializationLevel p_level)
