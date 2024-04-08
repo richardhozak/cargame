@@ -32,6 +32,9 @@ sky_material = SubResource("PanoramaSkyMaterial_j14pt")
 background_mode = 2
 sky = SubResource("Sky_5oy6w")
 tonemap_exposure = 0.5
+ssao_enabled = true
+ssao_intensity = 4.0
+ssil_enabled = true
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_p3uq5")
