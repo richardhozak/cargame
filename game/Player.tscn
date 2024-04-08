@@ -8,7 +8,6 @@ wheel2 = NodePath("Node3D/Wheel2")
 wheel3 = NodePath("Node3D/Wheel3")
 wheel4 = NodePath("Node3D/Wheel4")
 body = NodePath("Node3D/Body")
-track = NodePath("../track_straight")
 script = ExtResource("1_tma0k")
 
 [node name="Node3D" type="Node3D" parent="."]
