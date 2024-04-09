@@ -38,6 +38,8 @@ void CarPhysics::_bind_methods()
     BIND_ENUM_CONSTANT(NOOP);
     BIND_ENUM_CONSTANT(SAVE);
     BIND_ENUM_CONSTANT(RESET);
+
+    ADD_SIGNAL(MethodInfo("car_stats_changed", PropertyInfo(Variant::FLOAT, "speed"), PropertyInfo(Variant::FLOAT, "rpm"), PropertyInfo(Variant::INT, "gear")));
 }
 
 void CarPhysics::_ready()
@@ -89,6 +91,9 @@ CarPhysics::CarPhysicsInputAction CarPhysics::simulate(const Ref<CarPhysicsInput
     wheel2_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[1]));
     wheel3_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[2]));
     wheel4_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[3]));
+
+    emit_signal("car_stats_changed", state.speed, state.rpm, state.gear);
+
     if (!last_state.finished && state.finished)
     {
         UtilityFunctions::print("finished");

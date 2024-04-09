@@ -44,6 +44,7 @@ func load_track() -> void:
 		var player := Player.instantiate()
 		player.set_disable_scale(true)
 		player.ready.connect(player_ready.bind(player))
+		player.car_stats_changed.connect(display_car_stats)
 		loaded_player = player
 		
 		loaded_track = scene_node
@@ -69,3 +70,8 @@ func load_replay():
 	var replay = ResourceLoader.load("user://replay.res")
 	assert(replay != null)
 	loaded_player.play_replay(replay)
+	
+func display_car_stats(speed: float, rpm: float, gear: int) -> void:
+	$HUD/CarStats/Gear.text = "%d gear" % gear
+	$HUD/CarStats/Speed.text = "%.f" % absf(speed * 3.6)
+	$HUD/CarStats/Rpm.text = "%.f RPM" % rpm
