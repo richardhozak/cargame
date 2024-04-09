@@ -40,13 +40,14 @@ func load_track() -> void:
 		var scene_node := document.generate_scene(state)
 		scene_node.scale = Vector3(10.0, 10.0, 10.0)
 		scene_node.set_meta("mesh", physics_mesh)
-		
+
 		var player := Player.instantiate()
 		player.set_disable_scale(true)
 		player.ready.connect(player_ready.bind(player))
 		player.car_stats_changed.connect(display_car_stats)
+		player.countdown.connect(display_countdown)
 		loaded_player = player
-		
+
 		loaded_track = scene_node
 		loaded_mesh = physics_mesh
 		add_child(scene_node)
@@ -59,7 +60,7 @@ func player_ready(player: Player) -> void:
 	$PhantomCamera3D.set_follow_target(player.camera_eye)
 	$PhantomCamera3D.set_look_at_target(player.camera_target)
 	print("player ready", player.camera_target, $PhantomCamera3D.is_active())
-	
+
 func save_replay():
 	var replay = loaded_player.get_replay()
 	var result := ResourceSaver.save(replay, "user://replay.res", ResourceSaver.FLAG_COMPRESS)
@@ -70,8 +71,19 @@ func load_replay():
 	var replay = ResourceLoader.load("user://replay.res")
 	assert(replay != null)
 	loaded_player.play_replay(replay)
-	
+
 func display_car_stats(speed: float, rpm: float, gear: int) -> void:
 	$HUD/CarStats/Gear.text = "%d gear" % gear
 	$HUD/CarStats/Speed.text = "%.f" % absf(speed * 3.6)
 	$HUD/CarStats/Rpm.text = "%.f RPM" % rpm
+
+func display_countdown(seconds: float) -> void:
+	seconds = absf(floorf(seconds))
+	if seconds > 0.0:
+		$HUD/Countdown.visible = true
+		$HUD/Countdown.text = String.num(seconds)
+	else:
+		$HUD/Countdown.text = "Start"
+		await get_tree().create_timer(1.0).timeout
+		$HUD/Countdown.visible = false
+

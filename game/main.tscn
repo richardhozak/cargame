@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cadk3rrmdrx4t"]
+[gd_scene load_steps=16 format=3 uid="uid://cadk3rrmdrx4t"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_p3uq5"]
 [ext_resource type="PackedScene" uid="uid://cicnstbqx5k4" path="res://track_straight.glb" id="2_7htmg"]
@@ -11,6 +11,9 @@
 
 [sub_resource type="LabelSettings" id="LabelSettings_deulf"]
 font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_lef5a"]
+font_size = 72
 
 [sub_resource type="Resource" id="Resource_u3ywf"]
 script = ExtResource("4_m11bp")
@@ -88,6 +91,23 @@ label_settings = SubResource("LabelSettings_deulf")
 layout_mode = 2
 text = "Rpm"
 horizontal_alignment = 2
+
+[node name="Countdown" type="Label" parent="HUD"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.5
+offset_top = -224.0
+offset_right = 20.5
+offset_bottom = -125.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "3"
+label_settings = SubResource("LabelSettings_lef5a")
+horizontal_alignment = 1
 
 [node name="Camera3D" type="Camera3D" parent="."]
 fov = 60.0
