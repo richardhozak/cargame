@@ -1,12 +1,14 @@
 #include "register_types.h"
 
-#include "gdphysics.h"
-
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/core/defs.hpp>
 #include <godot_cpp/godot.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
+
+#include "car_physics.hpp"
+#include "car_physics_track_mesh.hpp"
+#include "car_physics_input.hpp"
 
 using namespace godot;
 
