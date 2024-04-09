@@ -9,9 +9,9 @@
 
 namespace godot {
 
-class GDPhysics : public Node3D
+class CarPhysics : public Node3D
 {
-    GDCLASS(GDPhysics, Node3D)
+    GDCLASS(CarPhysics, Node3D)
 private:
     NodePath wheel1;
     NodePath wheel2;
@@ -27,7 +27,7 @@ public:
 
     void _ready() override;
 
-    void simulate(const Ref<PhysicsInput>& input);
+    void simulate(const Ref<CarPhysicsInput>& input);
 
     void set_wheel1(const NodePath& p_wheel1);
     NodePath get_wheel1() const;

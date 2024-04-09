@@ -10,9 +10,9 @@
 
 namespace godot {
 
-class GDPhysicsMesh : public RefCounted
+class CarPhysicsTrackMesh : public RefCounted
 {
-    GDCLASS(GDPhysicsMesh, RefCounted)
+    GDCLASS(CarPhysicsTrackMesh, RefCounted)
 public:
     static void _bind_methods();
     bool add_mesh(

@@ -1,7 +1,7 @@
 extends Node3D
 
 var loaded_track: Node3D
-var loaded_mesh: GDPhysicsMesh
+var loaded_mesh: CarPhysicsTrackMesh
 
 const Player = preload("res://Player.tscn")
 
@@ -19,7 +19,7 @@ func load_track() -> void:
 	var state := GLTFState.new()
 	var error := document.append_from_file("res://track1.glb", state)
 	if error == OK:
-		var physics_mesh := GDPhysicsMesh.new()
+		var physics_mesh := CarPhysicsTrackMesh.new()
 		for node in state.nodes:
 			if node.mesh != -1:
 				var gltf_mesh := state.meshes[node.mesh]

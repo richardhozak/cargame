@@ -8,34 +8,34 @@
 
 using namespace godot;
 
-void GDPhysics::_bind_methods()
+void CarPhysics::_bind_methods()
 {
     UtilityFunctions::print("bind methods");
 
-    ClassDB::bind_method(D_METHOD("simulate", "p_input"), &GDPhysics::simulate);
+    ClassDB::bind_method(D_METHOD("simulate", "p_input"), &CarPhysics::simulate);
 
-    ClassDB::bind_method(D_METHOD("get_wheel1"), &GDPhysics::get_wheel1);
-    ClassDB::bind_method(D_METHOD("set_wheel1", "p_wheel1"), &GDPhysics::set_wheel1);
-    ClassDB::add_property("GDPhysics", PropertyInfo(Variant::NODE_PATH, "wheel1", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel1", "get_wheel1");
+    ClassDB::bind_method(D_METHOD("get_wheel1"), &CarPhysics::get_wheel1);
+    ClassDB::bind_method(D_METHOD("set_wheel1", "p_wheel1"), &CarPhysics::set_wheel1);
+    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "wheel1", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel1", "get_wheel1");
 
-    ClassDB::bind_method(D_METHOD("get_wheel2"), &GDPhysics::get_wheel2);
-    ClassDB::bind_method(D_METHOD("set_wheel2", "p_wheel2"), &GDPhysics::set_wheel2);
-    ClassDB::add_property("GDPhysics", PropertyInfo(Variant::NODE_PATH, "wheel2", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel2", "get_wheel2");
+    ClassDB::bind_method(D_METHOD("get_wheel2"), &CarPhysics::get_wheel2);
+    ClassDB::bind_method(D_METHOD("set_wheel2", "p_wheel2"), &CarPhysics::set_wheel2);
+    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "wheel2", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel2", "get_wheel2");
 
-    ClassDB::bind_method(D_METHOD("get_wheel3"), &GDPhysics::get_wheel3);
-    ClassDB::bind_method(D_METHOD("set_wheel3", "p_wheel3"), &GDPhysics::set_wheel3);
-    ClassDB::add_property("GDPhysics", PropertyInfo(Variant::NODE_PATH, "wheel3", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel3", "get_wheel3");
+    ClassDB::bind_method(D_METHOD("get_wheel3"), &CarPhysics::get_wheel3);
+    ClassDB::bind_method(D_METHOD("set_wheel3", "p_wheel3"), &CarPhysics::set_wheel3);
+    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "wheel3", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel3", "get_wheel3");
 
-    ClassDB::bind_method(D_METHOD("get_wheel4"), &GDPhysics::get_wheel4);
-    ClassDB::bind_method(D_METHOD("set_wheel4", "p_wheel4"), &GDPhysics::set_wheel4);
-    ClassDB::add_property("GDPhysics", PropertyInfo(Variant::NODE_PATH, "wheel4", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel4", "get_wheel4");
+    ClassDB::bind_method(D_METHOD("get_wheel4"), &CarPhysics::get_wheel4);
+    ClassDB::bind_method(D_METHOD("set_wheel4", "p_wheel4"), &CarPhysics::set_wheel4);
+    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "wheel4", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel4", "get_wheel4");
 
-    ClassDB::bind_method(D_METHOD("get_body"), &GDPhysics::get_body);
-    ClassDB::bind_method(D_METHOD("set_body", "p_body"), &GDPhysics::set_body);
-    ClassDB::add_property("GDPhysics", PropertyInfo(Variant::NODE_PATH, "body", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_body", "get_body");
+    ClassDB::bind_method(D_METHOD("get_body"), &CarPhysics::get_body);
+    ClassDB::bind_method(D_METHOD("set_body", "p_body"), &CarPhysics::set_body);
+    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "body", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_body", "get_body");
 }
 
-void GDPhysics::_ready()
+void CarPhysics::_ready()
 {
     if (!get_parent()->has_meta("mesh"))
     {
@@ -44,7 +44,7 @@ void GDPhysics::_ready()
     }
 
     UtilityFunctions::print("ready", get_parent());
-    GDPhysicsMesh* mesh = Object::cast_to<GDPhysicsMesh>(static_cast<Object*>(get_parent()->get_meta("mesh")));
+    CarPhysicsTrackMesh* mesh = Object::cast_to<CarPhysicsTrackMesh>(static_cast<Object*>(get_parent()->get_meta("mesh")));
     UtilityFunctions::print(mesh->meshes.size());
 
     physics::Configuration cfg;
@@ -65,7 +65,7 @@ Transform3D physics_matrix_to_transform(const physics::Matrix4& mat)
     return static_cast<Transform3D>(projection);
 }
 
-void GDPhysics::simulate(const Ref<PhysicsInput>& input)
+void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
 {
     if (input.is_null())
     {
@@ -91,52 +91,52 @@ void GDPhysics::simulate(const Ref<PhysicsInput>& input)
     last_state = state;
 }
 
-void GDPhysics::set_wheel1(const NodePath& p_wheel1)
+void CarPhysics::set_wheel1(const NodePath& p_wheel1)
 {
     UtilityFunctions::print("set_wheel1");
     wheel1 = p_wheel1;
 }
-NodePath GDPhysics::get_wheel1() const
+NodePath CarPhysics::get_wheel1() const
 {
     return wheel1;
 }
 
-void GDPhysics::set_wheel2(const NodePath& p_wheel2)
+void CarPhysics::set_wheel2(const NodePath& p_wheel2)
 {
     UtilityFunctions::print("set_wheel2");
     wheel2 = p_wheel2;
 }
-NodePath GDPhysics::get_wheel2() const
+NodePath CarPhysics::get_wheel2() const
 {
     return wheel2;
 }
 
-void GDPhysics::set_wheel3(const NodePath& p_wheel3)
+void CarPhysics::set_wheel3(const NodePath& p_wheel3)
 {
     UtilityFunctions::print("set_wheel3");
     wheel3 = p_wheel3;
 }
-NodePath GDPhysics::get_wheel3() const
+NodePath CarPhysics::get_wheel3() const
 {
     return wheel3;
 }
 
-void GDPhysics::set_wheel4(const NodePath& p_wheel4)
+void CarPhysics::set_wheel4(const NodePath& p_wheel4)
 {
     UtilityFunctions::print("set_wheel4");
     wheel4 = p_wheel4;
 }
-NodePath GDPhysics::get_wheel4() const
+NodePath CarPhysics::get_wheel4() const
 {
     return wheel4;
 }
 
-void GDPhysics::set_body(const NodePath& p_body)
+void CarPhysics::set_body(const NodePath& p_body)
 {
     UtilityFunctions::print("set_body");
     body = p_body;
 }
-NodePath GDPhysics::get_body() const
+NodePath CarPhysics::get_body() const
 {
     return body;
 }

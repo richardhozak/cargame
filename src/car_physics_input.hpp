@@ -6,12 +6,12 @@
 
 namespace godot {
 
-class PhysicsInput : public RefCounted
+class CarPhysicsInput : public RefCounted
 {
-    GDCLASS(PhysicsInput, RefCounted)
+    GDCLASS(CarPhysicsInput, RefCounted)
 public:
     static void _bind_methods();
-    PhysicsInput();
+    CarPhysicsInput();
 
     void set_up(const bool& p_up);
     bool get_up() const;

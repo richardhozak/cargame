@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Player.gd" id="1_tma0k"]
 
-[node name="GDPhysics" type="GDPhysics"]
+[node name="CarPhysics" type="CarPhysics"]
 wheel1 = NodePath("Node3D/Wheel1")
 wheel2 = NodePath("Node3D/Wheel2")
 wheel3 = NodePath("Node3D/Wheel3")

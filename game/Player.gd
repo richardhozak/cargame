@@ -1,4 +1,4 @@
-extends GDPhysics
+extends CarPhysics
 
 @onready
 var camera_target := $Node3D/Body/LookAt
@@ -7,7 +7,7 @@ var camera_target := $Node3D/Body/LookAt
 var camera_eye := $Node3D/Eye
 
 func _physics_process(delta: float) -> void:
-	var input := PhysicsInput.new()
+	var input := CarPhysicsInput.new()
 	input.up = Input.is_action_pressed("up")
 	input.down = Input.is_action_pressed("down")
 	input.left = Input.is_action_pressed("left")

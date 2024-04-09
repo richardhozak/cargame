@@ -22,9 +22,9 @@ void initialize_physics_module(ModuleInitializationLevel p_level)
     }
 
     UtilityFunctions::print("register class");
-    ClassDB::register_class<GDPhysics>();
-    ClassDB::register_class<GDPhysicsMesh>();
-    ClassDB::register_class<PhysicsInput>();
+    ClassDB::register_class<CarPhysicsInput>();
+    ClassDB::register_class<CarPhysicsTrackMesh>();
+    ClassDB::register_class<CarPhysics>();
 }
 
 void uninitialize_physics_module(ModuleInitializationLevel p_level)

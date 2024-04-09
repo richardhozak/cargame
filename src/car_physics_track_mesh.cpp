@@ -28,14 +28,14 @@ physics::MeshKind mesh_kind_from_color(const Color& color)
     return physics::MeshKind::Road;
 }
 
-void GDPhysicsMesh::_bind_methods()
+void CarPhysicsTrackMesh::_bind_methods()
 {
     UtilityFunctions::print("bind methods physics mesh");
 
-    ClassDB::bind_method(D_METHOD("add_mesh", "position", "rotation", "scale", "vertices", "indices", "color"), &GDPhysicsMesh::add_mesh);
+    ClassDB::bind_method(D_METHOD("add_mesh", "position", "rotation", "scale", "vertices", "indices", "color"), &CarPhysicsTrackMesh::add_mesh);
 }
 
-bool GDPhysicsMesh::add_mesh(
+bool CarPhysicsTrackMesh::add_mesh(
     Vector3 position,
     Quaternion rotation,
     Vector3 scale,
