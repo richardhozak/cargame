@@ -1,5 +1,10 @@
 #include "car_physics_input.hpp"
 
+#include <godot_cpp/classes/global_constants.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
+
+#include <cassert>
+
 using namespace godot;
 
 void CarPhysicsInput::_bind_methods()

@@ -4,9 +4,12 @@ var loaded_track: Node3D
 var loaded_mesh: CarPhysicsTrackMesh
 
 const Player = preload("res://Player.tscn")
+var loaded_player: Player
 
 func _ready() -> void:
-	$HUD/LoadTrackButton.pressed.connect(load_track)
+	$HUD/Menu/LoadTrackButton.pressed.connect(load_track)
+	$HUD/Menu/SaveReplayButton.pressed.connect(save_replay)
+	$HUD/Menu/LoadReplayButton.pressed.connect(load_replay)
 
 func load_track() -> void:
 	if loaded_track != null:
@@ -17,7 +20,7 @@ func load_track() -> void:
 	print("Load track")
 	var document := GLTFDocument.new()
 	var state := GLTFState.new()
-	var error := document.append_from_file("res://track1.glb", state)
+	var error := document.append_from_file("res://track_straight.glb", state)
 	if error == OK:
 		var physics_mesh := CarPhysicsTrackMesh.new()
 		for node in state.nodes:
@@ -41,6 +44,7 @@ func load_track() -> void:
 		var player := Player.instantiate()
 		player.set_disable_scale(true)
 		player.ready.connect(player_ready.bind(player))
+		loaded_player = player
 		
 		loaded_track = scene_node
 		loaded_mesh = physics_mesh
@@ -50,8 +54,18 @@ func load_track() -> void:
 	else:
 		printerr("Couldn't load glTF scene (error code: %s)." % error_string(error))
 
-func player_ready(player):
+func player_ready(player: Player) -> void:
 	$PhantomCamera3D.set_follow_target(player.camera_eye)
 	$PhantomCamera3D.set_look_at_target(player.camera_target)
-	#$PhantomCamera3D.set_look_at_target_offset(Vector3(0.0, 0.0, -5.0))
 	print("player ready", player.camera_target, $PhantomCamera3D.is_active())
+	
+func save_replay():
+	var replay = loaded_player.get_replay()
+	var result := ResourceSaver.save(replay, "user://replay.res", ResourceSaver.FLAG_COMPRESS)
+	if result != OK:
+		printerr("Could not save replay (error: %s)" % error_string(result))
+
+func load_replay():
+	var replay = ResourceLoader.load("user://replay.res")
+	assert(replay != null)
+	loaded_player.play_replay(replay)

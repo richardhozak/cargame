@@ -41,10 +41,22 @@ script = ExtResource("1_p3uq5")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
-[node name="LoadTrackButton" type="Button" parent="HUD"]
-offset_right = 8.0
-offset_bottom = 8.0
+[node name="Menu" type="VBoxContainer" parent="HUD"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="LoadTrackButton" type="Button" parent="HUD/Menu"]
+layout_mode = 2
 text = "Load track"
+
+[node name="SaveReplayButton" type="Button" parent="HUD/Menu"]
+layout_mode = 2
+text = "Save Replay"
+
+[node name="LoadReplayButton" type="Button" parent="HUD/Menu"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Load Replay"
 
 [node name="Camera3D" type="Camera3D" parent="."]
 fov = 60.0

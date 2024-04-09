@@ -2,6 +2,7 @@
 
 #include <godot_cpp/variant/utility_functions.hpp>
 
+#include "car_physics_input.hpp"
 #include "car_physics_track_mesh.hpp"
 #include "configuration.h"
 #include "physics.h"
@@ -33,6 +34,10 @@ void CarPhysics::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_body"), &CarPhysics::get_body);
     ClassDB::bind_method(D_METHOD("set_body", "p_body"), &CarPhysics::set_body);
     ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "body", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_body", "get_body");
+
+    BIND_ENUM_CONSTANT(NOOP);
+    BIND_ENUM_CONSTANT(SAVE);
+    BIND_ENUM_CONSTANT(RESET);
 }
 
 void CarPhysics::_ready()
@@ -65,12 +70,12 @@ Transform3D physics_matrix_to_transform(const physics::Matrix4& mat)
     return static_cast<Transform3D>(projection);
 }
 
-void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
+CarPhysics::CarPhysicsInputAction CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
 {
     if (input.is_null())
     {
         UtilityFunctions::printerr("Input is null");
-        return;
+        return CarPhysicsInputAction::NOOP;
     }
 
     physics::State state = physics->simulate(input->as_physics_input());
@@ -88,7 +93,20 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
     {
         UtilityFunctions::print("finished");
     }
+
+    if (state.finished && last_state.finished)
+    {
+        return CarPhysicsInputAction::NOOP;
+    }
+
     last_state = state;
+
+    if (input->get_restart())
+    {
+        return CarPhysicsInputAction::RESET;
+    }
+
+    return CarPhysicsInputAction::SAVE;
 }
 
 void CarPhysics::set_wheel1(const NodePath& p_wheel1)

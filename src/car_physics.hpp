@@ -22,12 +22,19 @@ private:
     physics::State last_state;
 
 protected:
-public:
     static void _bind_methods();
+
+public:
+    enum CarPhysicsInputAction
+    {
+        NOOP,
+        SAVE,
+        RESET,
+    };
 
     void _ready() override;
 
-    void simulate(const Ref<CarPhysicsInput>& input);
+    CarPhysicsInputAction simulate(const Ref<CarPhysicsInput>& input);
 
     void set_wheel1(const NodePath& p_wheel1);
     NodePath get_wheel1() const;
@@ -46,3 +53,5 @@ public:
 };
 
 }  // namespace godot
+
+VARIANT_ENUM_CAST(CarPhysics::CarPhysicsInputAction);
