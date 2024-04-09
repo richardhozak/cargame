@@ -16,7 +16,7 @@ func load_track() -> void:
 		remove_child(loaded_track)
 		loaded_track = null
 		loaded_mesh = null
-	
+
 	print("Load track")
 	var document := GLTFDocument.new()
 	var state := GLTFState.new()

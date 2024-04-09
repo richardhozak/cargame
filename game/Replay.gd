@@ -20,7 +20,7 @@ func add_input(input: CarPhysicsInput) -> void:
 	input_bytes.encode_u8(6, input.restart)
 	data.append_array(input_bytes)
 	count += 1
-	
+
 func get_input(index: int) -> CarPhysicsInput:
 	var input := CarPhysicsInput.new()
 	var begin := index * INPUT_SIZE

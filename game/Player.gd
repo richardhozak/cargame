@@ -33,19 +33,19 @@ func _physics_process(delta: float) -> void:
 		if replay_input >= replay.get_count():
 			self.simulate(CarPhysicsInput.new())
 			return
-		
+
 		if replay_input == 0:
 			var input := CarPhysicsInput.new()
 			input.restart = true
 			self.simulate(input)
-		
+
 		var input := replay.get_input(replay_input)
 		self.simulate(input)
 		replay_input += 1
-	
+
 func play_replay(to_play: Replay) -> void:
 	replay_input = 0
 	replay = to_play
-	
+
 func get_replay() -> Replay:
 	return replay
