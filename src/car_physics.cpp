@@ -13,8 +13,6 @@ using namespace godot;
 
 void CarPhysics::_bind_methods()
 {
-    UtilityFunctions::print("bind methods");
-
     ClassDB::bind_method(D_METHOD("simulate", "p_input"), &CarPhysics::simulate);
     ClassDB::bind_method(D_METHOD("save_state"), &CarPhysics::save_state);
     ClassDB::bind_method(D_METHOD("load_state", "p_state"), &CarPhysics::load_state);
@@ -57,7 +55,7 @@ void CarPhysics::_ready()
 
     UtilityFunctions::print("ready", get_parent());
     CarPhysicsTrackMesh* mesh = Object::cast_to<CarPhysicsTrackMesh>(static_cast<Object*>(get_parent()->get_meta("mesh")));
-    UtilityFunctions::print(mesh->meshes.size());
+    UtilityFunctions::print("mesh size", mesh->meshes.size());
 
     physics::Configuration cfg;
     physics::Track track;
@@ -162,7 +160,6 @@ void CarPhysics::load_state(const PackedByteArray& state)
 
 void CarPhysics::set_wheel1(const NodePath& p_wheel1)
 {
-    UtilityFunctions::print("set_wheel1");
     wheel1 = p_wheel1;
 }
 NodePath CarPhysics::get_wheel1() const
@@ -172,7 +169,6 @@ NodePath CarPhysics::get_wheel1() const
 
 void CarPhysics::set_wheel2(const NodePath& p_wheel2)
 {
-    UtilityFunctions::print("set_wheel2");
     wheel2 = p_wheel2;
 }
 NodePath CarPhysics::get_wheel2() const
@@ -182,7 +178,6 @@ NodePath CarPhysics::get_wheel2() const
 
 void CarPhysics::set_wheel3(const NodePath& p_wheel3)
 {
-    UtilityFunctions::print("set_wheel3");
     wheel3 = p_wheel3;
 }
 NodePath CarPhysics::get_wheel3() const
@@ -192,7 +187,6 @@ NodePath CarPhysics::get_wheel3() const
 
 void CarPhysics::set_wheel4(const NodePath& p_wheel4)
 {
-    UtilityFunctions::print("set_wheel4");
     wheel4 = p_wheel4;
 }
 NodePath CarPhysics::get_wheel4() const
@@ -202,7 +196,6 @@ NodePath CarPhysics::get_wheel4() const
 
 void CarPhysics::set_body(const NodePath& p_body)
 {
-    UtilityFunctions::print("set_body");
     body = p_body;
 }
 NodePath CarPhysics::get_body() const

@@ -8,30 +8,24 @@ physics::MeshKind mesh_kind_from_color(const Color& color)
 {
     if (color.is_equal_approx(Color{1.0, 0.0, 0.0, 1.0}))
     {
-        UtilityFunctions::print("finish");
         return physics::MeshKind::Finish;
     }
 
     if (color.is_equal_approx(Color{0.0, 1.0, 0.0, 1.0}))
     {
-        UtilityFunctions::print("start");
         return physics::MeshKind::Start;
     }
 
     if (color.is_equal_approx(Color{0.0, 0.0, 1.0, 1.0}))
     {
-        UtilityFunctions::print("checkpoint");
         return physics::MeshKind::Checkpoint;
     }
 
-    UtilityFunctions::print("road ", color.r, " ", color.g, " ", color.b, " ", color.a);
     return physics::MeshKind::Road;
 }
 
 void CarPhysicsTrackMesh::_bind_methods()
 {
-    UtilityFunctions::print("bind methods physics mesh");
-
     ClassDB::bind_method(D_METHOD("add_mesh", "position", "rotation", "scale", "vertices", "indices", "color"), &CarPhysicsTrackMesh::add_mesh);
 }
 
@@ -43,8 +37,6 @@ bool CarPhysicsTrackMesh::add_mesh(
     PackedInt32Array indices,
     Color color)
 {
-    UtilityFunctions::print("add mesh", position, rotation, scale, color);
-
     physics::MeshKind kind = mesh_kind_from_color(color);
 
     physics::Mesh physics_mesh;
