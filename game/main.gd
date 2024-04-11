@@ -6,10 +6,12 @@ var loaded_mesh: CarPhysicsTrackMesh
 const Player = preload("res://Player.tscn")
 var loaded_player: Player
 
+
 func _ready() -> void:
 	$HUD/Menu/LoadTrackButton.pressed.connect(load_track)
 	$HUD/Menu/SaveReplayButton.pressed.connect(save_replay)
 	$HUD/Menu/LoadReplayButton.pressed.connect(load_replay)
+
 
 func load_track() -> void:
 	if loaded_track != null:
@@ -33,7 +35,14 @@ func load_track() -> void:
 					var arrays := mesh.get_surface_arrays(surface_idx)
 					var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 					var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-					if !physics_mesh.add_mesh(node.position, node.rotation, node.scale, vertices, indices, material.albedo_color):
+					if !physics_mesh.add_mesh(
+						node.position,
+						node.rotation,
+						node.scale,
+						vertices,
+						indices,
+						material.albedo_color
+					):
 						# TODO: this generates errors, try to make start and finish invisible different way
 						mesh.clear()
 
@@ -56,10 +65,12 @@ func load_track() -> void:
 	else:
 		printerr("Couldn't load glTF scene (error code: %s)." % error_string(error))
 
+
 func player_ready(player: Player) -> void:
 	$PhantomCamera3D.set_follow_target(player.camera_eye)
 	$PhantomCamera3D.set_look_at_target(player.camera_target)
 	print("player ready", player.camera_target, $PhantomCamera3D.is_active())
+
 
 func save_replay():
 	var replay = loaded_player.get_replay()
@@ -67,15 +78,18 @@ func save_replay():
 	if result != OK:
 		printerr("Could not save replay (error: %s)" % error_string(result))
 
+
 func load_replay():
 	var replay = ResourceLoader.load("user://replay.res")
 	assert(replay != null)
 	loaded_player.play_replay(replay)
 
+
 func display_car_stats(speed: float, rpm: float, gear: int) -> void:
 	$HUD/CarStats/Gear.text = "%d gear" % gear
 	$HUD/CarStats/Speed.text = "%.f" % absf(speed * 3.6)
 	$HUD/CarStats/Rpm.text = "%.f RPM" % rpm
+
 
 func display_countdown(seconds: float) -> void:
 	seconds = absf(floorf(seconds))
@@ -86,4 +100,3 @@ func display_countdown(seconds: float) -> void:
 		$HUD/Countdown.text = "Start"
 		await get_tree().create_timer(1.0).timeout
 		$HUD/Countdown.visible = false
-

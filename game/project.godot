@@ -21,7 +21,7 @@ gdscript/warnings/untyped_declaration=1
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/format_on_save/plugin.cfg", "res://addons/phantom_camera/plugin.cfg")
 
 [filesystem]
 

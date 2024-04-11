@@ -5,8 +5,10 @@ const INPUT_SIZE: int = 7
 @export var count: int
 @export var data: PackedByteArray
 
+
 func get_count() -> int:
 	return count
+
 
 func add_input(input: CarPhysicsInput) -> void:
 	var input_bytes := PackedByteArray()
@@ -20,6 +22,7 @@ func add_input(input: CarPhysicsInput) -> void:
 	input_bytes.encode_u8(6, input.restart)
 	data.append_array(input_bytes)
 	count += 1
+
 
 func get_input(index: int) -> CarPhysicsInput:
 	var input := CarPhysicsInput.new()
