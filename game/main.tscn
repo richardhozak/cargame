@@ -48,12 +48,8 @@ script = ExtResource("1_p3uq5")
 [node name="HUD" type="CanvasLayer" parent="."]
 
 [node name="Menu" type="VBoxContainer" parent="HUD"]
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="LoadTrackButton" type="Button" parent="HUD/Menu"]
-layout_mode = 2
-text = "Load track"
+offset_right = 200.0
+offset_bottom = 233.0
 
 [node name="SaveReplayButton" type="Button" parent="HUD/Menu"]
 layout_mode = 2
@@ -63,6 +59,31 @@ text = "Save Replay"
 auto_translate_mode = 1
 layout_mode = 2
 text = "Load Replay"
+
+[node name="HostGameButton" type="Button" parent="HUD/Menu"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Host Game"
+
+[node name="JoinGameButton" type="Button" parent="HUD/Menu"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Join Game"
+
+[node name="PlayerNameLabel" type="Label" parent="HUD/Menu"]
+layout_mode = 2
+text = "Player Name"
+horizontal_alignment = 1
+
+[node name="PlayerName" type="LineEdit" parent="HUD/Menu"]
+layout_mode = 2
+placeholder_text = "Name..."
+alignment = 1
+
+[node name="DisconnectButton" type="Button" parent="HUD/Menu"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Disconnect"
 
 [node name="CarStats" type="VBoxContainer" parent="HUD"]
 anchors_preset = 3

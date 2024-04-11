@@ -6,8 +6,29 @@ class_name Player extends CarPhysics
 var replay := Replay.new()
 var replay_input: int = -1
 
+var initial_state := PackedByteArray()
 
-func _physics_process(delta: float) -> void:
+signal input_simulated(input: CarPhysicsInput)
+
+
+func _enter_tree() -> void:
+	set_multiplayer_authority(str(name).to_int())
+
+
+func _physics_process(_delta: float) -> void:
+	if initial_state.size() > 0:
+		load_state(initial_state)
+		initial_state = PackedByteArray()
+
+	if !is_multiplayer_authority():
+		if replay.get_count() == 0:
+			return
+
+		if replay_input < replay.get_count():
+			self.simulate(replay.get_input(replay_input))
+			replay_input += 1
+			return
+
 	if replay_input == -1:
 		var input := CarPhysicsInput.new()
 		input.up = Input.is_action_pressed("up")
@@ -24,6 +45,9 @@ func _physics_process(delta: float) -> void:
 				pass
 			RESET:
 				replay = Replay.new()
+
+		if !multiplayer.is_server():
+			input_simulated.emit(input)
 	else:
 		if replay_input >= replay.get_count():
 			self.simulate(CarPhysicsInput.new())
@@ -37,6 +61,13 @@ func _physics_process(delta: float) -> void:
 		var input := replay.get_input(replay_input)
 		self.simulate(input)
 		replay_input += 1
+
+
+func simulate_input(input: CarPhysicsInput) -> void:
+	if replay_input == -1:
+		replay_input = 0
+
+	replay.add_input(input)
 
 
 func play_replay(to_play: Replay) -> void:

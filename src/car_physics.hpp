@@ -2,6 +2,7 @@
 
 #include <godot_cpp/classes/node3d.hpp>
 
+#include <godot_cpp/variant/packed_byte_array.hpp>
 #include <memory>
 
 #include "car_physics_input.hpp"
@@ -35,6 +36,8 @@ public:
     void _ready() override;
 
     CarPhysicsInputAction simulate(const Ref<CarPhysicsInput>& input);
+    PackedByteArray save_state() const;
+    void load_state(const PackedByteArray& state);
 
     void set_wheel1(const NodePath& p_wheel1);
     NodePath get_wheel1() const;

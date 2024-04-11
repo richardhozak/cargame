@@ -1,6 +1,7 @@
 #include "car_physics.hpp"
 
 #include <godot_cpp/core/math.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include "car_physics_input.hpp"
@@ -15,6 +16,8 @@ void CarPhysics::_bind_methods()
     UtilityFunctions::print("bind methods");
 
     ClassDB::bind_method(D_METHOD("simulate", "p_input"), &CarPhysics::simulate);
+    ClassDB::bind_method(D_METHOD("save_state"), &CarPhysics::save_state);
+    ClassDB::bind_method(D_METHOD("load_state", "p_state"), &CarPhysics::load_state);
 
     ClassDB::bind_method(D_METHOD("get_wheel1"), &CarPhysics::get_wheel1);
     ClassDB::bind_method(D_METHOD("set_wheel1", "p_wheel1"), &CarPhysics::set_wheel1);
@@ -125,6 +128,36 @@ CarPhysics::CarPhysicsInputAction CarPhysics::simulate(const Ref<CarPhysicsInput
     }
 
     return CarPhysicsInputAction::SAVE;
+}
+
+PackedByteArray CarPhysics::save_state() const
+{
+    std::string physics_state = physics->save_state();
+
+    PackedByteArray state;
+    CRASH_COND(state.resize(physics_state.size()) != 0);
+
+    size_t i = 0;
+    for (const uint8_t element : physics_state)
+    {
+        state.set(i++, element);
+    }
+
+    return state;
+}
+
+void CarPhysics::load_state(const PackedByteArray& state)
+{
+    std::string physics_state;
+    physics_state.resize(state.size());
+
+    size_t i = 0;
+    for (const char element : state)
+    {
+        physics_state[i++] = element;
+    }
+
+    physics->load_state(physics_state);
 }
 
 void CarPhysics::set_wheel1(const NodePath& p_wheel1)
