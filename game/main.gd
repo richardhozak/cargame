@@ -7,6 +7,7 @@ const IP_ADDRESS = "127.0.0.1"
 var loaded_track: Node3D
 var loaded_mesh: CarPhysicsTrackMesh
 var player_name: String
+var saved_state: PackedByteArray
 
 const Player = preload("res://Player.tscn")
 var loaded_player: Player
@@ -15,7 +16,7 @@ var loaded_player: Player
 class PeerState:
 	var name: String = ""
 	var level_loaded: bool = false
-	var player_spawned: bool = false
+	var player: Player = null
 
 	func _init(peer_name: String) -> void:
 		name = peer_name
@@ -37,13 +38,15 @@ func print_info(fn: String) -> void:
 
 
 func _ready() -> void:
-	$HUD/Menu/PlayerName.text = RandomName.get_random_name()
+	player_name = RandomName.get_random_name()
+	$HUD/PlayerNameContainer/PlayerName.text = player_name
 	$HUD/Menu/SaveReplayButton.pressed.connect(save_replay)
 	$HUD/Menu/LoadReplayButton.pressed.connect(load_replay)
 	$HUD/Menu/HostGameButton.pressed.connect(host_game)
 	$HUD/Menu/JoinGameButton.pressed.connect(join_game)
 	$HUD/Menu/DisconnectButton.pressed.connect(disconnect_from_game)
-	player_name = $HUD/Menu/PlayerName.text
+	$HUD/Menu/SaveStateButton.pressed.connect(save_state)
+	$HUD/Menu/LoadStateButton.pressed.connect(load_state)
 
 
 @rpc("any_peer", "call_local", "reliable")
@@ -63,33 +66,63 @@ func load_level(level_name: String) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func level_loaded() -> void:
-	var remote_id := multiplayer.get_remote_sender_id()
-	var state: PeerState = peers[remote_id]
-	state.level_loaded = true
-	prints("level loaded, spawning player", remote_id, state.name)
+	var sender_id := multiplayer.get_remote_sender_id()
+	var sender_state: PeerState = peers[sender_id]
+	sender_state.level_loaded = true
+
+	prints("level loaded, spawning player", sender_id, sender_state.name)
+
+	# send currently loaded player spawn to every other player, including the currently loaded player
 	for peer_id: int in peers:
-		if peers[peer_id].level_loaded:
-			spawn_player.rpc_id(peer_id, remote_id, state.name)
+		var peer_state: PeerState = peers[peer_id]
+		if peer_state.level_loaded:
+			spawn_player.rpc_id(peer_id, sender_id, sender_state.name, PackedByteArray())
+
+	# send every spawned player to currently loaded player
+	for peer_id: int in peers:
+		if peer_id == sender_id:
+			continue
+		var peer_state: PeerState = peers[peer_id]
+		if peer_state.player:
+			spawn_player.rpc_id(sender_id, peer_id, peer_state.name, peer_state.player.save_state())
 
 
 @rpc("authority", "call_local", "reliable")
-func spawn_player(id: int, peer_name: String) -> void:
+func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) -> void:
 	print_info("spawn_player")
+	var is_local := multiplayer.get_unique_id() == id
 	prints("spawn player", id, peer_name, "is server", multiplayer.is_server())
 	var player := Player.instantiate()
 	player.name = str(id)
+	player.initial_state = initial_state
 	player.set_disable_scale(true)
+
 	loaded_track.add_child(player)
-	if id == multiplayer.get_unique_id():
-		player.input_simulated.connect(on_player_input_simulated)
+
+	# set camera for local player
+	if is_local:
+		loaded_player = player
 		$PhantomCamera3D.set_follow_target(player.camera_eye)
 		$PhantomCamera3D.set_look_at_target(player.camera_target)
 
+	# bind inputs simulated inputs, server distributes them to clients, clients just need to send them to server
+	if multiplayer.is_server():
+		player.input_simulated.connect(func(input): on_server_input_simulated(id, input))
+	elif is_local:
+		player.input_simulated.connect(on_local_input_simulated)
+
+	if multiplayer.is_server():
+		peers[id].player = player
+
+
+@rpc("any_peer", "call_local", "reliable")
+func player_spawned(id: int) -> void:
+	pass
+
 
 @rpc("any_peer", "call_remote", "reliable")
-func simulate_input(input: CarPhysicsInput) -> void:
+func input_simulated(input: CarPhysicsInput) -> void:
 	var peer_id := multiplayer.get_remote_sender_id()
-	print("simulate input", peer_id, input)
 	var node := loaded_track.get_node_or_null(str(peer_id))
 	if node:
 		node.simulate_input(input)
@@ -97,8 +130,26 @@ func simulate_input(input: CarPhysicsInput) -> void:
 		printerr("no player with id ", peer_id)
 
 
-func on_player_input_simulated(input: CarPhysicsInput) -> void:
-	simulate_input.rpc_id(1, input)
+@rpc("authority", "call_local", "reliable")
+func simulate_input(peer_id: int, input: CarPhysicsInput) -> void:
+	var node := loaded_track.get_node_or_null(str(peer_id))
+	if node:
+		node.simulate_input(input)
+	else:
+		printerr("no player with id ", peer_id)
+
+
+func on_local_input_simulated(input: CarPhysicsInput) -> void:
+	# send input to server
+	input_simulated.rpc_id(1, input)
+
+
+func on_server_input_simulated(peer_id: int, input: CarPhysicsInput) -> void:
+	for remote_peer_id in multiplayer.get_peers():
+		if remote_peer_id != peer_id:
+			var peer_state: PeerState = peers.get(remote_peer_id)
+			if peer_state && peer_state.level_loaded:
+				simulate_input.rpc_id(remote_peer_id, peer_id, input)
 
 
 func peer_connected(id: int) -> void:
@@ -233,6 +284,15 @@ func load_replay() -> void:
 	var replay := ResourceLoader.load("user://replay.res")
 	assert(replay != null)
 	loaded_player.play_replay(replay)
+
+
+func save_state() -> void:
+	saved_state = loaded_player.save_state()
+
+
+func load_state() -> void:
+	if saved_state.size() > 0:
+		loaded_player.load_state(saved_state)
 
 
 func display_car_stats(speed: float, rpm: float, gear: int) -> void:

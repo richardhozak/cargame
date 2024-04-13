@@ -25,9 +25,13 @@ func _physics_process(_delta: float) -> void:
 			return
 
 		if replay_input < replay.get_count():
-			self.simulate(replay.get_input(replay_input))
+			var input := replay.get_input(replay_input)
+			self.simulate(input)
 			replay_input += 1
+			input_simulated.emit(input)
 			return
+
+		return
 
 	if replay_input == -1:
 		var input := CarPhysicsInput.new()
@@ -46,8 +50,7 @@ func _physics_process(_delta: float) -> void:
 			RESET:
 				replay = Replay.new()
 
-		if !multiplayer.is_server():
-			input_simulated.emit(input)
+		input_simulated.emit(input)
 	else:
 		if replay_input >= replay.get_count():
 			self.simulate(CarPhysicsInput.new())

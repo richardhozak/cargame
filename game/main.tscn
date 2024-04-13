@@ -70,20 +70,20 @@ auto_translate_mode = 1
 layout_mode = 2
 text = "Join Game"
 
-[node name="PlayerNameLabel" type="Label" parent="HUD/Menu"]
-layout_mode = 2
-text = "Player Name"
-horizontal_alignment = 1
-
-[node name="PlayerName" type="LineEdit" parent="HUD/Menu"]
-layout_mode = 2
-placeholder_text = "Name..."
-alignment = 1
-
 [node name="DisconnectButton" type="Button" parent="HUD/Menu"]
 auto_translate_mode = 1
 layout_mode = 2
 text = "Disconnect"
+
+[node name="SaveStateButton" type="Button" parent="HUD/Menu"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Save State"
+
+[node name="LoadStateButton" type="Button" parent="HUD/Menu"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Load State"
 
 [node name="CarStats" type="VBoxContainer" parent="HUD"]
 anchors_preset = 3
@@ -129,6 +129,25 @@ grow_vertical = 2
 text = "3"
 label_settings = SubResource("LabelSettings_lef5a")
 horizontal_alignment = 1
+
+[node name="PlayerNameContainer" type="VBoxContainer" parent="HUD"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -104.0
+offset_bottom = 40.0
+grow_horizontal = 0
+
+[node name="PlayerNameLabel" type="Label" parent="HUD/PlayerNameContainer"]
+layout_mode = 2
+text = "Player Name"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="PlayerName" type="Label" parent="HUD/PlayerNameContainer"]
+layout_mode = 2
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="Camera3D" type="Camera3D" parent="."]
 fov = 60.0
