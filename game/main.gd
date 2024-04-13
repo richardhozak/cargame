@@ -102,9 +102,12 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 
 	# set camera for local player
 	if is_local:
-		loaded_player = player
 		$PhantomCamera3D.set_follow_target(player.camera_eye)
 		$PhantomCamera3D.set_look_at_target(player.camera_target)
+		player.car_stats_changed.connect(display_car_stats)
+		player.countdown.connect(display_countdown)
+		player.simulation_step.connect(simulation_step)
+		loaded_player = player
 
 	# bind inputs simulated inputs, server distributes them to clients, clients just need to send them to server
 	if multiplayer.is_server():
@@ -311,3 +314,21 @@ func display_countdown(seconds: float) -> void:
 		$HUD/Countdown.text = "Start"
 		await get_tree().create_timer(1.0).timeout
 		$HUD/Countdown.visible = false
+
+
+func human_time(step: int, full: bool = false) -> String:
+	var is_negative := step < 0
+	step = absi(step)
+	var seconds := step as float / 60.0
+	var minutes := (seconds / 60.0) as int
+	var remaining_seconds = fmod(seconds, 60.0)
+	var prefix := "-" if is_negative else " "
+	var time = "%s%02d:%06.3f" % [prefix, minutes, remaining_seconds]
+	if !full:
+		time[time.length() - 1] = " "
+
+	return time
+
+
+func simulation_step(step: int) -> void:
+	$HUD/Time.text = human_time(step)

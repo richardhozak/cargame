@@ -43,6 +43,7 @@ void CarPhysics::_bind_methods()
 
     ADD_SIGNAL(MethodInfo("car_stats_changed", PropertyInfo(Variant::FLOAT, "speed"), PropertyInfo(Variant::FLOAT, "rpm"), PropertyInfo(Variant::INT, "gear")));
     ADD_SIGNAL(MethodInfo("countdown", PropertyInfo(Variant::FLOAT, "seconds")));
+    ADD_SIGNAL(MethodInfo("simulation_step", PropertyInfo(Variant::INT, "step")));
 }
 
 void CarPhysics::_ready()
@@ -107,6 +108,8 @@ CarPhysics::CarPhysicsInputAction CarPhysics::simulate(const Ref<CarPhysicsInput
     {
         emit_signal("countdown", 0.0);
     }
+
+    emit_signal("simulation_step", state.step);
 
     if (!last_state.finished && state.finished)
     {
