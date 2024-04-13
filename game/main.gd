@@ -94,6 +94,7 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	prints("spawn player", id, peer_name, "is server", multiplayer.is_server())
 	var player := Player.instantiate()
 	player.name = str(id)
+	player.player_name = peer_name
 	player.initial_state = initial_state
 	player.set_disable_scale(true)
 

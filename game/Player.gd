@@ -3,6 +3,12 @@ class_name Player extends CarPhysics
 @onready var camera_target := $Node3D/Body/LookAt
 @onready var camera_eye := $Node3D/Eye
 
+@export var player_name: String:
+	get:
+		return $Node3D/Body/Label3D.text
+	set(value):
+		$Node3D/Body/Label3D.text = value
+
 var replay := Replay.new()
 var replay_input: int = -1
 
