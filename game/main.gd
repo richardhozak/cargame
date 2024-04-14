@@ -4,6 +4,7 @@ const MAX_CLIENTS = 4
 const PORT = 3535
 const IP_ADDRESS = "127.0.0.1"
 
+var create_server := false
 var selected_track_uri := ""
 var loaded_track: Node3D
 var loaded_mesh: CarPhysicsTrackMesh
@@ -214,11 +215,13 @@ func host_game() -> void:
 	multiplayer.server_relay = false
 	multiplayer.allow_object_decoding = true
 
-	var peer := ENetMultiplayerPeer.new()
-	peer.create_server(PORT, MAX_CLIENTS)
-	multiplayer.multiplayer_peer = peer
-	multiplayer.peer_connected.connect(peer_connected)
-	multiplayer.peer_disconnected.connect(peer_disconnected)
+	if create_server:
+		var peer := ENetMultiplayerPeer.new()
+		peer.create_server(PORT, MAX_CLIENTS)
+		multiplayer.multiplayer_peer = peer
+		multiplayer.peer_connected.connect(peer_connected)
+		multiplayer.peer_disconnected.connect(peer_disconnected)
+
 	hello.rpc_id(1, player_name)
 
 
@@ -364,6 +367,7 @@ func simulation_step(step: int) -> void:
 
 
 func _on_main_menu_host() -> void:
+	create_server = true
 	$MainMenu.visible = false
 	$SelectTrackMenu.visible = true
 
@@ -381,3 +385,8 @@ func _on_select_track_menu_selected(track_uri: String) -> void:
 	$SelectTrackMenu.visible = false
 	selected_track_uri = track_uri
 	host_game()
+
+
+func _on_main_menu_single_player() -> void:
+	$MainMenu.visible = false
+	$SelectTrackMenu.visible = true
