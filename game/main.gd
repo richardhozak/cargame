@@ -43,11 +43,9 @@ func _ready() -> void:
 	spectate_group.allow_unpress = false
 	spectate_group.pressed.connect(_on_spectate_pressed)
 	player_name = RandomName.get_random_name()
-	$HUD/PlayerNameContainer/PlayerName.text = player_name
+	$PlayerName/PlayerNameContainer/PlayerName.text = player_name
 	$DebugMenu/Menu/SaveReplayButton.pressed.connect(save_replay)
 	$DebugMenu/Menu/LoadReplayButton.pressed.connect(load_replay)
-	$DebugMenu/Menu/HostGameButton.pressed.connect(host_game)
-	$DebugMenu/Menu/JoinGameButton.pressed.connect(join_game)
 	$DebugMenu/Menu/DisconnectButton.pressed.connect(disconnect_from_game)
 	$DebugMenu/Menu/SaveStateButton.pressed.connect(save_state)
 	$DebugMenu/Menu/LoadStateButton.pressed.connect(load_state)
@@ -298,6 +296,7 @@ func load_track(track_name: String) -> void:
 
 func track_ready() -> void:
 	level_loaded.rpc_id(1)
+	$HUD.visible = true
 
 
 func player_ready(player: Player) -> void:
@@ -361,3 +360,22 @@ func human_time(step: int, full: bool = false) -> String:
 
 func simulation_step(step: int) -> void:
 	$HUD/Time.text = human_time(step)
+
+
+func _on_main_menu_host() -> void:
+	$MainMenu.visible = false
+	$SelectTrackMenu.visible = true
+
+
+func _on_main_menu_join() -> void:
+	$MainMenu.visible = false
+	join_game()
+
+
+func _on_main_menu_quit() -> void:
+	get_tree().quit()
+
+
+func _on_select_track_menu_selected() -> void:
+	$SelectTrackMenu.visible = false
+	host_game()

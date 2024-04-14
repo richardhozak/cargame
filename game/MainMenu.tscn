@@ -1,6 +1,28 @@
-[gd_scene format=3 uid="uid://coaitlq6dylqq"]
+[gd_scene load_steps=2 format=3 uid="uid://coaitlq6dylqq"]
+
+[sub_resource type="GDScript" id="GDScript_8ni0j"]
+resource_name = "MainMenu"
+script/source = "extends CanvasLayer
+
+signal host
+signal join
+signal quit
+
+
+func _on_host_pressed() -> void:
+	host.emit()
+
+
+func _on_join_pressed() -> void:
+	join.emit()
+
+
+func _on_quit_pressed() -> void:
+	quit.emit()
+"
 
 [node name="CanvasLayer" type="CanvasLayer"]
+script = SubResource("GDScript_8ni0j")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 auto_translate_mode = 1
@@ -48,3 +70,7 @@ auto_translate_mode = 1
 layout_mode = 2
 size_flags_vertical = 10
 text = "Quit"
+
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Host" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
