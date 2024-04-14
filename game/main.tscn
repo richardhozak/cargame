@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cadk3rrmdrx4t"]
+[gd_scene load_steps=20 format=3 uid="uid://cadk3rrmdrx4t"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_p3uq5"]
 [ext_resource type="PackedScene" uid="uid://cicnstbqx5k4" path="res://track_straight.glb" id="2_7htmg"]
@@ -9,6 +9,8 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3D.gd" id="5_m8fvt"]
 [ext_resource type="PackedScene" uid="uid://carl0mcgdyymp" path="res://track1.glb" id="6_p8y0n"]
 [ext_resource type="Texture2D" uid="uid://bdau8ntkwx6cp" path="res://evening_road_01_puresky_4k.hdr" id="7_pdd3v"]
+[ext_resource type="PackedScene" uid="uid://coaitlq6dylqq" path="res://MainMenu.tscn" id="10_egcly"]
+[ext_resource type="PackedScene" uid="uid://dhs1kqgn5gaoe" path="res://SelectTrackMenu.tscn" id="11_nfy3h"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_deulf"]
 font_size = 32
@@ -50,45 +52,48 @@ ssil_enabled = true
 [node name="Main" type="Node3D"]
 script = ExtResource("1_p3uq5")
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="DebugMenu" type="CanvasLayer" parent="."]
+visible = false
 
-[node name="Menu" type="VBoxContainer" parent="HUD"]
+[node name="Menu" type="VBoxContainer" parent="DebugMenu"]
 offset_right = 200.0
-offset_bottom = 233.0
+offset_bottom = 241.0
 
-[node name="SaveReplayButton" type="Button" parent="HUD/Menu"]
+[node name="SaveReplayButton" type="Button" parent="DebugMenu/Menu"]
 layout_mode = 2
 text = "Save Replay"
 
-[node name="LoadReplayButton" type="Button" parent="HUD/Menu"]
+[node name="LoadReplayButton" type="Button" parent="DebugMenu/Menu"]
 auto_translate_mode = 1
 layout_mode = 2
 text = "Load Replay"
 
-[node name="HostGameButton" type="Button" parent="HUD/Menu"]
+[node name="HostGameButton" type="Button" parent="DebugMenu/Menu"]
 auto_translate_mode = 1
 layout_mode = 2
 text = "Host Game"
 
-[node name="JoinGameButton" type="Button" parent="HUD/Menu"]
+[node name="JoinGameButton" type="Button" parent="DebugMenu/Menu"]
 auto_translate_mode = 1
 layout_mode = 2
 text = "Join Game"
 
-[node name="DisconnectButton" type="Button" parent="HUD/Menu"]
+[node name="DisconnectButton" type="Button" parent="DebugMenu/Menu"]
 auto_translate_mode = 1
 layout_mode = 2
 text = "Disconnect"
 
-[node name="SaveStateButton" type="Button" parent="HUD/Menu"]
+[node name="SaveStateButton" type="Button" parent="DebugMenu/Menu"]
 auto_translate_mode = 1
 layout_mode = 2
 text = "Save State"
 
-[node name="LoadStateButton" type="Button" parent="HUD/Menu"]
+[node name="LoadStateButton" type="Button" parent="DebugMenu/Menu"]
 auto_translate_mode = 1
 layout_mode = 2
 text = "Load State"
+
+[node name="HUD" type="CanvasLayer" parent="."]
 
 [node name="CarStats" type="VBoxContainer" parent="HUD"]
 anchors_preset = 3
@@ -211,3 +216,9 @@ environment = SubResource("Environment_rychs")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.239452, 0.840832, -0.485452, -6.86016e-09, 0.499998, 0.866027, 0.970908, 0.207372, -0.119726, 0, 30, 0)
 shadow_enabled = true
+
+[node name="MainMenu" parent="." instance=ExtResource("10_egcly")]
+visible = false
+
+[node name="SelectTrackMenu" parent="." instance=ExtResource("11_nfy3h")]
+visible = false

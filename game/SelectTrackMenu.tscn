@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://dhs1kqgn5gaoe"]
+
+[node name="CanvasLayer" type="CanvasLayer"]
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+auto_translate_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 409.0
+offset_top = 169.0
+offset_right = -409.0
+offset_bottom = -169.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Select Track"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+
+[node name="LinkButton1" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+toggle_mode = true
+text = "Track 1"
+uri = "res://track1.glb"
+
+[node name="LinkButton2" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+toggle_mode = true
+text = "Track 2"
+uri = "res://track2.glb"
+
+[node name="LinkButton3" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+toggle_mode = true
+text = "Track 3"
+uri = "res://track3.glb"
+
+[node name="LinkButton4" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+toggle_mode = true
+text = "Track 4"
+uri = "res://track4.glb"
+
+[node name="LinkButton5" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+toggle_mode = true
+text = "Track 5"
+uri = "res://track5.glb"
+
+[node name="LinkButton6" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+toggle_mode = true
+text = "Track Straight"
+uri = "res://track_straight.glb"
+
+[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Selected: None, please select"
+
+[node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Start"

@@ -44,13 +44,13 @@ func _ready() -> void:
 	spectate_group.pressed.connect(_on_spectate_pressed)
 	player_name = RandomName.get_random_name()
 	$HUD/PlayerNameContainer/PlayerName.text = player_name
-	$HUD/Menu/SaveReplayButton.pressed.connect(save_replay)
-	$HUD/Menu/LoadReplayButton.pressed.connect(load_replay)
-	$HUD/Menu/HostGameButton.pressed.connect(host_game)
-	$HUD/Menu/JoinGameButton.pressed.connect(join_game)
-	$HUD/Menu/DisconnectButton.pressed.connect(disconnect_from_game)
-	$HUD/Menu/SaveStateButton.pressed.connect(save_state)
-	$HUD/Menu/LoadStateButton.pressed.connect(load_state)
+	$DebugMenu/Menu/SaveReplayButton.pressed.connect(save_replay)
+	$DebugMenu/Menu/LoadReplayButton.pressed.connect(load_replay)
+	$DebugMenu/Menu/HostGameButton.pressed.connect(host_game)
+	$DebugMenu/Menu/JoinGameButton.pressed.connect(join_game)
+	$DebugMenu/Menu/DisconnectButton.pressed.connect(disconnect_from_game)
+	$DebugMenu/Menu/SaveStateButton.pressed.connect(save_state)
+	$DebugMenu/Menu/LoadStateButton.pressed.connect(load_state)
 
 
 func _on_spectate_pressed(button: BaseButton):
