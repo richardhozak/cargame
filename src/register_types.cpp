@@ -14,14 +14,12 @@ using namespace godot;
 
 void initialize_physics_module(ModuleInitializationLevel p_level)
 {
-    UtilityFunctions::print("init ", p_level, " ", MODULE_INITIALIZATION_LEVEL_SCENE);
-
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
     {
         return;
     }
 
-    UtilityFunctions::print("register class");
+    UtilityFunctions::print("Physics Init");
     ClassDB::register_class<CarPhysicsInput>();
     ClassDB::register_class<CarPhysicsTrackMesh>();
     ClassDB::register_class<CarPhysics>();
@@ -29,13 +27,10 @@ void initialize_physics_module(ModuleInitializationLevel p_level)
 
 void uninitialize_physics_module(ModuleInitializationLevel p_level)
 {
-    UtilityFunctions::print("deinit", p_level);
     if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
     {
         return;
     }
-
-    // ClassDB::deinitialize(static_cast<GDExtensionInitializationLevel>(p_level));
 }
 
 extern "C" {
