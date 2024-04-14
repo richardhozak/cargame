@@ -53,6 +53,22 @@ func _ready() -> void:
 	$DebugMenu/Menu/LoadStateButton.pressed.connect(load_state)
 
 
+func toggle_pause():
+	if !loaded_track:
+		return
+	var paused: bool = $PauseMenu.visible
+	$PauseMenu.visible = !paused
+	if !create_server:
+		for child in loaded_track.get_children():
+			if child is Player:
+				child.paused = !paused
+
+
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("menu"):
+		toggle_pause()
+
+
 func _on_spectate_pressed(button: BaseButton):
 	var peer_id = button.get_meta("peer_id")
 	if !peer_id:
@@ -390,3 +406,15 @@ func _on_select_track_menu_selected(track_uri: String) -> void:
 func _on_main_menu_single_player() -> void:
 	$MainMenu.visible = false
 	$SelectTrackMenu.visible = true
+
+
+func _on_pause_menu_quit() -> void:
+	get_tree().quit()
+
+
+func _on_pause_menu_resume() -> void:
+	toggle_pause()
+
+
+func _on_pause_menu_main_menu() -> void:
+	pass

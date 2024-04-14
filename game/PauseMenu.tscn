@@ -1,0 +1,67 @@
+[gd_scene load_steps=2 format=3 uid="uid://cuoc6m3quycfq"]
+
+[sub_resource type="GDScript" id="GDScript_b2xvw"]
+script/source = "extends CanvasLayer
+
+signal resume
+signal main_menu
+signal quit
+
+
+func _on_resume_pressed() -> void:
+	resume.emit()
+
+
+func _on_main_menu_pressed() -> void:
+	main_menu.emit()
+
+
+func _on_quit_pressed() -> void:
+	quit.emit()
+
+
+"
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = SubResource("GDScript_b2xvw")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_left = 446.0
+offset_top = 251.0
+offset_right = 705.0
+offset_bottom = 396.0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Pause Menu"
+horizontal_alignment = 1
+
+[node name="Resume" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Resume"
+
+[node name="MainMenu" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Back to Main Menu"
+
+[node name="Quit" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+size_flags_vertical = 10
+text = "Quit"
+
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/MainMenu" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
