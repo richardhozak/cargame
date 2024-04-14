@@ -16,6 +16,16 @@ const Player = preload("res://Player.tscn")
 const PlayerSpectateItem = preload("res://PlayerSpectateItem.tscn")
 var loaded_player: Player
 
+var current_menu_state: MenuState = MenuState.MAIN_MENU
+
+enum MenuState {
+	NONE,
+	MAIN_MENU,
+	TRACK_SELECT_HOST,
+	TRACK_SELECT_SINGLE_PLAYER,
+	PAUSED,
+}
+
 
 class PeerState:
 	var name: String = ""
@@ -53,20 +63,64 @@ func _ready() -> void:
 	$DebugMenu/Menu/LoadStateButton.pressed.connect(load_state)
 
 
-func toggle_pause():
+func change_menu(menu_state: MenuState) -> void:
+	match menu_state:
+		MenuState.MAIN_MENU:
+			if current_menu_state == MenuState.PAUSED:
+				disconnect_from_game()
+			create_server = false
+			$PauseMenu.visible = false
+			$SelectTrackMenu.visible = false
+			$MainMenu.visible = true
+		MenuState.TRACK_SELECT_HOST:
+			create_server = true
+			$PauseMenu.visible = false
+			$SelectTrackMenu.visible = true
+			$MainMenu.visible = false
+		MenuState.TRACK_SELECT_SINGLE_PLAYER:
+			create_server = false
+			$PauseMenu.visible = false
+			$SelectTrackMenu.visible = true
+			$MainMenu.visible = false
+		MenuState.PAUSED:
+			if current_menu_state == MenuState.NONE:
+				pause_children(true)
+			$PauseMenu.visible = true
+			$SelectTrackMenu.visible = false
+			$MainMenu.visible = false
+		MenuState.NONE:
+			if current_menu_state == MenuState.PAUSED:
+				pause_children(false)
+			$PauseMenu.visible = false
+			$SelectTrackMenu.visible = false
+			$MainMenu.visible = false
+
+	current_menu_state = menu_state
+
+
+func pause_children(pause: bool):
 	if !loaded_track:
 		return
-	var paused: bool = $PauseMenu.visible
-	$PauseMenu.visible = !paused
+
 	if !create_server:
 		for child in loaded_track.get_children():
 			if child is Player:
-				child.paused = !paused
+				child.paused = pause
 
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("menu"):
-		toggle_pause()
+		match current_menu_state:
+			MenuState.MAIN_MENU:
+				pass
+			MenuState.TRACK_SELECT_HOST:
+				change_menu(MenuState.MAIN_MENU)
+			MenuState.TRACK_SELECT_SINGLE_PLAYER:
+				change_menu(MenuState.MAIN_MENU)
+			MenuState.PAUSED:
+				change_menu(MenuState.NONE)
+			MenuState.NONE:
+				change_menu(MenuState.PAUSED)
 
 
 func _on_spectate_pressed(button: BaseButton):
@@ -222,6 +276,13 @@ func peer_disconnected(id: int) -> void:
 
 
 func disconnect_from_game() -> void:
+	for button in spectate_group.get_buttons():
+		button.get_parent().queue_free()
+	loaded_player = null
+	$HUD.visible = false
+	$PhantomCamera3D.set_follow_target(null)
+	$PhantomCamera3D.set_look_at_target(null)
+	loaded_track.queue_free()
 	multiplayer.multiplayer_peer = null
 
 
@@ -237,6 +298,8 @@ func host_game() -> void:
 		multiplayer.multiplayer_peer = peer
 		multiplayer.peer_connected.connect(peer_connected)
 		multiplayer.peer_disconnected.connect(peer_disconnected)
+	else:
+		multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 
 	hello.rpc_id(1, player_name)
 
@@ -383,13 +446,11 @@ func simulation_step(step: int) -> void:
 
 
 func _on_main_menu_host() -> void:
-	create_server = true
-	$MainMenu.visible = false
-	$SelectTrackMenu.visible = true
+	change_menu(MenuState.TRACK_SELECT_HOST)
 
 
 func _on_main_menu_join() -> void:
-	$MainMenu.visible = false
+	change_menu(MenuState.NONE)
 	join_game()
 
 
@@ -398,14 +459,13 @@ func _on_main_menu_quit() -> void:
 
 
 func _on_select_track_menu_selected(track_uri: String) -> void:
-	$SelectTrackMenu.visible = false
+	change_menu(MenuState.NONE)
 	selected_track_uri = track_uri
 	host_game()
 
 
 func _on_main_menu_single_player() -> void:
-	$MainMenu.visible = false
-	$SelectTrackMenu.visible = true
+	change_menu(MenuState.TRACK_SELECT_SINGLE_PLAYER)
 
 
 func _on_pause_menu_quit() -> void:
@@ -413,8 +473,8 @@ func _on_pause_menu_quit() -> void:
 
 
 func _on_pause_menu_resume() -> void:
-	toggle_pause()
+	change_menu(MenuState.NONE)
 
 
 func _on_pause_menu_main_menu() -> void:
-	pass
+	change_menu(MenuState.MAIN_MENU)
