@@ -1,0 +1,132 @@
+[gd_scene load_steps=6 format=3 uid="uid://cf6thyojtjhqa"]
+
+[ext_resource type="FontFile" uid="uid://dkhvrkwgnwvvw" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="1_6xktg"]
+[ext_resource type="Script" path="res://addons/fontawesome/FontAwesome.gd" id="2_gy4e6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hiprr"]
+
+[sub_resource type="GDScript" id="GDScript_767ll"]
+script/source = "@tool
+extends PanelContainer
+
+@export var button_group: ButtonGroup:
+	get:
+		return %Button.button_group
+	set(value):
+		if not is_inside_tree():
+			await ready
+		%Button.button_group = value
+
+@export var player_time: String:
+	get:
+		return %Time.text
+	set(value):
+		if not is_inside_tree():
+			await ready
+		%Time.text = value
+
+@export var player_name: String:
+	get:
+		return %Player.text
+	set(value):
+		if not is_inside_tree():
+			await ready
+		%Player.text = value
+
+
+func _on_button_toggled(toggled_on: bool) -> void:
+	%Eye.visible = toggled_on
+	%EyeClosed.visible = !toggled_on
+"
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6fb21"]
+
+[node name="PanelContainer" type="PanelContainer"]
+auto_translate_mode = 1
+theme_override_styles/panel = SubResource("StyleBoxEmpty_hiprr")
+script = SubResource("GDScript_767ll")
+player_time = "00:00.000"
+player_name = "Player"
+
+[node name="Button" type="Button" parent="."]
+unique_name_in_owner = true
+auto_translate_mode = 1
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+auto_translate_mode = 1
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Position" type="Label" parent="MarginContainer/HBoxContainer"]
+auto_translate_mode = 1
+visible = false
+layout_mode = 2
+text = " 1."
+
+[node name="Player" type="Label" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Player"
+text_overrun_behavior = 3
+
+[node name="Time" type="Label" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+layout_mode = 2
+text = "00:00.000"
+horizontal_alignment = 3
+vertical_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_6fb21")
+
+[node name="Eye" type="Label" parent="MarginContainer/HBoxContainer/PanelContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 2
+visible = false
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_horizontal = 4
+localize_numeral_system = false
+auto_translate = false
+theme_override_fonts/font = ExtResource("1_6xktg")
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_gy4e6")
+icon_name = "eye"
+
+[node name="EyeClosed" type="Label" parent="MarginContainer/HBoxContainer/PanelContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 2
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+localize_numeral_system = false
+auto_translate = false
+theme_override_colors/font_color = Color(1, 1, 1, 0.498039)
+theme_override_fonts/font = ExtResource("1_6xktg")
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_gy4e6")
+icon_name = "eye-slash"
+
+[connection signal="toggled" from="Button" to="." method="_on_button_toggled"]

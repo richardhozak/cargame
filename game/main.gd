@@ -8,8 +8,10 @@ var loaded_track: Node3D
 var loaded_mesh: CarPhysicsTrackMesh
 var player_name: String
 var saved_state: PackedByteArray
+var spectate_group := ButtonGroup.new()
 
 const Player = preload("res://Player.tscn")
+const PlayerSpectateItem = preload("res://PlayerSpectateItem.tscn")
 var loaded_player: Player
 
 
@@ -38,6 +40,8 @@ func print_info(fn: String) -> void:
 
 
 func _ready() -> void:
+	spectate_group.allow_unpress = false
+	spectate_group.pressed.connect(_on_spectate_pressed)
 	player_name = RandomName.get_random_name()
 	$HUD/PlayerNameContainer/PlayerName.text = player_name
 	$HUD/Menu/SaveReplayButton.pressed.connect(save_replay)
@@ -47,6 +51,27 @@ func _ready() -> void:
 	$HUD/Menu/DisconnectButton.pressed.connect(disconnect_from_game)
 	$HUD/Menu/SaveStateButton.pressed.connect(save_state)
 	$HUD/Menu/LoadStateButton.pressed.connect(load_state)
+
+
+func _on_spectate_pressed(button: BaseButton):
+	var peer_id = button.get_meta("peer_id")
+	if !peer_id:
+		printerr("spected canno find peer id")
+		return
+
+	var player := loaded_track.get_node_or_null(str(peer_id)) as Player
+	if player:
+		spectate(player)
+	else:
+		printerr("no player with id ", peer_id)
+
+
+func spectate(player: Player) -> void:
+	$PhantomCamera3D.set_follow_target(player.camera_eye)
+	$PhantomCamera3D.set_look_at_target(player.camera_target)
+	player.car_stats_changed.connect(display_car_stats)
+	player.countdown.connect(display_countdown)
+	player.simulation_step.connect(simulation_step)
 
 
 @rpc("any_peer", "call_local", "reliable")
@@ -98,16 +123,21 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	player.initial_state = initial_state
 	player.set_disable_scale(true)
 
+	var spectate_item := PlayerSpectateItem.instantiate()
+	spectate_item.button_group = spectate_group
+	spectate_item.player_name = peer_name
+	$HUD/ScrollContainer/SpectateContainer.add_child(spectate_item)
+
+	var spectate_button: BaseButton = spectate_group.get_buttons().back()
+	spectate_button.set_meta("peer_id", id)
+
 	loaded_track.add_child(player)
 
 	# set camera for local player
 	if is_local:
-		$PhantomCamera3D.set_follow_target(player.camera_eye)
-		$PhantomCamera3D.set_look_at_target(player.camera_target)
-		player.car_stats_changed.connect(display_car_stats)
-		player.countdown.connect(display_countdown)
-		player.simulation_step.connect(simulation_step)
+		spectate(player)
 		loaded_player = player
+		spectate_button.button_pressed = true
 
 	# bind inputs simulated inputs, server distributes them to clients, clients just need to send them to server
 	if multiplayer.is_server():
