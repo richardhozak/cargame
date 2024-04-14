@@ -129,16 +129,22 @@ func _on_spectate_pressed(button: BaseButton):
 		printerr("spected cannot find peer id")
 		return
 
+	spectate(peer_id)
+
+
+func spectate(peer_id: int) -> void:
+	if !loaded_track:
+		printerr("cannot spectate peer %d, track is not loaded" % peer_id)
+		return
+
 	var player := loaded_track.get_node_or_null(str(peer_id)) as Player
-	if player:
-		spectate(player)
-	else:
-		printerr("no player with id ", peer_id)
+	if !player:
+		printerr("cannot find peer %d in loaded track" % peer_id)
+		return
 
-
-func spectate(player: Player) -> void:
 	$PhantomCamera3D.set_follow_target(player.camera_eye)
 	$PhantomCamera3D.set_look_at_target(player.camera_target)
+	$PhantomCamera3D.set_meta("spectated_peer_id", peer_id)
 	player.car_stats_changed.connect(display_car_stats, CONNECT_REFERENCE_COUNTED)
 	player.countdown.connect(display_countdown, CONNECT_REFERENCE_COUNTED)
 	player.simulation_step.connect(simulation_step, CONNECT_REFERENCE_COUNTED)
@@ -255,6 +261,24 @@ func on_server_input_simulated(peer_id: int, input: CarPhysicsInput) -> void:
 				simulate_input.rpc_id(remote_peer_id, peer_id, input)
 
 
+@rpc("authority", "call_local", "reliable")
+func despawn_player(id: int) -> void:
+	for button in spectate_group.get_buttons():
+		if button.get_meta("peer_id") == id:
+			button.get_parent().queue_free()
+
+	var node := loaded_track.get_node_or_null(str(id))
+	if node:
+		if $PhantomCamera3D.get_meta("spectated_peer_id") == id:
+			$PhantomCamera3D.set_follow_target(null)
+			$PhantomCamera3D.set_look_at_target(null)
+
+			var local_peer_id := str(loaded_player.name).to_int()
+			spectate(local_peer_id)
+
+		node.queue_free()
+
+
 func peer_connected(id: int) -> void:
 	# TODO: timeout peer if they do not send 'hello'
 	return
@@ -266,13 +290,11 @@ func peer_connected(id: int) -> void:
 
 
 func peer_disconnected(id: int) -> void:
-	print("peer disconnected ", id, " ", multiplayer.is_server())
-	var node := loaded_track.get_node_or_null(str(id))
 	peers.erase(id)
-	if node:
-		node.queue_free()
-
-	# TODO: send disconnect to other peers
+	despawn_player.rpc_id(1, id)
+	for peer_id in multiplayer.get_peers():
+		if peer_id != id:
+			despawn_player.rpc_id(peer_id, id)
 
 
 func disconnect_from_game() -> void:
@@ -365,15 +387,6 @@ func load_track(track_name: String) -> void:
 		scene_node.ready.connect(track_ready)
 
 		add_child(scene_node)
-
-		#var player := Player.instantiate()
-		#player.set_disable_scale(true)
-		#player.ready.connect(player_ready.bind(player))
-		#player.car_stats_changed.connect(display_car_stats)
-		#player.countdown.connect(display_countdown)
-		#loaded_player = player
-
-		#scene_node.add_child(player)
 	else:
 		printerr("Couldn't load glTF scene (error code: %s)." % error_string(error))
 
@@ -381,12 +394,6 @@ func load_track(track_name: String) -> void:
 func track_ready() -> void:
 	level_loaded.rpc_id(1)
 	$HUD.visible = true
-
-
-func player_ready(player: Player) -> void:
-	$PhantomCamera3D.set_follow_target(player.camera_eye)
-	$PhantomCamera3D.set_look_at_target(player.camera_target)
-	print("player ready", player.camera_target, $PhantomCamera3D.is_active())
 
 
 func save_replay() -> void:
