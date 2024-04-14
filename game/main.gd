@@ -56,7 +56,7 @@ func _ready() -> void:
 func _on_spectate_pressed(button: BaseButton):
 	var peer_id = button.get_meta("peer_id")
 	if !peer_id:
-		printerr("spected canno find peer id")
+		printerr("spected cannot find peer id")
 		return
 
 	var player := loaded_track.get_node_or_null(str(peer_id)) as Player
@@ -69,9 +69,9 @@ func _on_spectate_pressed(button: BaseButton):
 func spectate(player: Player) -> void:
 	$PhantomCamera3D.set_follow_target(player.camera_eye)
 	$PhantomCamera3D.set_look_at_target(player.camera_target)
-	player.car_stats_changed.connect(display_car_stats)
-	player.countdown.connect(display_countdown)
-	player.simulation_step.connect(simulation_step)
+	player.car_stats_changed.connect(display_car_stats, CONNECT_REFERENCE_COUNTED)
+	player.countdown.connect(display_countdown, CONNECT_REFERENCE_COUNTED)
+	player.simulation_step.connect(simulation_step, CONNECT_REFERENCE_COUNTED)
 
 
 @rpc("any_peer", "call_local", "reliable")
@@ -135,7 +135,6 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 
 	# set camera for local player
 	if is_local:
-		spectate(player)
 		loaded_player = player
 		spectate_button.button_pressed = true
 

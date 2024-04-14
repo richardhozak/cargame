@@ -133,7 +133,7 @@ var _is_active: bool = false
 	get = get_priority
 
 ## Determines the positional logic for a given [param PhantomCamera3D].
-## The different modes have different functionalities and purposes, so 
+## The different modes have different functionalities and purposes, so
 ## choosing the correct one depends on what each [param PhantomCamera3D]
 ## is meant to do.
 @export var follow_mode: FollowMode = FollowMode.NONE:
@@ -334,7 +334,7 @@ var _has_tweened: bool
 @export var show_viewfinder_in_play: bool = false
 
 ## Defines the position of the [member follow_target] within the viewport.[br]
-## This is only used for when [member follow_mode] is set to [param Framed]. 
+## This is only used for when [member follow_mode] is set to [param Framed].
 var viewport_position: Vector2
 var _follow_framed_initial_set: bool = false
 
@@ -474,7 +474,7 @@ func _validate_property(property: Dictionary) -> void:
 
 func _enter_tree() -> void:
 	add_to_group(_constants.PCAM_GROUP_NAME)
-	
+
 	var pcam_host: Array[Node] = get_tree().get_nodes_in_group("phantom_camera_host_group")
 	if pcam_host.size() > 0:
 		set_pcam_host_owner(pcam_host[0])
@@ -519,7 +519,7 @@ func _physics_process(delta: float) -> void:
 #				TODO
 
 	if not _should_follow: return
-	
+
 	match follow_mode:
 		FollowMode.GLUED:
 			if follow_target:
@@ -720,7 +720,7 @@ func _interpolate_position(_global_position: Vector3, delta: float, target: Node
 				#_global_position, \
 				#delta * follow_damping_value \
 			#), delta)
-			
+
 		target.global_position = eerp_vector3(target.global_position, _global_position, delta * follow_damping_value)
 	else:
 		target.global_position = _global_position
@@ -757,7 +757,7 @@ func _get_framed_side_offset() -> Vector2:
 
 func _set_layer(current_layers: int, layer_number: int, value: bool) -> int:
 	var mask: int = current_layers
-	
+
 	# From https://github.com/godotengine/godot/blob/51991e20143a39e9ef0107163eaf283ca0a761ea/scene/3d/camera_3d.cpp#L638
 	if layer_number < 1 or layer_number > 20:
 		printerr("Render layer must be between 1 and 20.")
@@ -830,7 +830,7 @@ func set_pcam_host_owner(value: PhantomCameraHost) -> void:
 #			print(pcam.get_tree().get_nodes_in_group(PhantomCameraGroupNames.PHANTOM_CAMERA_HOST_GROUP_NAME))
 #			multiple_pcam_host_group.append(camera_host)
 #			return null
-## Sets a PCamHost to 
+## Sets a PCamHost to
 #func assign_pcam_host(value: PhantomCameraHost) -> void:
 	#pcam_host_owner = value
 ## Gets the current [PhantomCameraHost] this [param PhantomCamera3D] is
@@ -985,7 +985,7 @@ func set_follow_targets(value: Array[Node3D]) -> void:
 		_should_follow = false
 		_has_multiple_follow_targets = false
 		return
-	
+
 	var valid_instances: int
 	for target in follow_targets:
 		if is_instance_valid(target):
@@ -1001,7 +1001,7 @@ func append_follow_group_node(value: Node3D) -> void:
 	if not is_instance_valid(value):
 		printerr(value, " is not a valid instance")
 		return
-	
+
 	if not follow_targets.has(value):
 		follow_targets.append(value)
 		_should_follow = true
@@ -1170,7 +1170,7 @@ func set_look_at_targets(value: Array[Node3D]) -> void:
 	if look_at_targets == value: return
 
 	look_at_targets = value
-	
+
 	if look_at_targets.is_empty():
 		_should_look_at = false
 		_has_look_at_targets = false
@@ -1181,7 +1181,7 @@ func set_look_at_targets(value: Array[Node3D]) -> void:
 			valid_instances += 1
 			_should_look_at = true
 			_valid_look_at_targets.append(target)
-		
+
 		if valid_instances > 1:
 			print("Larger than 1")
 			_has_look_at_targets = true
