@@ -332,17 +332,34 @@ func join_game() -> void:
 	multiplayer.allow_object_decoding = true
 	var peer := ENetMultiplayerPeer.new()
 	peer.create_client(IP_ADDRESS, PORT)
+
+	for p in peer.host.get_peers():
+		p.set_timeout(500, 1000, 2000)
+
 	multiplayer.multiplayer_peer = peer
 	multiplayer.connected_to_server.connect(connected_to_server)
+	multiplayer.connection_failed.connect(connection_failed)
 	multiplayer.server_disconnected.connect(server_disconnected)
 
 
 func connected_to_server() -> void:
+	print("connected to server")
+	var peer := multiplayer.multiplayer_peer
+	if peer is ENetMultiplayerPeer:
+		for p in peer.host.get_peers():
+			p.set_timeout(1000, 2000, 4000)
+
 	hello.rpc_id(1, player_name)
 
 
 func server_disconnected() -> void:
+	print("server disconnected")
 	disconnect_from_game()
+
+
+func connection_failed() -> void:
+	print("connection failed")
+	change_menu(MenuState.MAIN_MENU)
 
 
 func load_track(track_name: String) -> void:
