@@ -4,11 +4,30 @@
 resource_name = "SelectTrackMenu"
 script/source = "extends CanvasLayer
 
-signal selected
+signal selected(track_uri: String)
+
+var track_group := ButtonGroup.new()
+var selected_track := \"\"
+
+func _init() -> void:
+	track_group.allow_unpress = false
+	track_group.pressed.connect(_on_track_button_pressed)
+
+
+func _on_track_button_pressed(button: BaseButton) -> void:
+	if button is LinkButton:
+		selected_track = button.uri
+		%SelectedLabel.text = \"Selected: \" + button.text
 
 
 func _on_button_pressed() -> void:
-	selected.emit()
+	if selected_track:
+		selected.emit(selected_track)
+
+
+func _on_v_box_container_child_entered_tree(node: Node) -> void:
+	if node is LinkButton:
+		node.button_group = track_group
 "
 
 [node name="CanvasLayer" type="CanvasLayer"]
@@ -91,7 +110,8 @@ toggle_mode = true
 text = "Track Straight"
 uri = "res://track_straight.glb"
 
-[node name="Label2" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="SelectedLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 auto_translate_mode = 1
 layout_mode = 2
 text = "Selected: None, please select"
@@ -101,4 +121,5 @@ auto_translate_mode = 1
 layout_mode = 2
 text = "Start"
 
+[connection signal="child_entered_tree" from="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" to="." method="_on_v_box_container_child_entered_tree"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]

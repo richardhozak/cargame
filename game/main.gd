@@ -4,6 +4,7 @@ const MAX_CLIENTS = 4
 const PORT = 3535
 const IP_ADDRESS = "127.0.0.1"
 
+var selected_track_uri := ""
 var loaded_track: Node3D
 var loaded_mesh: CarPhysicsTrackMesh
 var player_name: String
@@ -78,7 +79,7 @@ func hello(peer_name: String) -> void:
 	prints("got hello from", remote_id, peer_name)
 	prints("sending load level")
 	peers[remote_id] = PeerState.new(peer_name)
-	load_level.rpc_id(remote_id, "res://track_straight.glb")
+	load_level.rpc_id(remote_id, selected_track_uri)
 
 
 @rpc("authority", "call_local", "reliable")
@@ -376,6 +377,7 @@ func _on_main_menu_quit() -> void:
 	get_tree().quit()
 
 
-func _on_select_track_menu_selected() -> void:
+func _on_select_track_menu_selected(track_uri: String) -> void:
 	$SelectTrackMenu.visible = false
+	selected_track_uri = track_uri
 	host_game()
