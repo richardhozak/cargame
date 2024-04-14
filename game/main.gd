@@ -282,7 +282,8 @@ func disconnect_from_game() -> void:
 	$HUD.visible = false
 	$PhantomCamera3D.set_follow_target(null)
 	$PhantomCamera3D.set_look_at_target(null)
-	loaded_track.queue_free()
+	if loaded_track:
+		loaded_track.queue_free()
 	multiplayer.multiplayer_peer = null
 
 
