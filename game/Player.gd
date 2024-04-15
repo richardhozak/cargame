@@ -16,12 +16,9 @@ var replay_input: int = -1
 
 var initial_state := PackedByteArray()
 
-signal input_simulated(input: CarPhysicsInput)
-
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
-	simulated.connect(func(step): input_simulated.emit(step.input))
 
 
 func _physics_process(_delta: float) -> void:

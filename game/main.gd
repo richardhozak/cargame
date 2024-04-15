@@ -214,9 +214,9 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 
 	# bind inputs simulated inputs, server distributes them to clients, clients just need to send them to server
 	if multiplayer.is_server():
-		player.input_simulated.connect(func(input): on_server_input_simulated(id, input))
+		player.simulated.connect(func(step): on_server_input_simulated(id, step.input))
 	elif is_local:
-		player.input_simulated.connect(on_local_input_simulated)
+		player.simulated.connect(func(step): on_local_input_simulated(step.input))
 
 	if multiplayer.is_server():
 		peers[id].player = player
