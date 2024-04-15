@@ -21,10 +21,10 @@ struct State final
     float speed;
     float rpm;
     int gear;
+    bool last_finished;
     bool finished;
     int64_t step;
     uint32_t collected_checkpoints;
-    bool input_simulated;
 };
 
 struct Vector3 final

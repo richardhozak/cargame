@@ -20,7 +20,6 @@ private:
     NodePath wheel4;
     NodePath body;
     std::unique_ptr<physics::Physics> physics;
-    physics::State last_state;
 
 protected:
     static void _bind_methods();

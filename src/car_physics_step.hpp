@@ -21,6 +21,9 @@ public:
     void set_input(const Ref<CarPhysicsInput>& p_input);
     Ref<CarPhysicsInput> get_input() const;
 
+    void set_simulated(const bool& p_simulated);
+    bool get_simulated() const;
+
     void set_speed(const float& p_speed);
     float get_speed() const;
 
@@ -33,6 +36,7 @@ public:
 private:
     int64_t step;
     Ref<CarPhysicsInput> input;
+    bool simulated;
     float speed;
     float rpm;
     int64_t gear;

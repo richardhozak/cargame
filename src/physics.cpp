@@ -258,6 +258,7 @@ class Physics::impl : public ContactListener
 
     std::map<BodyID, Mat44> available_checkpoints;
     std::set<BodyID> collected_checkpoints;
+    bool last_finished = false;
     bool finished = false;
     Mutex checkpoint_mutex;
     std::optional<BodyID> last_collected_checkpoint;
@@ -492,6 +493,7 @@ class Physics::impl : public ContactListener
         }
 
         state.step = step;
+        state.last_finished = last_finished;
         state.finished = finished;
 
         state.collected_checkpoints = collected_checkpoints.size();
@@ -514,6 +516,7 @@ std::string Physics::save_state() const
 
     impl->vehicle_test->SaveState(recorder);
 
+    recorder.Write(impl->last_finished);
     recorder.Write(impl->finished);
 
     recorder.Write(impl->step);
@@ -542,6 +545,7 @@ void Physics::load_state(const std::string& bytes)
 
     impl->vehicle_test->RestoreState(recorder);
 
+    recorder.Read(impl->last_finished);
     recorder.Read(impl->finished);
 
     recorder.Read(impl->step);
@@ -578,6 +582,8 @@ State Physics::simulate(const Input& input)
 {
     // We simulate the physics world in discrete time steps. 60 Hz is a good rate to update the physics system.
     const float cDeltaTime = 1.0f / 60.0f;
+
+    impl->last_finished = impl->finished;
 
     if (input.restart)
     {
