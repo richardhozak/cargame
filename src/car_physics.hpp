@@ -26,18 +26,13 @@ protected:
     static void _bind_methods();
 
 public:
-    enum CarPhysicsInputAction
-    {
-        NOOP,
-        SAVE,
-        RESET,
-    };
-
     void _ready() override;
 
-    CarPhysicsInputAction simulate(const Ref<CarPhysicsInput>& input);
+    void simulate(const Ref<CarPhysicsInput>& input);
     PackedByteArray save_state() const;
     void load_state(const PackedByteArray& state);
+    size_t checkpoint_count() const;
+    size_t collected_checkpoint_count() const;
 
     void set_wheel1(const NodePath& p_wheel1);
     NodePath get_wheel1() const;
@@ -56,5 +51,3 @@ public:
 };
 
 }  // namespace godot
-
-VARIANT_ENUM_CAST(CarPhysics::CarPhysicsInputAction);

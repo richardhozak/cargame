@@ -1,10 +1,13 @@
 #include "car_physics.hpp"
 
+#include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/core/math.hpp>
+#include <godot_cpp/core/property_info.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include "car_physics_input.hpp"
+#include "car_physics_simulation_info.hpp"
 #include "car_physics_track_mesh.hpp"
 #include "configuration.h"
 #include "physics.h"
@@ -16,6 +19,8 @@ void CarPhysics::_bind_methods()
     ClassDB::bind_method(D_METHOD("simulate", "p_input"), &CarPhysics::simulate);
     ClassDB::bind_method(D_METHOD("save_state"), &CarPhysics::save_state);
     ClassDB::bind_method(D_METHOD("load_state", "p_state"), &CarPhysics::load_state);
+    ClassDB::bind_method(D_METHOD("checkpoint_count"), &CarPhysics::checkpoint_count);
+    ClassDB::bind_method(D_METHOD("collected_checkpoint_count"), &CarPhysics::collected_checkpoint_count);
 
     ClassDB::bind_method(D_METHOD("get_wheel1"), &CarPhysics::get_wheel1);
     ClassDB::bind_method(D_METHOD("set_wheel1", "p_wheel1"), &CarPhysics::set_wheel1);
@@ -37,11 +42,7 @@ void CarPhysics::_bind_methods()
     ClassDB::bind_method(D_METHOD("set_body", "p_body"), &CarPhysics::set_body);
     ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "body", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_body", "get_body");
 
-    BIND_ENUM_CONSTANT(NOOP);
-    BIND_ENUM_CONSTANT(SAVE);
-    BIND_ENUM_CONSTANT(RESET);
-
-    ADD_SIGNAL(MethodInfo("simulated", PropertyInfo(Variant::INT, "step"), PropertyInfo(Variant::FLOAT, "speed"), PropertyInfo(Variant::FLOAT, "rpm"), PropertyInfo(Variant::INT, "gear")));
+    ADD_SIGNAL(MethodInfo("simulated", PropertyInfo(Variant::OBJECT, "simulation_info", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT, "CarPhysicsSimulationInfo")));
 }
 
 void CarPhysics::_ready()
@@ -74,12 +75,12 @@ Transform3D physics_matrix_to_transform(const physics::Matrix4& mat)
     return static_cast<Transform3D>(projection);
 }
 
-CarPhysics::CarPhysicsInputAction CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
+void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
 {
     if (input.is_null())
     {
         UtilityFunctions::printerr("Input is null");
-        return CarPhysicsInputAction::NOOP;
+        return;
     }
 
     physics::State state = physics->simulate(input->as_physics_input());
@@ -94,26 +95,26 @@ CarPhysics::CarPhysicsInputAction CarPhysics::simulate(const Ref<CarPhysicsInput
     wheel3_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[2]));
     wheel4_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[3]));
 
-    emit_signal("simulated", state.step, state.speed, state.rpm, state.gear);
+    bool input_simulated = !(state.finished && last_state.finished);
+
+    Ref<CarPhysicsSimulationInfo> simulation_info;
+    simulation_info.instantiate();
+
+    simulation_info->set_step(state.step);
+    simulation_info->set_input(input);
+    simulation_info->set_input_simulated(input_simulated);
+    simulation_info->set_speed(state.speed);
+    simulation_info->set_rpm(state.rpm);
+    simulation_info->set_gear(state.gear);
+
+    emit_signal("simulated", simulation_info);
 
     if (!last_state.finished && state.finished)
     {
         UtilityFunctions::print("finished");
     }
 
-    if (state.finished && last_state.finished)
-    {
-        return CarPhysicsInputAction::NOOP;
-    }
-
     last_state = state;
-
-    if (input->get_restart())
-    {
-        return CarPhysicsInputAction::RESET;
-    }
-
-    return CarPhysicsInputAction::SAVE;
 }
 
 PackedByteArray CarPhysics::save_state() const
@@ -144,6 +145,16 @@ void CarPhysics::load_state(const PackedByteArray& state)
     }
 
     physics->load_state(physics_state);
+}
+
+size_t CarPhysics::checkpoint_count() const
+{
+    return physics->checkpoint_count();
+}
+
+size_t CarPhysics::collected_checkpoint_count() const
+{
+    return physics->collected_checkpoint_count();
 }
 
 void CarPhysics::set_wheel1(const NodePath& p_wheel1)

@@ -21,6 +21,7 @@ signal input_simulated(input: CarPhysicsInput)
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
+	simulated.connect(func(step): if step.input_simulated: input_simulated.emit(step.input))
 
 
 func _physics_process(_delta: float) -> void:
@@ -39,7 +40,6 @@ func _physics_process(_delta: float) -> void:
 			var input := replay.get_input(replay_input)
 			self.simulate(input)
 			replay_input += 1
-			input_simulated.emit(input)
 			return
 
 		return
@@ -53,15 +53,7 @@ func _physics_process(_delta: float) -> void:
 		input.brake = Input.is_action_pressed("brake")
 		input.respawn = Input.is_action_pressed("respawn")
 		input.restart = Input.is_action_pressed("restart")
-		match self.simulate(input):
-			SAVE:
-				replay.add_input(input)
-			NOOP:
-				pass
-			RESET:
-				replay = Replay.new()
-
-		input_simulated.emit(input)
+		self.simulate(input)
 	else:
 		if replay_input >= replay.get_count():
 			self.simulate(CarPhysicsInput.new())

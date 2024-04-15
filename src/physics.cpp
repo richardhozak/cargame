@@ -494,7 +494,7 @@ class Physics::impl : public ContactListener
         state.step = step;
         state.finished = finished;
 
-        state.remaining_checkpoints = available_checkpoints.size() - collected_checkpoints.size();
+        state.collected_checkpoints = collected_checkpoints.size();
 
         return state;
     }
@@ -642,6 +642,16 @@ State Physics::simulate(const Input& input)
         impl->physics_system.Update(cDeltaTime, cCollisionSteps, &impl->temp_allocator, &impl->job_system);
         return impl->current_simulation_state();
     }
+}
+
+size_t Physics::checkpoint_count() const
+{
+    return impl->available_checkpoints.size();
+}
+
+size_t Physics::collected_checkpoint_count() const
+{
+    return impl->collected_checkpoints.size();
 }
 
 std::unique_ptr<Physics> new_physics(const Track& track, const Configuration& configuration)

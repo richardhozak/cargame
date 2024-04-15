@@ -23,7 +23,7 @@ struct State final
     int gear;
     bool finished;
     int64_t step;
-    uint32_t remaining_checkpoints;
+    uint32_t collected_checkpoints;
     bool input_simulated;
 };
 
@@ -89,6 +89,8 @@ public:
     State simulate(const Input& input);
     std::string save_state() const;
     void load_state(const std::string& bytes);
+    size_t checkpoint_count() const;
+    size_t collected_checkpoint_count() const;
 
 private:
     class impl;
