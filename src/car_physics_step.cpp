@@ -32,6 +32,10 @@ void CarPhysicsStep::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_gear"), &CarPhysicsStep::get_gear);
     ClassDB::bind_method(D_METHOD("set_gear", "p_gear"), &CarPhysicsStep::set_gear);
     ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::INT, "gear"), "set_gear", "get_gear");
+
+    ClassDB::bind_method(D_METHOD("get_just_finished"), &CarPhysicsStep::get_just_finished);
+    ClassDB::bind_method(D_METHOD("set_just_finished", "p_just_finished"), &CarPhysicsStep::set_just_finished);
+    ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::BOOL, "just_finished"), "set_just_finished", "get_just_finished");
 }
 
 CarPhysicsStep::CarPhysicsStep()
@@ -90,4 +94,13 @@ void CarPhysicsStep::set_gear(const int64_t& p_gear)
 int64_t CarPhysicsStep::get_gear() const
 {
     return gear;
+}
+
+void CarPhysicsStep::set_just_finished(const bool& p_just_finished)
+{
+    just_finished = p_just_finished;
+}
+bool CarPhysicsStep::get_just_finished() const
+{
+    return just_finished;
 }

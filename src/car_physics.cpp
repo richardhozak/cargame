@@ -97,6 +97,7 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
     wheel4_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[3]));
 
     bool input_simulated = !(state.finished && state.last_finished);
+    bool just_finished = state.finished && !state.last_finished;
 
     Ref<CarPhysicsStep> step;
     step.instantiate();
@@ -107,13 +108,9 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
     step->set_speed(state.speed);
     step->set_rpm(state.rpm);
     step->set_gear(state.gear);
+    step->set_just_finished(just_finished);
 
     emit_signal("simulated", step);
-
-    if (!state.last_finished && state.finished)
-    {
-        UtilityFunctions::print("finished");
-    }
 }
 
 PackedByteArray CarPhysics::save_state() const

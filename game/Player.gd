@@ -19,6 +19,7 @@ var initial_state := PackedByteArray()
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
+	simulated.connect(func(step): if step.just_finished: prints(name, "just finished"))
 
 
 func _physics_process(_delta: float) -> void:

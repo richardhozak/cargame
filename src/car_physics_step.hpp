@@ -33,6 +33,9 @@ public:
     void set_gear(const int64_t& p_gear);
     int64_t get_gear() const;
 
+    void set_just_finished(const bool& p_just_finished);
+    bool get_just_finished() const;
+
 private:
     int64_t step;
     Ref<CarPhysicsInput> input;
@@ -40,6 +43,7 @@ private:
     float speed;
     float rpm;
     int64_t gear;
+    bool just_finished;
 };
 
 }  // namespace godot
