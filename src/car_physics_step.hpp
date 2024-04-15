@@ -8,12 +8,12 @@
 
 namespace godot {
 
-class CarPhysicsSimulationInfo : public RefCounted
+class CarPhysicsStep : public RefCounted
 {
-    GDCLASS(CarPhysicsSimulationInfo, RefCounted)
+    GDCLASS(CarPhysicsStep, RefCounted)
 public:
     static void _bind_methods();
-    CarPhysicsSimulationInfo();
+    CarPhysicsStep();
 
     void set_step(const int64_t& p_step);
     int64_t get_step() const;

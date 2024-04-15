@@ -169,8 +169,8 @@ FetchContent_MakeAvailable(godot-cpp)
 add_library(physics SHARED
 	src/car_physics_input.cpp
 	src/car_physics_input.hpp
-	src/car_physics_simulation_info.cpp
-	src/car_physics_simulation_info.hpp
+	src/car_physics_step.cpp
+	src/car_physics_step.hpp
 	src/car_physics_track_mesh.cpp
 	src/car_physics_track_mesh.hpp
 	src/car_physics.cpp

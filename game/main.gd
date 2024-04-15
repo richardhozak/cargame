@@ -468,7 +468,7 @@ func human_time(step: int, full: bool = false) -> String:
 	return time
 
 
-func _on_player_simulated(step: CarPhysicsSimulationInfo) -> void:
+func _on_player_simulated(step: CarPhysicsStep) -> void:
 	display_car_stats(step.speed, step.rpm, step.gear)
 	display_countdown(step.step)
 	$HUD/Time.text = human_time(step.step)

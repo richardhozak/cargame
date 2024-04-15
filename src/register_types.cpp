@@ -7,7 +7,7 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include "car_physics_input.hpp"
-#include "car_physics_simulation_info.hpp"
+#include "car_physics_step.hpp"
 #include "car_physics_track_mesh.hpp"
 #include "car_physics.hpp"
 
@@ -22,7 +22,7 @@ void initialize_physics_module(ModuleInitializationLevel p_level)
 
     UtilityFunctions::print("Physics Init");
     ClassDB::register_class<CarPhysicsInput>();
-    ClassDB::register_class<CarPhysicsSimulationInfo>();
+    ClassDB::register_class<CarPhysicsStep>();
     ClassDB::register_class<CarPhysicsTrackMesh>();
     ClassDB::register_class<CarPhysics>();
 }

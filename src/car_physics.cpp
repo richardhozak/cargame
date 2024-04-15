@@ -7,7 +7,8 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include "car_physics_input.hpp"
-#include "car_physics_simulation_info.hpp"
+#include "car_physics_step.hpp"
+#include "car_physics_step.hpp"
 #include "car_physics_track_mesh.hpp"
 #include "configuration.h"
 #include "physics.h"
@@ -42,7 +43,7 @@ void CarPhysics::_bind_methods()
     ClassDB::bind_method(D_METHOD("set_body", "p_body"), &CarPhysics::set_body);
     ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "body", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_body", "get_body");
 
-    ADD_SIGNAL(MethodInfo("simulated", PropertyInfo(Variant::OBJECT, "simulation_info", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT, "CarPhysicsSimulationInfo")));
+    ADD_SIGNAL(MethodInfo("simulated", PropertyInfo(Variant::OBJECT, "step", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT, "CarPhysicsStep")));
 }
 
 void CarPhysics::_ready()
@@ -97,17 +98,17 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
 
     bool input_simulated = !(state.finished && last_state.finished);
 
-    Ref<CarPhysicsSimulationInfo> simulation_info;
-    simulation_info.instantiate();
+    Ref<CarPhysicsStep> step;
+    step.instantiate();
 
-    simulation_info->set_step(state.step);
-    simulation_info->set_input(input);
-    simulation_info->set_input_simulated(input_simulated);
-    simulation_info->set_speed(state.speed);
-    simulation_info->set_rpm(state.rpm);
-    simulation_info->set_gear(state.gear);
+    step->set_step(state.step);
+    step->set_input(input);
+    step->set_input_simulated(input_simulated);
+    step->set_speed(state.speed);
+    step->set_rpm(state.rpm);
+    step->set_gear(state.gear);
 
-    emit_signal("simulated", simulation_info);
+    emit_signal("simulated", step);
 
     if (!last_state.finished && state.finished)
     {
