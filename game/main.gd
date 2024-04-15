@@ -98,7 +98,7 @@ func change_menu(menu_state: MenuState) -> void:
 	current_menu_state = menu_state
 
 
-func pause_children(pause: bool):
+func pause_children(pause: bool) -> void:
 	if !loaded_track:
 		return
 
@@ -123,7 +123,7 @@ func _process(_delta: float) -> void:
 				change_menu(MenuState.PAUSED)
 
 
-func _on_spectate_pressed(button: BaseButton):
+func _on_spectate_pressed(button: BaseButton) -> void:
 	var peer_id = button.get_meta("peer_id")
 	if !peer_id:
 		printerr("spected cannot find peer id")
@@ -350,7 +350,7 @@ func connected_to_server() -> void:
 	print("connected to server")
 	var peer := multiplayer.multiplayer_peer
 	if peer is ENetMultiplayerPeer:
-		for p in peer.host.get_peers():
+		for p: ENetPacketPeer in peer.host.get_peers():
 			p.set_timeout(1000, 2000, 4000)
 
 	hello.rpc_id(1, player_name)
@@ -465,9 +465,9 @@ func human_time(step: int, full: bool = false) -> String:
 	step = absi(step)
 	var seconds := step as float / 60.0
 	var minutes := (seconds / 60.0) as int
-	var remaining_seconds = fmod(seconds, 60.0)
+	var remaining_seconds := fmod(seconds, 60.0)
 	var prefix := "-" if is_negative else " "
-	var time = "%s%02d:%06.3f" % [prefix, minutes, remaining_seconds]
+	var time := "%s%02d:%06.3f" % [prefix, minutes, remaining_seconds]
 	if !full:
 		time[time.length() - 1] = " "
 
