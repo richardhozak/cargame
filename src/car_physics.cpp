@@ -41,9 +41,7 @@ void CarPhysics::_bind_methods()
     BIND_ENUM_CONSTANT(SAVE);
     BIND_ENUM_CONSTANT(RESET);
 
-    ADD_SIGNAL(MethodInfo("car_stats_changed", PropertyInfo(Variant::FLOAT, "speed"), PropertyInfo(Variant::FLOAT, "rpm"), PropertyInfo(Variant::INT, "gear")));
-    ADD_SIGNAL(MethodInfo("countdown", PropertyInfo(Variant::FLOAT, "seconds")));
-    ADD_SIGNAL(MethodInfo("simulation_step", PropertyInfo(Variant::INT, "step")));
+    ADD_SIGNAL(MethodInfo("simulated", PropertyInfo(Variant::INT, "step"), PropertyInfo(Variant::FLOAT, "speed"), PropertyInfo(Variant::FLOAT, "rpm"), PropertyInfo(Variant::INT, "gear")));
 }
 
 void CarPhysics::_ready()
@@ -96,20 +94,7 @@ CarPhysics::CarPhysicsInputAction CarPhysics::simulate(const Ref<CarPhysicsInput
     wheel3_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[2]));
     wheel4_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[3]));
 
-    emit_signal("car_stats_changed", state.speed, state.rpm, state.gear);
-
-    double seconds = state.step / 60.0;
-
-    if (seconds < 0.0)
-    {
-        emit_signal("countdown", seconds);
-    }
-    else if (seconds == 0.0)
-    {
-        emit_signal("countdown", 0.0);
-    }
-
-    emit_signal("simulation_step", state.step);
+    emit_signal("simulated", state.step, state.speed, state.rpm, state.gear);
 
     if (!last_state.finished && state.finished)
     {

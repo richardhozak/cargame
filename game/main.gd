@@ -145,9 +145,7 @@ func spectate(peer_id: int) -> void:
 	$PhantomCamera3D.set_follow_target(player.camera_eye)
 	$PhantomCamera3D.set_look_at_target(player.camera_target)
 	$PhantomCamera3D.set_meta("spectated_peer_id", peer_id)
-	player.car_stats_changed.connect(display_car_stats, CONNECT_REFERENCE_COUNTED)
-	player.countdown.connect(display_countdown, CONNECT_REFERENCE_COUNTED)
-	player.simulation_step.connect(simulation_step, CONNECT_REFERENCE_COUNTED)
+	player.simulated.connect(_on_player_simulated, CONNECT_REFERENCE_COUNTED)
 
 
 @rpc("any_peer", "call_local", "reliable")
@@ -441,7 +439,11 @@ func display_car_stats(speed: float, rpm: float, gear: int) -> void:
 	$HUD/CarStats/Rpm.text = "%.f RPM" % rpm
 
 
-func display_countdown(seconds: float) -> void:
+func display_countdown(step: int) -> void:
+	if step > 0:
+		return
+
+	var seconds := step / 60.0
 	seconds = absf(floorf(seconds))
 	if seconds > 0.0:
 		$HUD/Countdown.visible = true
@@ -466,7 +468,9 @@ func human_time(step: int, full: bool = false) -> String:
 	return time
 
 
-func simulation_step(step: int) -> void:
+func _on_player_simulated(step: int, speed: float, rpm: float, gear: int) -> void:
+	display_car_stats(speed, rpm, gear)
+	display_countdown(step)
 	$HUD/Time.text = human_time(step)
 
 
