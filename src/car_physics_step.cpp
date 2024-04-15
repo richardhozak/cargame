@@ -17,10 +17,6 @@ void CarPhysicsStep::_bind_methods()
     ClassDB::bind_method(D_METHOD("set_input", "p_input"), &CarPhysicsStep::set_input);
     ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::OBJECT, "input"), "set_input", "get_input");
 
-    ClassDB::bind_method(D_METHOD("get_input_simulated"), &CarPhysicsStep::get_input_simulated);
-    ClassDB::bind_method(D_METHOD("set_input_simulated", "p_input_simulated"), &CarPhysicsStep::set_input_simulated);
-    ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::BOOL, "input_simulated"), "set_input_simulated", "get_input_simulated");
-
     ClassDB::bind_method(D_METHOD("get_speed"), &CarPhysicsStep::get_speed);
     ClassDB::bind_method(D_METHOD("set_speed", "p_speed"), &CarPhysicsStep::set_speed);
     ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::FLOAT, "speed"), "set_speed", "get_speed");
@@ -54,15 +50,6 @@ void CarPhysicsStep::set_input(const Ref<CarPhysicsInput>& p_input)
 Ref<CarPhysicsInput> CarPhysicsStep::get_input() const
 {
     return input;
-}
-
-void CarPhysicsStep::set_input_simulated(const bool& p_input_simulated)
-{
-    input_simulated = p_input_simulated;
-}
-bool CarPhysicsStep::get_input_simulated() const
-{
-    return input_simulated;
 }
 
 void CarPhysicsStep::set_speed(const float& p_speed)

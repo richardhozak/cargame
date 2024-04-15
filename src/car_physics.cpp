@@ -98,17 +98,19 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
 
     bool input_simulated = !(state.finished && last_state.finished);
 
-    Ref<CarPhysicsStep> step;
-    step.instantiate();
+    if (input_simulated)
+    {
+        Ref<CarPhysicsStep> step;
+        step.instantiate();
 
-    step->set_step(state.step);
-    step->set_input(input);
-    step->set_input_simulated(input_simulated);
-    step->set_speed(state.speed);
-    step->set_rpm(state.rpm);
-    step->set_gear(state.gear);
+        step->set_step(state.step);
+        step->set_input(input);
+        step->set_speed(state.speed);
+        step->set_rpm(state.rpm);
+        step->set_gear(state.gear);
 
-    emit_signal("simulated", step);
+        emit_signal("simulated", step);
+    }
 
     if (!last_state.finished && state.finished)
     {
