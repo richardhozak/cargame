@@ -142,10 +142,16 @@ func spectate(peer_id: int) -> void:
 		printerr("cannot find peer %d in loaded track" % peer_id)
 		return
 
+	var spectated_peer_id := $PhantomCamera3D.get_meta("spectated_peer_id", 0) as int
+	if spectated_peer_id != 0:
+		var spectated_player := loaded_track.get_node_or_null(str(spectated_peer_id)) as Player
+		if spectated_player:
+			spectated_player.simulated.disconnect(_on_player_simulated)
+
 	$PhantomCamera3D.set_follow_target(player.camera_eye)
 	$PhantomCamera3D.set_look_at_target(player.camera_target)
 	$PhantomCamera3D.set_meta("spectated_peer_id", peer_id)
-	player.simulated.connect(_on_player_simulated, CONNECT_REFERENCE_COUNTED)
+	player.simulated.connect(_on_player_simulated)
 
 
 @rpc("any_peer", "call_local", "reliable")
