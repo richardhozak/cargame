@@ -474,11 +474,21 @@ func human_time(step: int, full: bool = false) -> String:
 	return time
 
 
+func checkpoint_text(collected: int, available: int) -> String:
+	if available > 0:
+		return "%s / %s" % [collected, available]
+	else:
+		return ""
+
+
 func _on_player_simulated(step: CarPhysicsStep) -> void:
 	if step.simulated:
 		display_car_stats(step.speed, step.rpm, step.gear)
 		display_countdown(step.step)
-		$HUD/Time.text = human_time(step.step)
+		$HUD/TrackStats/Time.text = human_time(step.step)
+		$HUD/TrackStats/Checkpoints.text = checkpoint_text(
+			step.collected_checkpoints, step.available_checkpoints
+		)
 
 
 func _on_main_menu_host() -> void:

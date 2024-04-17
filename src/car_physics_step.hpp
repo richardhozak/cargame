@@ -4,7 +4,7 @@
 
 #include "car_physics_input.hpp"
 
-#include <cstddef>
+#include <cstdint>
 
 namespace godot {
 
@@ -36,6 +36,12 @@ public:
     void set_just_finished(const bool& p_just_finished);
     bool get_just_finished() const;
 
+    void set_available_checkpoints(const int64_t& p_available_checkpoints);
+    int64_t get_available_checkpoints() const;
+
+    void set_collected_checkpoints(const int64_t& p_collected_checkpoints);
+    int64_t get_collected_checkpoints() const;
+
 private:
     int64_t step;
     Ref<CarPhysicsInput> input;
@@ -44,6 +50,8 @@ private:
     float rpm;
     int64_t gear;
     bool just_finished;
+    int64_t available_checkpoints;
+    int64_t collected_checkpoints;
 };
 
 }  // namespace godot

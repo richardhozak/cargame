@@ -109,6 +109,8 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
     step->set_rpm(state.rpm);
     step->set_gear(state.gear);
     step->set_just_finished(just_finished);
+    step->set_available_checkpoints(physics->checkpoint_count());
+    step->set_collected_checkpoints(physics->collected_checkpoint_count());
 
     emit_signal("simulated", step);
 }

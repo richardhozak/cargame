@@ -3,8 +3,6 @@
 #include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 
-#include <cassert>
-
 using namespace godot;
 
 void CarPhysicsStep::_bind_methods()
@@ -36,6 +34,14 @@ void CarPhysicsStep::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_just_finished"), &CarPhysicsStep::get_just_finished);
     ClassDB::bind_method(D_METHOD("set_just_finished", "p_just_finished"), &CarPhysicsStep::set_just_finished);
     ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::BOOL, "just_finished"), "set_just_finished", "get_just_finished");
+
+    ClassDB::bind_method(D_METHOD("get_available_checkpoints"), &CarPhysicsStep::get_available_checkpoints);
+    ClassDB::bind_method(D_METHOD("set_available_checkpoints", "p_available_checkpoints"), &CarPhysicsStep::set_available_checkpoints);
+    ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::INT, "available_checkpoints"), "set_available_checkpoints", "get_available_checkpoints");
+
+    ClassDB::bind_method(D_METHOD("get_collected_checkpoints"), &CarPhysicsStep::get_collected_checkpoints);
+    ClassDB::bind_method(D_METHOD("set_collected_checkpoints", "p_collected_checkpoints"), &CarPhysicsStep::set_collected_checkpoints);
+    ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::INT, "collected_checkpoints"), "set_collected_checkpoints", "get_collected_checkpoints");
 }
 
 CarPhysicsStep::CarPhysicsStep()
@@ -103,4 +109,22 @@ void CarPhysicsStep::set_just_finished(const bool& p_just_finished)
 bool CarPhysicsStep::get_just_finished() const
 {
     return just_finished;
+}
+
+void CarPhysicsStep::set_available_checkpoints(const int64_t& p_available_checkpoints)
+{
+    available_checkpoints = p_available_checkpoints;
+}
+int64_t CarPhysicsStep::get_available_checkpoints() const
+{
+    return available_checkpoints;
+}
+
+void CarPhysicsStep::set_collected_checkpoints(const int64_t& p_collected_checkpoints)
+{
+    collected_checkpoints = p_collected_checkpoints;
+}
+int64_t CarPhysicsStep::get_collected_checkpoints() const
+{
+    return collected_checkpoints;
 }
