@@ -310,6 +310,7 @@ func disconnect_from_game() -> void:
 	$PhantomCamera3D.set_look_at_target(null)
 	if loaded_track:
 		loaded_track.queue_free()
+		loaded_track = null
 	multiplayer.multiplayer_peer = null
 
 
@@ -359,6 +360,7 @@ func connected_to_server() -> void:
 func server_disconnected() -> void:
 	print("server disconnected")
 	disconnect_from_game()
+	change_menu(MenuState.MAIN_MENU)
 
 
 func connection_failed() -> void:
