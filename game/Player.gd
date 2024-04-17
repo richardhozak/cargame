@@ -11,6 +11,12 @@ class_name Player extends CarPhysics
 	set(value):
 		$Node3D/Body/Label3D.text = value
 
+@export var show_player_name: bool:
+	get:
+		return $Node3D/Body/Label3D.visible
+	set(value):
+		$Node3D/Body/Label3D.visible = value
+
 var replay := Replay.new()
 var replay_input: int = -1
 

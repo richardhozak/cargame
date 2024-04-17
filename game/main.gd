@@ -146,7 +146,10 @@ func spectate(peer_id: int) -> void:
 	if spectated_peer_id != 0:
 		var spectated_player := loaded_track.get_node_or_null(str(spectated_peer_id)) as Player
 		if spectated_player:
+			spectated_player.show_player_name = true
 			spectated_player.simulated.disconnect(_on_player_simulated)
+
+	player.show_player_name = false
 
 	if peer_id == multiplayer.get_unique_id():
 		$HUD/SpectatingLabel.text = ""
