@@ -148,6 +148,11 @@ func spectate(peer_id: int) -> void:
 		if spectated_player:
 			spectated_player.simulated.disconnect(_on_player_simulated)
 
+	if peer_id == multiplayer.get_unique_id():
+		$HUD/SpectatingLabel.text = ""
+	else:
+		$HUD/SpectatingLabel.text = "Spectating: %s" % player.player_name
+
 	$PhantomCamera3D.set_follow_target(player.camera_eye)
 	$PhantomCamera3D.set_look_at_target(player.camera_target)
 	$PhantomCamera3D.set_meta("spectated_peer_id", peer_id)

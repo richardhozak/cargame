@@ -103,3 +103,12 @@ auto_translate_mode = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="SpectatingLabel" type="Label" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 200.0
+grow_horizontal = 2
+text = "Spectating: Player"
+horizontal_alignment = 1
+vertical_alignment = 1
