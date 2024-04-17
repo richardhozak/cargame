@@ -456,17 +456,14 @@ func display_car_stats(speed: float, rpm: float, gear: int) -> void:
 
 
 func display_countdown(step: int) -> void:
-	if step > 0:
-		return
-
-	var seconds := step / 60.0
-	seconds = absf(floorf(seconds))
-	if seconds > 0.0:
+	if step < 0:
+		var seconds := step / 60.0
+		seconds = absf(floorf(seconds))
 		$HUD/Countdown.visible = true
 		$HUD/Countdown.text = String.num(seconds)
-	else:
+	elif step <= 60:
 		$HUD/Countdown.text = "Start"
-		await get_tree().create_timer(1.0).timeout
+	else:
 		$HUD/Countdown.visible = false
 
 
