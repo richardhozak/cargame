@@ -376,6 +376,27 @@ func connection_failed() -> void:
 	change_menu(MenuState.MAIN_MENU)
 
 
+func override_materials(node: Node):
+	if node is MeshInstance3D:
+		var mesh: Mesh = node.mesh
+		for index in mesh.get_surface_count():
+			var material := mesh.surface_get_material(index)
+			if material is BaseMaterial3D:
+				prints(material.albedo_color)
+				if material.albedo_color.is_equal_approx(Color(1, 0, 0, 1)):
+					material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+					material.albedo_color = Color(1, 0, 0, 0.5)
+				elif material.albedo_color.is_equal_approx(Color(0, 1, 0, 1)):
+					material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+					material.albedo_color = Color(0, 1, 0, 0)
+				elif material.albedo_color.is_equal_approx(Color(0, 0, 1, 1)):
+					material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+					material.albedo_color = Color(0, 0, 1, 0.5)
+
+	for child in node.get_children():
+		override_materials(child)
+
+
 func load_track(track_name: String) -> void:
 	if loaded_track != null:
 		remove_child(loaded_track)
@@ -394,22 +415,20 @@ func load_track(track_name: String) -> void:
 				var mesh := gltf_mesh.mesh
 				for surface_idx in mesh.get_surface_count():
 					var material := mesh.get_surface_material(surface_idx)
-					#print(node.position, ", ", node.rotation, ", ", node.scale, ", ", surface_idx, ", ", material.albedo_color)
 					var arrays := mesh.get_surface_arrays(surface_idx)
 					var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 					var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-					if !physics_mesh.add_mesh(
+					physics_mesh.add_mesh(
 						node.position,
 						node.rotation,
 						node.scale,
 						vertices,
 						indices,
 						material.albedo_color
-					):
-						# TODO: this generates errors, try to make start and finish invisible different way
-						mesh.clear()
+					)
 
 		var scene_node := document.generate_scene(state)
+		override_materials(scene_node)
 		scene_node.scale = Vector3(10.0, 10.0, 10.0)
 		scene_node.set_meta("mesh", physics_mesh)
 		loaded_track = scene_node
