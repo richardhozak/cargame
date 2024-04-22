@@ -24,6 +24,7 @@ enum MenuState {
 	TRACK_SELECT_HOST,
 	TRACK_SELECT_SINGLE_PLAYER,
 	PAUSED,
+	FINISHED,
 }
 
 
@@ -66,34 +67,46 @@ func _ready() -> void:
 func change_menu(menu_state: MenuState) -> void:
 	match menu_state:
 		MenuState.MAIN_MENU:
-			if current_menu_state == MenuState.PAUSED:
-				disconnect_from_game()
+			match current_menu_state:
+				MenuState.PAUSED, MenuState.FINISHED:
+					prints("Disconnect from game")
+					disconnect_from_game()
 			create_server = false
 			$PauseMenu.visible = false
 			$SelectTrackMenu.visible = false
 			$MainMenu.visible = true
+			$FinishMenu.visible = false
 		MenuState.TRACK_SELECT_HOST:
 			create_server = true
 			$PauseMenu.visible = false
 			$SelectTrackMenu.visible = true
 			$MainMenu.visible = false
+			$FinishMenu.visible = false
 		MenuState.TRACK_SELECT_SINGLE_PLAYER:
 			create_server = false
 			$PauseMenu.visible = false
 			$SelectTrackMenu.visible = true
 			$MainMenu.visible = false
+			$FinishMenu.visible = false
 		MenuState.PAUSED:
 			if current_menu_state == MenuState.NONE:
 				pause_children(true)
 			$PauseMenu.visible = true
 			$SelectTrackMenu.visible = false
 			$MainMenu.visible = false
+			$FinishMenu.visible = false
+		MenuState.FINISHED:
+			$PauseMenu.visible = false
+			$SelectTrackMenu.visible = false
+			$MainMenu.visible = false
+			$FinishMenu.visible = true
 		MenuState.NONE:
 			if current_menu_state == MenuState.PAUSED:
 				pause_children(false)
 			$PauseMenu.visible = false
 			$SelectTrackMenu.visible = false
 			$MainMenu.visible = false
+			$FinishMenu.visible = false
 
 	current_menu_state = menu_state
 
@@ -119,6 +132,8 @@ func _process(_delta: float) -> void:
 				change_menu(MenuState.MAIN_MENU)
 			MenuState.PAUSED:
 				change_menu(MenuState.NONE)
+			MenuState.FINISHED:
+				pass
 			MenuState.NONE:
 				change_menu(MenuState.PAUSED)
 
@@ -147,7 +162,7 @@ func spectate(peer_id: int) -> void:
 		var spectated_player := loaded_track.get_node_or_null(str(spectated_peer_id)) as Player
 		if spectated_player:
 			spectated_player.show_player_name = true
-			spectated_player.simulated.disconnect(_on_player_simulated)
+			spectated_player.simulated.disconnect(_on_spectated_player_simulated)
 
 	player.show_player_name = false
 
@@ -159,7 +174,7 @@ func spectate(peer_id: int) -> void:
 	$PhantomCamera3D.set_follow_target(player.camera_eye)
 	$PhantomCamera3D.set_look_at_target(player.camera_target)
 	$PhantomCamera3D.set_meta("spectated_peer_id", peer_id)
-	player.simulated.connect(_on_player_simulated)
+	player.simulated.connect(_on_spectated_player_simulated)
 
 
 @rpc("any_peer", "call_local", "reliable")
@@ -229,8 +244,9 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	# bind inputs simulated inputs, server distributes them to clients, clients just need to send them to server
 	if multiplayer.is_server():
 		player.simulated.connect(func(step): on_server_input_simulated(id, step.input))
-	elif is_local:
-		player.simulated.connect(func(step): on_local_input_simulated(step.input))
+
+	if is_local:
+		player.simulated.connect(func(step): on_local_step_simulated(step))
 
 	if multiplayer.is_server():
 		peers[id].player = player
@@ -260,9 +276,18 @@ func simulate_input(peer_id: int, input: CarPhysicsInput) -> void:
 		printerr("no player with id ", peer_id)
 
 
-func on_local_input_simulated(input: CarPhysicsInput) -> void:
-	# send input to server
-	input_simulated.rpc_id(1, input)
+func on_local_step_simulated(step: CarPhysicsStep) -> void:
+	if !multiplayer.is_server():
+		# send input to server
+		input_simulated.rpc_id(1, step.input)
+
+	if step.just_finished:
+		$FinishMenu.set_time(human_time(step.step, step.just_finished))
+		change_menu(MenuState.FINISHED)
+
+	if step.input.restart:
+		if current_menu_state == MenuState.FINISHED:
+			change_menu(MenuState.NONE)
 
 
 func on_server_input_simulated(peer_id: int, input: CarPhysicsInput) -> void:
@@ -507,7 +532,7 @@ func checkpoint_text(collected: int, available: int) -> String:
 		return ""
 
 
-func _on_player_simulated(step: CarPhysicsStep) -> void:
+func _on_spectated_player_simulated(step: CarPhysicsStep) -> void:
 	if step.simulated:
 		display_car_stats(step.speed, step.rpm, step.gear)
 		display_countdown(step.step)
@@ -550,3 +575,8 @@ func _on_pause_menu_resume() -> void:
 
 func _on_pause_menu_main_menu() -> void:
 	change_menu(MenuState.MAIN_MENU)
+
+
+func _on_finish_menu_restart() -> void:
+	if loaded_player:
+		loaded_player.restart()

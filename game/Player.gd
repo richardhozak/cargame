@@ -27,6 +27,10 @@ func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
 	simulated.connect(func(step): if step.just_finished: prints(name, "just finished"))
 
+func restart() -> void:
+	var input := CarPhysicsInput.new()
+	input.restart = true
+	self.simulate(input)
 
 func _physics_process(_delta: float) -> void:
 	if paused:
