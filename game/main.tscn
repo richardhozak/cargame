@@ -163,3 +163,4 @@ visible = false
 [connection signal="main_menu" from="FinishMenu" to="." method="_on_pause_menu_main_menu"]
 [connection signal="quit" from="FinishMenu" to="." method="_on_pause_menu_quit"]
 [connection signal="restart" from="FinishMenu" to="." method="_on_finish_menu_restart"]
+[connection signal="save_replay" from="FinishMenu" to="." method="_on_finish_menu_save_replay"]

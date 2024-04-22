@@ -40,6 +40,12 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 			spectate_camera.set_follow_target(%Eye)
 			spectate_camera.set_look_at_target(%LookAt)
 
+	if step.simulated && replay_input == -1:
+		if step.input.restart:
+			replay = Replay.new()
+		else:
+			replay.add_input(step.input)
+
 
 func set_spectate_camera(camera: PhantomCamera3D) -> void:
 	spectate_camera = camera

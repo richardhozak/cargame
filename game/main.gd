@@ -580,3 +580,14 @@ func _on_pause_menu_main_menu() -> void:
 func _on_finish_menu_restart() -> void:
 	if loaded_player:
 		loaded_player.restart()
+
+
+func _on_finish_menu_save_replay() -> void:
+	if loaded_player:
+		var replay := loaded_player.get_replay()
+		var result := ResourceSaver.save(replay, "user://replay.res", ResourceSaver.FLAG_COMPRESS)
+		if result == OK:
+			$FinishMenu.set_replay_label("Replay saved")
+		else:
+			printerr("Could not save replay (error: %s)" % error_string(result))
+			$FinishMenu.set_replay_label("Error %s" + error_string(result))
