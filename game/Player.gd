@@ -1,8 +1,5 @@
 class_name Player extends CarPhysics
 
-@onready var camera_target := $Node3D/Body/LookAt
-@onready var camera_eye := $Node3D/Eye
-
 @export var paused := false
 
 @export var player_name: String:
@@ -17,6 +14,8 @@ class_name Player extends CarPhysics
 	set(value):
 		$Node3D/Body/Label3D.visible = value
 
+var spectate_camera: PhantomCamera3D = null
+
 var replay := Replay.new()
 var replay_input: int = -1
 
@@ -25,12 +24,35 @@ var initial_state := PackedByteArray()
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
-	simulated.connect(func(step): if step.just_finished: prints(name, "just finished"))
+	simulated.connect(_on_step_simulated)
+
+
+func _on_step_simulated(step: CarPhysicsStep) -> void:
+	if step.just_finished:
+		%FinishEye.global_transform = %Eye.global_transform
+		%FinishLookAt.global_transform = %LookAt.global_transform
+		if spectate_camera:
+			spectate_camera.set_follow_target(%FinishEye)
+			spectate_camera.set_look_at_target(%FinishLookAt)
+
+	if step.input.restart:
+		if spectate_camera:
+			spectate_camera.set_follow_target(%Eye)
+			spectate_camera.set_look_at_target(%LookAt)
+
+
+func set_spectate_camera(camera: PhantomCamera3D) -> void:
+	spectate_camera = camera
+	if spectate_camera:
+		spectate_camera.set_follow_target(%Eye)
+		spectate_camera.set_look_at_target(%LookAt)
+
 
 func restart() -> void:
 	var input := CarPhysicsInput.new()
 	input.restart = true
 	self.simulate(input)
+
 
 func _physics_process(_delta: float) -> void:
 	if paused:

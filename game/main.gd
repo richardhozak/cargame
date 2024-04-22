@@ -161,6 +161,7 @@ func spectate(peer_id: int) -> void:
 	if spectated_peer_id != 0:
 		var spectated_player := loaded_track.get_node_or_null(str(spectated_peer_id)) as Player
 		if spectated_player:
+			spectated_player.set_spectate_camera(null)
 			spectated_player.show_player_name = true
 			spectated_player.simulated.disconnect(_on_spectated_player_simulated)
 
@@ -171,8 +172,7 @@ func spectate(peer_id: int) -> void:
 	else:
 		$HUD/SpectatingLabel.text = "Spectating: %s" % player.player_name
 
-	$PhantomCamera3D.set_follow_target(player.camera_eye)
-	$PhantomCamera3D.set_look_at_target(player.camera_target)
+	player.set_spectate_camera($PhantomCamera3D)
 	$PhantomCamera3D.set_meta("spectated_peer_id", peer_id)
 	player.simulated.connect(_on_spectated_player_simulated)
 
