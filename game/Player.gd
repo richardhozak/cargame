@@ -18,6 +18,7 @@ var spectate_camera: PhantomCamera3D = null
 
 var replay := Replay.new()
 var replay_input: int = -1
+var playing_replay: bool = false
 
 var initial_state := PackedByteArray()
 
@@ -68,7 +69,7 @@ func _physics_process(_delta: float) -> void:
 		load_state(initial_state)
 		initial_state = PackedByteArray()
 
-	if !is_multiplayer_authority():
+	if !is_multiplayer_authority() && !playing_replay:
 		if replay.get_count() == 0:
 			return
 
@@ -113,6 +114,7 @@ func simulate_input(input: CarPhysicsInput) -> void:
 
 
 func play_replay(to_play: Replay) -> void:
+	playing_replay = true
 	replay_input = 0
 	replay = to_play
 
