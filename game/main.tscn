@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://cadk3rrmdrx4t"]
+[gd_scene load_steps=20 format=3 uid="uid://cadk3rrmdrx4t"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_p3uq5"]
 [ext_resource type="PackedScene" uid="uid://cicnstbqx5k4" path="res://track_straight.glb" id="2_7htmg"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://dhs1kqgn5gaoe" path="res://SelectTrackMenu.tscn" id="11_nfy3h"]
 [ext_resource type="PackedScene" uid="uid://cuoc6m3quycfq" path="res://PauseMenu.tscn" id="12_tcf51"]
 [ext_resource type="PackedScene" uid="uid://515136wd1qgi" path="res://FinishMenu.tscn" id="13_g2rxe"]
+[ext_resource type="PackedScene" uid="uid://51v3rjhohssr" path="res://LoadReplayMenu.tscn" id="14_2yq6c"]
 
 [sub_resource type="Resource" id="Resource_u3ywf"]
 script = ExtResource("4_m11bp")
@@ -138,11 +139,15 @@ visible = false
 [node name="FinishMenu" parent="." instance=ExtResource("13_g2rxe")]
 visible = false
 
+[node name="ReplayMenu" parent="." instance=ExtResource("14_2yq6c")]
+visible = false
+
 [connection signal="host" from="MainMenu" to="." method="_on_main_menu_host"]
 [connection signal="join" from="MainMenu" to="." method="_on_main_menu_join"]
 [connection signal="quit" from="MainMenu" to="." method="_on_main_menu_quit"]
 [connection signal="single_player" from="MainMenu" to="." method="_on_main_menu_single_player"]
 [connection signal="selected" from="SelectTrackMenu" to="." method="_on_select_track_menu_selected"]
+[connection signal="load_replay" from="PauseMenu" to="." method="_on_pause_menu_load_replay"]
 [connection signal="main_menu" from="PauseMenu" to="." method="_on_pause_menu_main_menu"]
 [connection signal="quit" from="PauseMenu" to="." method="_on_pause_menu_quit"]
 [connection signal="resume" from="PauseMenu" to="." method="_on_pause_menu_resume"]
@@ -150,3 +155,4 @@ visible = false
 [connection signal="quit" from="FinishMenu" to="." method="_on_pause_menu_quit"]
 [connection signal="restart" from="FinishMenu" to="." method="_on_finish_menu_restart"]
 [connection signal="save_replay" from="FinishMenu" to="." method="_on_finish_menu_save_replay"]
+[connection signal="replay_toggled" from="ReplayMenu" to="." method="_on_replay_menu_replay_toggled"]

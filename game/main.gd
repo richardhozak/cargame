@@ -25,6 +25,7 @@ enum MenuState {
 	TRACK_SELECT_SINGLE_PLAYER,
 	PAUSED,
 	FINISHED,
+	LOAD_REPLAY,
 }
 
 
@@ -73,18 +74,21 @@ func change_menu(menu_state: MenuState) -> void:
 			$SelectTrackMenu.visible = false
 			$MainMenu.visible = true
 			$FinishMenu.visible = false
+			$ReplayMenu.visible = false
 		MenuState.TRACK_SELECT_HOST:
 			create_server = true
 			$PauseMenu.visible = false
 			$SelectTrackMenu.visible = true
 			$MainMenu.visible = false
 			$FinishMenu.visible = false
+			$ReplayMenu.visible = false
 		MenuState.TRACK_SELECT_SINGLE_PLAYER:
 			create_server = false
 			$PauseMenu.visible = false
 			$SelectTrackMenu.visible = true
 			$MainMenu.visible = false
 			$FinishMenu.visible = false
+			$ReplayMenu.visible = false
 		MenuState.PAUSED:
 			if current_menu_state == MenuState.NONE:
 				pause_children(true)
@@ -92,11 +96,13 @@ func change_menu(menu_state: MenuState) -> void:
 			$SelectTrackMenu.visible = false
 			$MainMenu.visible = false
 			$FinishMenu.visible = false
+			$ReplayMenu.visible = false
 		MenuState.FINISHED:
 			$PauseMenu.visible = false
 			$SelectTrackMenu.visible = false
 			$MainMenu.visible = false
 			$FinishMenu.visible = true
+			$ReplayMenu.visible = false
 		MenuState.NONE:
 			if current_menu_state == MenuState.PAUSED:
 				pause_children(false)
@@ -104,6 +110,13 @@ func change_menu(menu_state: MenuState) -> void:
 			$SelectTrackMenu.visible = false
 			$MainMenu.visible = false
 			$FinishMenu.visible = false
+			$ReplayMenu.visible = false
+		MenuState.LOAD_REPLAY:
+			$PauseMenu.visible = false
+			$SelectTrackMenu.visible = false
+			$MainMenu.visible = false
+			$FinishMenu.visible = false
+			$ReplayMenu.visible = true
 
 	current_menu_state = menu_state
 
@@ -132,6 +145,8 @@ func _process(_delta: float) -> void:
 			MenuState.FINISHED:
 				pass
 			MenuState.NONE:
+				change_menu(MenuState.PAUSED)
+			MenuState.LOAD_REPLAY:
 				change_menu(MenuState.PAUSED)
 
 
@@ -215,6 +230,7 @@ func level_loaded() -> void:
 @rpc("authority", "call_local", "reliable")
 func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) -> void:
 	print_info("spawn_player")
+	var is_replay := id < 0
 	var is_local := multiplayer.get_unique_id() == id
 	prints("spawn player", id, peer_name, "is server", multiplayer.is_server())
 	var player := Player.instantiate()
@@ -232,6 +248,9 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	spectate_button.set_meta("peer_id", id)
 
 	loaded_track.add_child(player)
+
+	if is_replay:
+		return
 
 	# set camera for local player
 	if is_local:
@@ -297,6 +316,8 @@ func on_server_input_simulated(peer_id: int, input: CarPhysicsInput) -> void:
 
 @rpc("authority", "call_local", "reliable")
 func despawn_player(id: int) -> void:
+	peers.erase(id)
+
 	for button in spectate_group.get_buttons():
 		if button.get_meta("peer_id") == id:
 			button.get_parent().queue_free()
@@ -324,7 +345,6 @@ func peer_connected(id: int) -> void:
 
 
 func peer_disconnected(id: int) -> void:
-	peers.erase(id)
 	despawn_player.rpc_id(1, id)
 	for peer_id in multiplayer.get_peers():
 		if peer_id != id:
@@ -583,3 +603,26 @@ func _on_finish_menu_save_replay() -> void:
 		else:
 			printerr("Could not save replay (error: %s)" % error_string(result))
 			$FinishMenu.set_replay_label("Error %s" % error_string(result))
+
+
+func _on_pause_menu_load_replay() -> void:
+	change_menu(MenuState.LOAD_REPLAY)
+
+
+func _on_replay_menu_replay_toggled(replay_uri: String, toggled: bool) -> void:
+	# Make replay player id negative as normal players are guaranteed to be positive
+	# so they do not collide
+	var player_id := -replay_uri.hash()
+	var player_name := "Replay '%s'" % replay_uri.get_file().get_basename()
+	if toggled:
+		var replay := ResourceLoader.load(replay_uri) as Replay
+		if !replay:
+			printerr("Failed to load replay %s" % replay_uri)
+			return
+
+		spawn_player(player_id, player_name, PackedByteArray())
+		var replay_player := loaded_track.get_node_or_null(str(player_id)) as Player
+		if replay_player:
+			replay_player.play_replay(replay)
+	else:
+		despawn_player(player_id)

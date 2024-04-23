@@ -4,6 +4,7 @@
 script/source = "extends CanvasLayer
 
 signal resume
+signal load_replay
 signal main_menu
 signal quit
 
@@ -12,14 +13,16 @@ func _on_resume_pressed() -> void:
 	resume.emit()
 
 
+func _on_load_replay_pressed() -> void:
+	load_replay.emit()
+
+
 func _on_main_menu_pressed() -> void:
 	main_menu.emit()
 
 
 func _on_quit_pressed() -> void:
 	quit.emit()
-
-
 "
 
 [node name="CanvasLayer" type="CanvasLayer"]
@@ -51,6 +54,11 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "Resume"
 
+[node name="LoadReplay" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Load Replay"
+
 [node name="MainMenu" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
 auto_translate_mode = 1
 layout_mode = 2
@@ -63,5 +71,6 @@ size_flags_vertical = 10
 text = "Quit"
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/LoadReplay" to="." method="_on_load_replay_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/MainMenu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
