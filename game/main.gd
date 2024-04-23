@@ -60,9 +60,16 @@ func _ready() -> void:
 	$PlayerName/PlayerNameContainer/PlayerName.text = player_name
 	$DebugMenu/Menu/SaveStateButton.pressed.connect(save_state)
 	$DebugMenu/Menu/LoadStateButton.pressed.connect(load_state)
+	change_menu(MenuState.MAIN_MENU)
 
 
 func change_menu(menu_state: MenuState) -> void:
+	var current_menu := get_node_or_null("menu")
+	if current_menu:
+		# change the name so it does not collide with newly spawned menu
+		current_menu.name = "old_menu"
+		current_menu.queue_free()
+
 	match menu_state:
 		MenuState.MAIN_MENU:
 			match current_menu_state:
@@ -70,53 +77,53 @@ func change_menu(menu_state: MenuState) -> void:
 					prints("Disconnect from game")
 					disconnect_from_game()
 			create_server = false
-			$PauseMenu.visible = false
-			$SelectTrackMenu.visible = false
-			$MainMenu.visible = true
-			$FinishMenu.visible = false
-			$ReplayMenu.visible = false
+
+			var menu := preload("res://MainMenu.tscn").instantiate()
+			menu.name = "menu"
+			menu.single_player.connect(_on_main_menu_single_player)
+			menu.host.connect(_on_main_menu_host)
+			menu.join.connect(_on_main_menu_join)
+			menu.quit.connect(_on_main_menu_quit)
+			add_child(menu)
 		MenuState.TRACK_SELECT_HOST:
 			create_server = true
-			$PauseMenu.visible = false
-			$SelectTrackMenu.visible = true
-			$MainMenu.visible = false
-			$FinishMenu.visible = false
-			$ReplayMenu.visible = false
+			var menu := preload("res://SelectTrackMenu.tscn").instantiate()
+			menu.name = "menu"
+			menu.selected.connect(_on_select_track_menu_selected)
+			add_child(menu)
 		MenuState.TRACK_SELECT_SINGLE_PLAYER:
 			create_server = false
-			$PauseMenu.visible = false
-			$SelectTrackMenu.visible = true
-			$MainMenu.visible = false
-			$FinishMenu.visible = false
-			$ReplayMenu.visible = false
+			var menu := preload("res://SelectTrackMenu.tscn").instantiate()
+			menu.name = "menu"
+			menu.selected.connect(_on_select_track_menu_selected)
+			add_child(menu)
 		MenuState.PAUSED:
 			if current_menu_state == MenuState.NONE:
 				pause_children(true)
-			$PauseMenu.visible = true
-			$SelectTrackMenu.visible = false
-			$MainMenu.visible = false
-			$FinishMenu.visible = false
-			$ReplayMenu.visible = false
+
+			var menu := preload("res://PauseMenu.tscn").instantiate()
+			menu.name = "menu"
+			menu.resume.connect(_on_pause_menu_resume)
+			menu.load_replay.connect(_on_pause_menu_load_replay)
+			menu.main_menu.connect(_on_pause_menu_main_menu)
+			menu.quit.connect(_on_pause_menu_quit)
+			add_child(menu)
 		MenuState.FINISHED:
-			$PauseMenu.visible = false
-			$SelectTrackMenu.visible = false
-			$MainMenu.visible = false
-			$FinishMenu.visible = true
-			$ReplayMenu.visible = false
+			var menu := preload("res://FinishMenu.tscn").instantiate()
+			menu.name = "menu"
+			menu.restart.connect(_on_finish_menu_restart)
+			menu.save_replay.connect(_on_finish_menu_save_replay)
+			menu.main_menu.connect(_on_pause_menu_main_menu)
+			menu.quit.connect(_on_pause_menu_quit)
+			add_child(menu)
 		MenuState.NONE:
 			if current_menu_state == MenuState.PAUSED:
 				pause_children(false)
-			$PauseMenu.visible = false
-			$SelectTrackMenu.visible = false
-			$MainMenu.visible = false
-			$FinishMenu.visible = false
-			$ReplayMenu.visible = false
 		MenuState.LOAD_REPLAY:
-			$PauseMenu.visible = false
-			$SelectTrackMenu.visible = false
-			$MainMenu.visible = false
-			$FinishMenu.visible = false
-			$ReplayMenu.visible = true
+			var menu := preload("res://LoadReplayMenu.tscn").instantiate()
+			menu.name = "menu"
+			menu.replay_toggled.connect(_on_replay_menu_replay_toggled)
+			add_child(menu)
 
 	current_menu_state = menu_state
 
@@ -298,8 +305,8 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 		input_simulated.rpc_id(1, step.input)
 
 	if step.just_finished:
-		$FinishMenu.set_time(human_time(step.step, step.just_finished))
 		change_menu(MenuState.FINISHED)
+		$menu.set_time(human_time(step.step, step.just_finished))
 
 	if step.input.restart:
 		if current_menu_state == MenuState.FINISHED:
@@ -599,10 +606,10 @@ func _on_finish_menu_save_replay() -> void:
 			)
 
 		if result == OK:
-			$FinishMenu.set_replay_label("Replay saved as '%s'" % replay_name)
+			$menu.set_replay_label("Replay saved as '%s'" % replay_name)
 		else:
 			printerr("Could not save replay (error: %s)" % error_string(result))
-			$FinishMenu.set_replay_label("Error %s" % error_string(result))
+			$menu.set_replay_label("Error %s" % error_string(result))
 
 
 func _on_pause_menu_load_replay() -> void:
