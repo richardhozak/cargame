@@ -78,7 +78,7 @@ func change_menu(menu_state: MenuState) -> void:
 					disconnect_from_game()
 			create_server = false
 
-			var menu := preload("res://MainMenu.tscn").instantiate()
+			var menu := preload("res://menus/MainMenu.tscn").instantiate()
 			menu.name = "menu"
 			menu.single_player.connect(_on_main_menu_single_player)
 			menu.host.connect(_on_main_menu_host)
@@ -87,13 +87,13 @@ func change_menu(menu_state: MenuState) -> void:
 			add_child(menu)
 		MenuState.TRACK_SELECT_HOST:
 			create_server = true
-			var menu := preload("res://SelectTrackMenu.tscn").instantiate()
+			var menu := preload("res://menus/SelectTrackMenu.tscn").instantiate()
 			menu.name = "menu"
 			menu.selected.connect(_on_select_track_menu_selected)
 			add_child(menu)
 		MenuState.TRACK_SELECT_SINGLE_PLAYER:
 			create_server = false
-			var menu := preload("res://SelectTrackMenu.tscn").instantiate()
+			var menu := preload("res://menus/SelectTrackMenu.tscn").instantiate()
 			menu.name = "menu"
 			menu.selected.connect(_on_select_track_menu_selected)
 			add_child(menu)
@@ -101,7 +101,7 @@ func change_menu(menu_state: MenuState) -> void:
 			if current_menu_state == MenuState.NONE:
 				pause_children(true)
 
-			var menu := preload("res://PauseMenu.tscn").instantiate()
+			var menu := preload("res://menus/PauseMenu.tscn").instantiate()
 			menu.name = "menu"
 			menu.resume.connect(_on_pause_menu_resume)
 			menu.load_replay.connect(_on_pause_menu_load_replay)
@@ -109,7 +109,7 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.quit.connect(_on_pause_menu_quit)
 			add_child(menu)
 		MenuState.FINISHED:
-			var menu := preload("res://FinishMenu.tscn").instantiate()
+			var menu := preload("res://menus/FinishMenu.tscn").instantiate()
 			menu.name = "menu"
 			menu.restart.connect(_on_finish_menu_restart)
 			menu.save_replay.connect(_on_finish_menu_save_replay)
@@ -120,7 +120,7 @@ func change_menu(menu_state: MenuState) -> void:
 			if current_menu_state == MenuState.PAUSED:
 				pause_children(false)
 		MenuState.LOAD_REPLAY:
-			var menu := preload("res://LoadReplayMenu.tscn").instantiate()
+			var menu := preload("res://menus/LoadReplayMenu.tscn").instantiate()
 			menu.name = "menu"
 			menu.replay_toggled.connect(_on_replay_menu_replay_toggled)
 			add_child(menu)
