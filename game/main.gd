@@ -122,6 +122,7 @@ func change_menu(menu_state: MenuState) -> void:
 		MenuState.LOAD_REPLAY:
 			var menu := preload("res://menus/LoadReplayMenu.tscn").instantiate()
 			menu.name = "menu"
+			menu.track_uri = selected_track_uri
 			menu.replay_toggled.connect(_on_replay_menu_replay_toggled)
 			add_child(menu)
 
@@ -604,10 +605,12 @@ func _on_finish_menu_save_replay() -> void:
 		var result := OK
 		var replay_name := Time.get_datetime_string_from_system(false, true)
 
-		result = DirAccess.make_dir_recursive_absolute("user://replays")
+		var replay_dir = "user://replays/%d" % selected_track_uri.hash()
+
+		result = DirAccess.make_dir_recursive_absolute(replay_dir)
 		if result == OK:
 			result = ResourceSaver.save(
-				replay, "user://replays/%s.res" % replay_name, ResourceSaver.FLAG_COMPRESS
+				replay, "%s/%s.res" % [replay_dir, replay_name], ResourceSaver.FLAG_COMPRESS
 			)
 
 		if result == OK:
