@@ -641,3 +641,31 @@ func _on_replay_menu_replay_toggled(replay_uri: String, toggled: bool) -> void:
 			replay_player.play_replay(replay)
 	else:
 		despawn_player(player_id)
+
+	_apply_replay_colors()
+
+
+func _apply_replay_colors():
+	# this function assigns replay car colors according to their time,
+	# the faster they are the lighter shade of blue they are
+
+	var replays := get_tree().get_nodes_in_group("replays")
+	replays.sort_custom(sort_slower)
+
+	if replays.size() >= 2:
+		var slowest := replays.front().get_replay().get_count() as int
+		var fastest := replays.back().get_replay().get_count() as int
+		var diff := slowest - fastest
+		var one_percent := diff as float / 100.0
+
+		for player in replays:
+			var count := player.get_replay().get_count() as int
+			var percent_slow := (count - fastest) / one_percent
+			var percent_fast := 100.0 - percent_slow
+			var ratio := percent_fast / 100.0
+			var lighter_amount := ratio * 0.6
+			player.set_color(Color.BLUE.lightened(lighter_amount))
+
+
+func sort_slower(a: Player, b: Player) -> bool:
+	return a.get_replay().get_count() > b.get_replay().get_count()

@@ -23,6 +23,12 @@ var playing_replay: bool = false
 var initial_state := PackedByteArray()
 
 
+func set_color(color: Color) -> void:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	$Node3D/Body/CSGBox3D.material = material
+
+
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
 	simulated.connect(_on_step_simulated)
