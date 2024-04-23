@@ -57,9 +57,6 @@ func _ready() -> void:
 	spectate_group.pressed.connect(_on_spectate_pressed)
 	player_name = RandomName.get_random_name()
 	$PlayerName/PlayerNameContainer/PlayerName.text = player_name
-	$DebugMenu/Menu/SaveReplayButton.pressed.connect(save_replay)
-	$DebugMenu/Menu/LoadReplayButton.pressed.connect(load_replay)
-	$DebugMenu/Menu/DisconnectButton.pressed.connect(disconnect_from_game)
 	$DebugMenu/Menu/SaveStateButton.pressed.connect(save_state)
 	$DebugMenu/Menu/LoadStateButton.pressed.connect(load_state)
 
@@ -471,19 +468,6 @@ func track_ready() -> void:
 	$HUD.visible = true
 
 
-func save_replay() -> void:
-	var replay := loaded_player.get_replay()
-	var result := ResourceSaver.save(replay, "user://replay.res", ResourceSaver.FLAG_COMPRESS)
-	if result != OK:
-		printerr("Could not save replay (error: %s)" % error_string(result))
-
-
-func load_replay() -> void:
-	var replay := ResourceLoader.load("user://replay.res")
-	assert(replay != null)
-	loaded_player.play_replay(replay)
-
-
 func save_state() -> void:
 	saved_state = loaded_player.save_state()
 
@@ -585,9 +569,17 @@ func _on_finish_menu_restart() -> void:
 func _on_finish_menu_save_replay() -> void:
 	if loaded_player:
 		var replay := loaded_player.get_replay()
-		var result := ResourceSaver.save(replay, "user://replay.res", ResourceSaver.FLAG_COMPRESS)
+		var result := OK
+		var replay_name := Time.get_datetime_string_from_system(false, true)
+
+		result = DirAccess.make_dir_recursive_absolute("user://replays")
 		if result == OK:
-			$FinishMenu.set_replay_label("Replay saved")
+			result = ResourceSaver.save(
+				replay, "user://replays/%s.res" % replay_name, ResourceSaver.FLAG_COMPRESS
+			)
+
+		if result == OK:
+			$FinishMenu.set_replay_label("Replay saved as '%s'" % replay_name)
 		else:
 			printerr("Could not save replay (error: %s)" % error_string(result))
-			$FinishMenu.set_replay_label("Error %s" + error_string(result))
+			$FinishMenu.set_replay_label("Error %s" % error_string(result))

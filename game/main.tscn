@@ -56,20 +56,6 @@ offset_right = 200.0
 grow_vertical = 0
 alignment = 2
 
-[node name="SaveReplayButton" type="Button" parent="DebugMenu/Menu"]
-layout_mode = 2
-text = "Save Replay"
-
-[node name="LoadReplayButton" type="Button" parent="DebugMenu/Menu"]
-auto_translate_mode = 1
-layout_mode = 2
-text = "Load Replay"
-
-[node name="DisconnectButton" type="Button" parent="DebugMenu/Menu"]
-auto_translate_mode = 1
-layout_mode = 2
-text = "Disconnect"
-
 [node name="SaveStateButton" type="Button" parent="DebugMenu/Menu"]
 auto_translate_mode = 1
 layout_mode = 2
