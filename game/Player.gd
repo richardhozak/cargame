@@ -56,6 +56,8 @@ func set_spectate_camera(camera: PhantomCamera3D) -> void:
 
 
 func restart() -> void:
+	if replay_input != -1:
+		replay_input = 0
 	var input := CarPhysicsInput.new()
 	input.restart = true
 	self.simulate(input)

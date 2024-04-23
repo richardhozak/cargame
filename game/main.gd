@@ -246,6 +246,9 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	player.initial_state = initial_state
 	player.set_disable_scale(true)
 
+	if is_replay:
+		player.add_to_group("replays")
+
 	var spectate_item := PlayerSpectateItem.instantiate()
 	spectate_item.button_group = spectate_group
 	spectate_item.player_name = peer_name
@@ -311,6 +314,8 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 	if step.input.restart:
 		if current_menu_state == MenuState.FINISHED:
 			change_menu(MenuState.NONE)
+
+		get_tree().call_group("replays", "restart")
 
 
 func on_server_input_simulated(peer_id: int, input: CarPhysicsInput) -> void:
