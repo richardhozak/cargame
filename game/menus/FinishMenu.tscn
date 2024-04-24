@@ -1,6 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://515136wd1qgi"]
 
 [sub_resource type="GDScript" id="GDScript_b2xvw"]
+resource_name = "FinishMenu"
 script/source = "extends CanvasLayer
 
 signal restart

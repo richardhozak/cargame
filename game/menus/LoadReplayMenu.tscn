@@ -1,7 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://51v3rjhohssr"]
 
 [sub_resource type="GDScript" id="GDScript_1jw8b"]
-resource_name = "SelectTrackMenu"
+resource_name = "LoadReplayMenu"
 script/source = "extends CanvasLayer
 
 signal replay_toggled(replay_uri: String, toggled: bool)
