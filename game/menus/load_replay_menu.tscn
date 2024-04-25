@@ -4,6 +4,8 @@
 resource_name = "LoadReplayMenu"
 script/source = "extends CanvasLayer
 
+const LoadReplayButton := preload(\"res://load_replay_button.tscn\")
+
 signal replay_toggled(replay_uri: String, toggled: bool)
 
 var track_uri: String
@@ -19,9 +21,12 @@ func _enter_tree() -> void:
 		if replay.track_name != track_uri:
 			continue
 
-		var button := CheckButton.new()
+		var button := LoadReplayButton.instantiate()
+		button.set_replay_name(replay_uri.get_file().get_basename())
+		button.set_player_name(replay.player_name)
+		# count - 180 is for the countdown which is not counted for total replay time
+		button.set_replay_time(Replays.human_time(replay.replay.get_count() - 180, true))
 		button.button_pressed = selected_replay_uris.find(replay_uri) != -1
-		button.text = replay_uri.get_file().get_basename()
 		button.toggled.connect(func(toggled: bool): replay_toggled.emit(replay_uri, toggled))
 		%ReplayButtonContainer.add_child(button)
 "

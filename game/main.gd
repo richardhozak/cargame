@@ -315,7 +315,7 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 
 	if step.just_finished:
 		change_menu(MenuState.FINISHED)
-		$menu.set_time(human_time(step.step, step.just_finished))
+		$menu.set_time(Replays.human_time(step.step, step.just_finished))
 
 	if step.input.restart:
 		if current_menu_state == MenuState.FINISHED:
@@ -533,20 +533,6 @@ func display_countdown(step: int) -> void:
 		$HUD/Countdown.visible = false
 
 
-func human_time(step: int, full: bool = false) -> String:
-	var is_negative := step < 0
-	step = absi(step)
-	var seconds := step as float / 60.0
-	var minutes := (seconds / 60.0) as int
-	var remaining_seconds := fmod(seconds, 60.0)
-	var prefix := "-" if is_negative else " "
-	var time := "%s%02d:%06.3f" % [prefix, minutes, remaining_seconds]
-	if !full:
-		time[time.length() - 1] = " "
-
-	return time
-
-
 func checkpoint_text(collected: int, available: int) -> String:
 	if available > 0:
 		return "%s / %s" % [collected, available]
@@ -558,7 +544,7 @@ func _on_spectated_player_simulated(step: CarPhysicsStep) -> void:
 	if step.simulated:
 		display_car_stats(step.speed, step.rpm, step.gear)
 		display_countdown(step.step)
-		$HUD/TrackStats/Time.text = human_time(step.step, step.just_finished)
+		$HUD/TrackStats/Time.text = Replays.human_time(step.step, step.just_finished)
 		$HUD/TrackStats/Checkpoints.text = checkpoint_text(
 			step.collected_checkpoints, step.available_checkpoints
 		)

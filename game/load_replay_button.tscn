@@ -1,0 +1,103 @@
+[gd_scene load_steps=6 format=3 uid="uid://cxu1cj4rrg0wt"]
+
+[ext_resource type="FontFile" uid="uid://dkhvrkwgnwvvw" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="1_crkh4"]
+[ext_resource type="Script" path="res://addons/fontawesome/FontAwesome.gd" id="2_uw3uq"]
+[ext_resource type="FontFile" uid="uid://to3oop0i3wkr" path="res://addons/fontawesome/fonts/fa-regular-400.woff2" id="3_gcmmf"]
+
+[sub_resource type="GDScript" id="GDScript_ixavf"]
+script/source = "extends CheckButton
+
+func set_replay_name(replay_name: String) -> void:
+	$GridContainer/ReplayName.text = \"[b]\" + replay_name
+
+
+func set_player_name(player_name: String) -> void:
+	$GridContainer/PlayerName.text = player_name
+
+
+func set_replay_time(replay_time: String) -> void:
+	$GridContainer/ReplayTime.text = \"[i]\" + replay_time
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_l3wqe"]
+
+[node name="CheckButton" type="CheckButton"]
+auto_translate_mode = 1
+custom_minimum_size = Vector2(250, 81)
+script = SubResource("GDScript_ixavf")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+auto_translate_mode = 1
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -38.5
+offset_bottom = 38.5
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2
+
+[node name="FileIcon" type="Label" parent="GridContainer"]
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+auto_translate = false
+theme_override_fonts/font = ExtResource("1_crkh4")
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_uw3uq")
+icon_name = "folder"
+
+[node name="ReplayName" type="RichTextLabel" parent="GridContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[b]0000-00-00 00:00:00"
+fit_content = true
+
+[node name="UserIcon" type="Label" parent="GridContainer"]
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+auto_translate = false
+theme_override_fonts/font = ExtResource("3_gcmmf")
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_uw3uq")
+icon_type = "regular"
+icon_name = "user"
+
+[node name="PlayerName" type="Label" parent="GridContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Unknown Player"
+label_settings = SubResource("LabelSettings_l3wqe")
+vertical_alignment = 1
+
+[node name="TimeIcon" type="Label" parent="GridContainer"]
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+auto_translate = false
+theme_override_fonts/font = ExtResource("3_gcmmf")
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_uw3uq")
+icon_type = "regular"
+icon_name = "flag"
+
+[node name="ReplayTime" type="RichTextLabel" parent="GridContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+bbcode_enabled = true
+text = "[i]00:00.000"
+fit_content = true
