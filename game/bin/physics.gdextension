@@ -1,0 +1,6 @@
+[configuration]
+entry_symbol = "physics_library_init"
+compatibility_minimum = "4.2"
+
+[libraries]
+linux.x86_64 = "res://bin/libphysics.so"

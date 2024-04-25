@@ -1,6 +1,5 @@
 # Godot 4+ specific ignores
 .godot/
-game/bin/lib*
 .sconsign*.dblite
 *build/
 .cache/
@@ -15,7 +14,6 @@ game/bin/lib*
 *.dblite
 *.pdb
 *.lib
-bin
 *.config
 *.creator
 *.creator.user
