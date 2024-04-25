@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://dwqkxgvp17fuj"]
+
+[node name="LoadTrackModelMenu" type="FileDialog"]
+title = "Open a File"
+initial_position = 2
+size = Vector2i(800, 500)
+visible = true
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.gltf; Models", "*.glb; Models")

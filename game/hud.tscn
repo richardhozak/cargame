@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://cfiu0ul16lw6"]
+[gd_scene load_steps=6 format=3 uid="uid://cfiu0ul16lw6"]
 
 [ext_resource type="FontFile" uid="uid://dj8wkuvqbimdd" path="res://fonts/FiraMono-Medium.ttf" id="1_g5uv4"]
 
@@ -10,6 +10,9 @@ font_size = 72
 
 [sub_resource type="LabelSettings" id="LabelSettings_hxgyh"]
 font = ExtResource("1_g5uv4")
+font_size = 32
+
+[sub_resource type="LabelSettings" id="LabelSettings_ifjya"]
 font_size = 32
 
 [node name="HUD" type="CanvasLayer"]
@@ -110,5 +113,17 @@ anchor_right = 1.0
 offset_bottom = 200.0
 grow_horizontal = 2
 text = "Spectating: Player"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ValidatingLabel" type="Label" parent="."]
+auto_translate_mode = 1
+offset_top = 20.0
+offset_right = 1152.0
+offset_bottom = 43.0
+grow_horizontal = 2
+text = "Validating
+"
+label_settings = SubResource("LabelSettings_ifjya")
 horizontal_alignment = 1
 vertical_alignment = 1

@@ -5,6 +5,7 @@ resource_name = "MainMenu"
 script/source = "extends CanvasLayer
 
 signal single_player
+signal create_track
 signal host
 signal join
 signal quit
@@ -12,6 +13,10 @@ signal quit
 
 func _on_single_player_pressed() -> void:
 	single_player.emit()
+
+
+func _on_create_track_pressed() -> void:
+	create_track.emit()
 
 
 func _on_host_pressed() -> void:
@@ -24,6 +29,8 @@ func _on_join_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	quit.emit()
+
+
 "
 
 [node name="CanvasLayer" type="CanvasLayer"]
@@ -65,6 +72,11 @@ auto_translate_mode = 1
 layout_mode = 2
 text = "Single Player"
 
+[node name="CreateTrack" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Create Track"
+
 [node name="Host" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
 auto_translate_mode = 1
 layout_mode = 2
@@ -82,6 +94,7 @@ size_flags_vertical = 10
 text = "Quit"
 
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/SinglePlayer" to="." method="_on_single_player_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/CreateTrack" to="." method="_on_create_track_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Join" to="." method="_on_join_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

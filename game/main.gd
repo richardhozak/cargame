@@ -4,6 +4,7 @@ const MAX_CLIENTS = 4
 const PORT = 3535
 const IP_ADDRESS = "127.0.0.1"
 
+var validating := false
 var create_server := false
 var selected_track_uri := ""
 var loaded_track: Node3D
@@ -11,6 +12,7 @@ var loaded_mesh: CarPhysicsTrackMesh
 var player_name: String
 var saved_state: PackedByteArray
 var spectate_group := ButtonGroup.new()
+var fastest_validation_replay := Replay.new()
 
 const Player = preload("res://player.tscn")
 const PlayerSpectateItem = preload("res://player_spectate_item.tscn")
@@ -25,7 +27,9 @@ enum MenuState {
 	TRACK_SELECT_SINGLE_PLAYER,
 	PAUSED,
 	FINISHED,
+	FINISHED_WITH_VALIDATION,
 	LOAD_REPLAY,
+	LOAD_TRACK_MODEL,
 }
 
 
@@ -73,7 +77,7 @@ func change_menu(menu_state: MenuState) -> void:
 	match menu_state:
 		MenuState.MAIN_MENU:
 			match current_menu_state:
-				MenuState.PAUSED, MenuState.FINISHED:
+				MenuState.PAUSED, MenuState.FINISHED, MenuState.FINISHED_WITH_VALIDATION:
 					prints("Disconnect from game")
 					disconnect_from_game()
 			create_server = false
@@ -81,6 +85,7 @@ func change_menu(menu_state: MenuState) -> void:
 			var menu := preload("res://menus/main_menu.tscn").instantiate()
 			menu.name = "menu"
 			menu.single_player.connect(_on_main_menu_single_player)
+			menu.create_track.connect(_on_main_menu_create_track)
 			menu.host.connect(_on_main_menu_host)
 			menu.join.connect(_on_main_menu_join)
 			menu.quit.connect(_on_main_menu_quit)
@@ -103,8 +108,12 @@ func change_menu(menu_state: MenuState) -> void:
 
 			var menu := preload("res://menus/pause_menu.tscn").instantiate()
 			menu.name = "menu"
+			menu.load_replay_visible = !validating
+			menu.accept_validation_visible = validating
+			menu.accept_validation_enabled = fastest_validation_replay.get_count() != 0
 			menu.resume.connect(_on_pause_menu_resume)
 			menu.load_replay.connect(_on_pause_menu_load_replay)
+			menu.accept.connect(_on_finish_with_validation_menu_accept)
 			menu.main_menu.connect(_on_pause_menu_main_menu)
 			menu.quit.connect(_on_pause_menu_quit)
 			add_child(menu)
@@ -113,6 +122,14 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.name = "menu"
 			menu.restart.connect(_on_finish_menu_restart)
 			menu.save_replay.connect(_on_finish_menu_save_replay)
+			menu.main_menu.connect(_on_pause_menu_main_menu)
+			menu.quit.connect(_on_pause_menu_quit)
+			add_child(menu)
+		MenuState.FINISHED_WITH_VALIDATION:
+			var menu := preload("res://menus/finish_with_validation_menu.tscn").instantiate()
+			menu.name = "menu"
+			menu.restart.connect(_on_finish_menu_restart)
+			menu.accept.connect(_on_finish_with_validation_menu_accept)
 			menu.main_menu.connect(_on_pause_menu_main_menu)
 			menu.quit.connect(_on_pause_menu_quit)
 			add_child(menu)
@@ -129,6 +146,12 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.selected_replay_uris.assign(replay_track_uris)
 			menu.track_uri = selected_track_uri
 			menu.replay_toggled.connect(_on_replay_menu_replay_toggled)
+			add_child(menu)
+		MenuState.LOAD_TRACK_MODEL:
+			var menu := preload("res://menus/load_track_model_menu.tscn").instantiate()
+			menu.name = "menu"
+			menu.file_selected.connect(_on_load_track_model_menu_file_selected)
+			menu.canceled.connect(_on_load_track_model_menu_canceled)
 			add_child(menu)
 
 	current_menu_state = menu_state
@@ -314,12 +337,29 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 		input_simulated.rpc_id(1, step.input)
 
 	if step.just_finished:
-		change_menu(MenuState.FINISHED)
-		$menu.set_time(Replays.human_time(step.step, step.just_finished))
+		if validating:
+			var current_replay := loaded_player.get_replay()
+			if (
+				(current_replay.get_count() <= fastest_validation_replay.get_count())
+				|| fastest_validation_replay.get_count() == 0
+			):
+				fastest_validation_replay = current_replay
+
+			var fastest_time := Replays.human_time(
+				fastest_validation_replay.get_count() - 180, true
+			)
+			$HUD/ValidatingLabel.text = "Validated with" + fastest_time
+			change_menu(MenuState.FINISHED_WITH_VALIDATION)
+			$menu.set_fastest_time(fastest_time)
+			$menu.set_time(Replays.human_time(step.step, true))
+		else:
+			change_menu(MenuState.FINISHED)
+			$menu.set_time(Replays.human_time(step.step, step.just_finished))
 
 	if step.input.restart:
-		if current_menu_state == MenuState.FINISHED:
-			change_menu(MenuState.NONE)
+		match current_menu_state:
+			MenuState.FINISHED, MenuState.FINISHED_WITH_VALIDATION:
+				change_menu(MenuState.NONE)
 
 		get_tree().call_group("replays", "restart")
 
@@ -503,6 +543,7 @@ func load_track(track_name: String) -> void:
 
 func track_ready() -> void:
 	level_loaded.rpc_id(1)
+	$HUD/ValidatingLabel.text = "Validating" if validating else ""
 	$HUD.visible = true
 
 
@@ -565,12 +606,17 @@ func _on_main_menu_quit() -> void:
 
 func _on_select_track_menu_selected(track_uri: String) -> void:
 	change_menu(MenuState.NONE)
+	validating = false
 	selected_track_uri = track_uri
 	host_game()
 
 
 func _on_main_menu_single_player() -> void:
 	change_menu(MenuState.TRACK_SELECT_SINGLE_PLAYER)
+
+
+func _on_main_menu_create_track() -> void:
+	change_menu(MenuState.LOAD_TRACK_MODEL)
 
 
 func _on_pause_menu_quit() -> void:
@@ -597,6 +643,21 @@ func _on_finish_menu_save_replay() -> void:
 		)
 
 		$menu.set_replay_label(result.message)
+
+
+func _on_finish_with_validation_menu_accept() -> void:
+	print("accept")
+
+
+func _on_load_track_model_menu_file_selected(file: String):
+	change_menu(MenuState.NONE)
+	validating = true
+	selected_track_uri = file
+	host_game()
+
+
+func _on_load_track_model_menu_canceled():
+	change_menu(MenuState.MAIN_MENU)
 
 
 func _on_pause_menu_load_replay() -> void:

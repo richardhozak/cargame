@@ -1,40 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://cuoc6m3quycfq"]
+[gd_scene load_steps=2 format=3 uid="uid://by645ldvbp1h4"]
 
 [sub_resource type="GDScript" id="GDScript_b2xvw"]
-resource_name = "PauseMenu"
+resource_name = "FinishMenu"
 script/source = "extends CanvasLayer
 
-signal resume
-signal load_replay
+signal restart
 signal accept
 signal main_menu
 signal quit
 
-var load_replay_visible: bool:
-	set(value):
-		print(\"load replay visible\", value)
-		load_replay_visible = value
-		%LoadReplay.visible = load_replay_visible
 
-var accept_validation_visible: bool:
-	set(value):
-		print(\"accept validation visible\", value)
-		accept_validation_visible = value
-		%AcceptValidation.visible = accept_validation_visible
-
-var accept_validation_enabled: bool:
-	set(value):
-		print(\"accept validation enabled\", value)
-		accept_validation_enabled = value
-		%AcceptValidation.disabled = !accept_validation_enabled
-
-
-func _on_resume_pressed() -> void:
-	resume.emit()
-
-
-func _on_load_replay_pressed() -> void:
-	load_replay.emit()
+func _on_restart_pressed() -> void:
+	restart.emit()
 
 
 func _on_accept_validation_pressed() -> void:
@@ -47,16 +24,32 @@ func _on_main_menu_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	quit.emit()
+
+
+func set_time(time: String) -> void:
+	%Time.text = time
+
+
+func set_fastest_time(time: String) -> void:
+	%FastestTime.text = time
 "
 
 [node name="CanvasLayer" type="CanvasLayer"]
 script = SubResource("GDScript_b2xvw")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
-offset_left = 446.0
-offset_top = 251.0
-offset_right = 705.0
-offset_bottom = 396.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -186.0
+offset_top = -114.0
+offset_right = 186.0
+offset_bottom = 115.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -71,24 +64,50 @@ theme_override_constants/separation = 15
 
 [node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Pause Menu"
+text = "Track is validated!"
 horizontal_alignment = 1
 
-[node name="Resume" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Resume"
 
-[node name="LoadReplay" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="TimeLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Finish time:"
+horizontal_alignment = 1
+
+[node name="Time" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 auto_translate_mode = 1
-visible = false
 layout_mode = 2
-text = "Load Replay"
+size_flags_horizontal = 3
+text = "00:00.000"
+horizontal_alignment = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+
+[node name="TimeLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Fastest validation time:"
+horizontal_alignment = 1
+
+[node name="FastestTime" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+layout_mode = 2
+size_flags_horizontal = 3
+text = "00:00.000"
+horizontal_alignment = 2
+
+[node name="Restart" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Restart"
 
 [node name="AcceptValidation" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
 auto_translate_mode = 1
-visible = false
 layout_mode = 2
 text = "Accept validation"
 
@@ -103,8 +122,7 @@ layout_mode = 2
 size_flags_vertical = 10
 text = "Quit"
 
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Resume" to="." method="_on_resume_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/LoadReplay" to="." method="_on_load_replay_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Restart" to="." method="_on_restart_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/AcceptValidation" to="." method="_on_accept_validation_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/MainMenu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
