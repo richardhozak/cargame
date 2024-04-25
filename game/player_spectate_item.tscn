@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://cf6thyojtjhqa"]
 
-[ext_resource type="FontFile" uid="uid://dkhvrkwgnwvvw" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="1_6xktg"]
-[ext_resource type="Script" path="res://addons/fontawesome/FontAwesome.gd" id="2_gy4e6"]
+[ext_resource type="FontFile" uid="uid://dkhvrkwgnwvvw" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="1_kbdyy"]
+[ext_resource type="Script" path="res://addons/fontawesome/FontAwesome.gd" id="2_t67o8"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hiprr"]
 
@@ -105,12 +105,12 @@ layout_mode = 2
 size_flags_horizontal = 4
 localize_numeral_system = false
 auto_translate = false
-theme_override_fonts/font = ExtResource("1_6xktg")
+theme_override_fonts/font = ExtResource("1_kbdyy")
 theme_override_font_sizes/font_size = 16
 text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("2_gy4e6")
+script = ExtResource("2_t67o8")
 icon_name = "eye"
 
 [node name="EyeClosed" type="Label" parent="MarginContainer/HBoxContainer/PanelContainer"]
@@ -121,12 +121,12 @@ layout_mode = 2
 localize_numeral_system = false
 auto_translate = false
 theme_override_colors/font_color = Color(1, 1, 1, 0.498039)
-theme_override_fonts/font = ExtResource("1_6xktg")
+theme_override_fonts/font = ExtResource("1_kbdyy")
 theme_override_font_sizes/font_size = 16
 text = ""
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("2_gy4e6")
+script = ExtResource("2_t67o8")
 icon_name = "eye-slash"
 
 [connection signal="toggled" from="Button" to="." method="_on_button_toggled"]

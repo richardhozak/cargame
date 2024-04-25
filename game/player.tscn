@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://8w67xbxm66t5"]
 
-[ext_resource type="Script" path="res://Player.gd" id="1_tma0k"]
+[ext_resource type="Script" path="res://player.gd" id="1_5y57b"]
 
 [node name="CarPhysics" type="CarPhysics"]
 wheel1 = NodePath("Node3D/Wheel1")
@@ -8,7 +8,7 @@ wheel2 = NodePath("Node3D/Wheel2")
 wheel3 = NodePath("Node3D/Wheel3")
 wheel4 = NodePath("Node3D/Wheel4")
 body = NodePath("Node3D/Body")
-script = ExtResource("1_tma0k")
+script = ExtResource("1_5y57b")
 
 [node name="Node3D" type="Node3D" parent="."]
 

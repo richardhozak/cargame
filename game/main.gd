@@ -12,8 +12,8 @@ var player_name: String
 var saved_state: PackedByteArray
 var spectate_group := ButtonGroup.new()
 
-const Player = preload("res://Player.tscn")
-const PlayerSpectateItem = preload("res://PlayerSpectateItem.tscn")
+const Player = preload("res://player.tscn")
+const PlayerSpectateItem = preload("res://player_spectate_item.tscn")
 var loaded_player: Player
 
 var current_menu_state: MenuState = MenuState.MAIN_MENU
