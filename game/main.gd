@@ -122,6 +122,11 @@ func change_menu(menu_state: MenuState) -> void:
 		MenuState.LOAD_REPLAY:
 			var menu := preload("res://menus/LoadReplayMenu.tscn").instantiate()
 			menu.name = "menu"
+
+			var replay_track_uris = get_tree().get_nodes_in_group("replays").map(
+				func(node): return node.get_meta("replay_uri")
+			)
+			menu.selected_replay_uris.assign(replay_track_uris)
 			menu.track_uri = selected_track_uri
 			menu.replay_toggled.connect(_on_replay_menu_replay_toggled)
 			add_child(menu)
@@ -601,23 +606,11 @@ func _on_finish_menu_restart() -> void:
 
 func _on_finish_menu_save_replay() -> void:
 	if loaded_player:
-		var replay := loaded_player.get_replay()
-		var result := OK
-		var replay_name := Time.get_datetime_string_from_system(false, true)
+		var result := Replays.save_replay(
+			selected_track_uri, player_name, loaded_player.get_replay()
+		)
 
-		var replay_dir = "user://replays/%d" % selected_track_uri.hash()
-
-		result = DirAccess.make_dir_recursive_absolute(replay_dir)
-		if result == OK:
-			result = ResourceSaver.save(
-				replay, "%s/%s.res" % [replay_dir, replay_name], ResourceSaver.FLAG_COMPRESS
-			)
-
-		if result == OK:
-			$menu.set_replay_label("Replay saved as '%s'" % replay_name)
-		else:
-			printerr("Could not save replay (error: %s)" % error_string(result))
-			$menu.set_replay_label("Error %s" % error_string(result))
+		$menu.set_replay_label(result.message)
 
 
 func _on_pause_menu_load_replay() -> void:
@@ -628,17 +621,14 @@ func _on_replay_menu_replay_toggled(replay_uri: String, toggled: bool) -> void:
 	# Make replay player id negative as normal players are guaranteed to be positive
 	# so they do not collide
 	var player_id := -replay_uri.hash()
-	var player_name := "Replay '%s'" % replay_uri.get_file().get_basename()
+	var replay: TrackReplay = Replays.loaded_replays[replay_uri]
+	var player_name := "Replay '%s'" % replay.player_name
 	if toggled:
-		var replay := ResourceLoader.load(replay_uri) as Replay
-		if !replay:
-			printerr("Failed to load replay %s" % replay_uri)
-			return
-
 		spawn_player(player_id, player_name, PackedByteArray())
 		var replay_player := loaded_track.get_node_or_null(str(player_id)) as Player
 		if replay_player:
-			replay_player.play_replay(replay)
+			replay_player.set_meta("replay_uri", replay_uri)
+			replay_player.play_replay(replay.replay)
 	else:
 		despawn_player(player_id)
 

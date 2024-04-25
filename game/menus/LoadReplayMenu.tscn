@@ -6,21 +6,22 @@ script/source = "extends CanvasLayer
 
 signal replay_toggled(replay_uri: String, toggled: bool)
 
-var track_uri: String:
-	set(value):
-		track_uri = value
-		_load_track_replays()
+var track_uri: String
+var selected_replay_uris: Array[String]
 
-func _load_track_replays() -> void:
+
+func _enter_tree() -> void:
 	if track_uri.is_empty():
 		return
 
-	var replay_dir := \"user://replays/%d\" % track_uri.hash()
-	var replays := DirAccess.get_files_at(replay_dir)
-	for replay in replays:
-		var replay_uri := \"%s/%s\" % [replay_dir, replay]
+	for replay_uri in Replays.loaded_replays:
+		var replay: TrackReplay = Replays.loaded_replays[replay_uri]
+		if replay.track_name != track_uri:
+			continue
+
 		var button := CheckButton.new()
-		button.text = replay.get_file().get_basename()
+		button.button_pressed = selected_replay_uris.find(replay_uri) != -1
+		button.text = replay_uri.get_file().get_basename()
 		button.toggled.connect(func(toggled: bool): replay_toggled.emit(replay_uri, toggled))
 		%ReplayButtonContainer.add_child(button)
 "
