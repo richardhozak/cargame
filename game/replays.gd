@@ -1,27 +1,14 @@
 extends Node
 
-
-class SaveResult:
-	var result: Error
-	var message: String
-
-	func _init(p_result: Error, p_message := ""):
-		if p_message.is_empty() && p_result != OK:
-			message = "Error %s" % error_string(p_result)
-		else:
-			message = p_message
-
-		result = p_result
-
+const REPLAY_DIR := "user://replays"
 
 var loaded_replays: Dictionary
 
 
-func _ready():
-	var replay_dir := "user://replays"
-	var replay_files := DirAccess.get_files_at(replay_dir)
+func _ready() -> void:
+	var replay_files := DirAccess.get_files_at(REPLAY_DIR)
 	for replay_file in replay_files:
-		var replay_uri = "%s/%s" % [replay_dir, replay_file]
+		var replay_uri := "%s/%s" % [REPLAY_DIR, replay_file]
 		var replay := ResourceLoader.load(replay_uri) as TrackReplay
 		if !replay:
 			printerr("Failed to load replay %s" % replay_file)
@@ -38,12 +25,11 @@ func save_replay(track_name: String, player_name: String, replay: Replay) -> Sav
 
 	var result := OK
 	var replay_name := Time.get_datetime_string_from_system(false, true)
-	var replay_dir := "user://replays"
-	result = DirAccess.make_dir_recursive_absolute(replay_dir)
+	result = DirAccess.make_dir_recursive_absolute(REPLAY_DIR)
 	if result != OK:
 		return SaveResult.new(result)
 
-	var replay_uri = "%s/%s.res" % [replay_dir, replay_name]
+	var replay_uri := "%s/%s.res" % [REPLAY_DIR, replay_name]
 	result = ResourceSaver.save(track_replay, replay_uri, ResourceSaver.FLAG_COMPRESS)
 
 	if result != OK:
@@ -52,3 +38,16 @@ func save_replay(track_name: String, player_name: String, replay: Replay) -> Sav
 
 	loaded_replays[replay_uri] = track_replay
 	return SaveResult.new(OK, "Replay saved as '%s'" % replay_name)
+
+
+class SaveResult:
+	var result: Error
+	var message: String
+
+	func _init(p_result: Error, p_message := "") -> void:
+		if p_message.is_empty() && p_result != OK:
+			message = "Error %s" % error_string(p_result)
+		else:
+			message = p_message
+
+		result = p_result
