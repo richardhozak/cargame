@@ -73,49 +73,42 @@ auto_translate_mode = 1
 layout_mode = 2
 toggle_mode = true
 text = "Track 1"
-uri = "res://track1.glb"
+uri = "res://tracks/track1.res"
 
 [node name="LinkButton2" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
 auto_translate_mode = 1
 layout_mode = 2
 toggle_mode = true
 text = "Track 2"
-uri = "res://track2.glb"
+uri = "res://tracks/track2.res"
 
 [node name="LinkButton3" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
 auto_translate_mode = 1
 layout_mode = 2
 toggle_mode = true
 text = "Track 3"
-uri = "res://track3.glb"
+uri = "res://tracks/track3.res"
 
 [node name="LinkButton4" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
 auto_translate_mode = 1
 layout_mode = 2
 toggle_mode = true
 text = "Track 4"
-uri = "res://track4.glb"
+uri = "res://tracks/track4.res"
 
 [node name="LinkButton5" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
 auto_translate_mode = 1
 layout_mode = 2
 toggle_mode = true
 text = "Track 5"
-uri = "res://track5.glb"
+uri = "res://tracks/track5.res"
 
 [node name="LinkButton6" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
 auto_translate_mode = 1
 layout_mode = 2
 toggle_mode = true
-text = "Track Straight"
-uri = "res://track_straight.glb"
-
-[node name="LinkButton7" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
-auto_translate_mode = 1
-layout_mode = 2
-toggle_mode = true
-text = "Track Straight Res"
-uri = "res://tracks/track_straight.res"
+text = "Track 6"
+uri = "res://tracks/track6.res"
 
 [node name="SelectedLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
