@@ -40,7 +40,7 @@ func save_replay(track_name: String, player_name: String, replay: Replay) -> Sav
 	return SaveResult.new(OK, "Replay saved as '%s'" % replay_name)
 
 
-static func human_time(step: int, full: bool = false) -> String:
+static func human_time(step: int, full: bool = false, pad: bool = true) -> String:
 	var is_negative := step < 0
 	step = absi(step)
 	var seconds := step as float / 60.0
@@ -50,6 +50,9 @@ static func human_time(step: int, full: bool = false) -> String:
 	var time := "%s%02d:%06.3f" % [prefix, minutes, remaining_seconds]
 	if !full:
 		time[time.length() - 1] = " "
+
+	if !pad:
+		time = time.strip_edges()
 
 	return time
 

@@ -30,6 +30,7 @@ enum MenuState {
 	FINISHED_WITH_VALIDATION,
 	LOAD_REPLAY,
 	LOAD_TRACK_MODEL,
+	CREATE_TRACK,
 }
 
 
@@ -152,6 +153,11 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.name = "menu"
 			menu.file_selected.connect(_on_load_track_model_menu_file_selected)
 			menu.canceled.connect(_on_load_track_model_menu_canceled)
+			add_child(menu)
+		MenuState.CREATE_TRACK:
+			var menu := preload("res://menus/create_track_menu.tscn").instantiate()
+			menu.name = "menu"
+			menu.author_time = fastest_validation_replay.get_count() - 180
 			add_child(menu)
 
 	current_menu_state = menu_state
@@ -646,7 +652,7 @@ func _on_finish_menu_save_replay() -> void:
 
 
 func _on_finish_with_validation_menu_accept() -> void:
-	print("accept")
+	change_menu(MenuState.CREATE_TRACK)
 
 
 func _on_load_track_model_menu_file_selected(file: String):
