@@ -110,6 +110,13 @@ toggle_mode = true
 text = "Track Straight"
 uri = "res://track_straight.glb"
 
+[node name="LinkButton7" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+toggle_mode = true
+text = "Track Straight Res"
+uri = "res://tracks/track_straight.res"
+
 [node name="SelectedLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 auto_translate_mode = 1

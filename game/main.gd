@@ -13,6 +13,8 @@ var player_name: String
 var saved_state: PackedByteArray
 var spectate_group := ButtonGroup.new()
 var fastest_validation_replay := Replay.new()
+var loaded_track_bytes: PackedByteArray
+var track_res: Track
 
 const Player = preload("res://player.tscn")
 const PlayerSpectateItem = preload("res://player_spectate_item.tscn")
@@ -157,7 +159,9 @@ func change_menu(menu_state: MenuState) -> void:
 		MenuState.CREATE_TRACK:
 			var menu := preload("res://menus/create_track_menu.tscn").instantiate()
 			menu.name = "menu"
+			menu.track_bytes = loaded_track_bytes
 			menu.author_time = fastest_validation_replay.get_count() - 180
+			menu.author_name = player_name
 			add_child(menu)
 
 	current_menu_state = menu_state
@@ -503,16 +507,10 @@ func override_materials(node: Node):
 		override_materials(child)
 
 
-func load_track(track_name: String) -> void:
-	if loaded_track != null:
-		remove_child(loaded_track)
-		loaded_track = null
-		loaded_mesh = null
-
-	print("Load track")
+func load_track_from_bytes(buffer: PackedByteArray) -> Error:
 	var document := GLTFDocument.new()
 	var state := GLTFState.new()
-	var error := document.append_from_file(track_name, state)
+	var error := document.append_from_buffer(buffer, "", state)
 	if error == OK:
 		var physics_mesh := CarPhysicsTrackMesh.new()
 		for node in state.nodes:
@@ -543,8 +541,40 @@ func load_track(track_name: String) -> void:
 		scene_node.ready.connect(track_ready)
 
 		add_child(scene_node)
+	return error
+
+
+func load_track(track_name: String) -> void:
+	if loaded_track != null:
+		remove_child(loaded_track)
+		loaded_track = null
+		loaded_mesh = null
+
+	if validating:
+		if track_name.get_extension() == "glb" || track_name.get_extension() == "gltf":
+			var buffer := FileAccess.get_file_as_bytes(track_name)
+			var error := FileAccess.get_open_error()
+			if error == OK:
+				print("Load track")
+				error = load_track_from_bytes(buffer)
+				if error == OK:
+					loaded_track_bytes = buffer
+				else:
+					printerr("Couldn't load glTF scene (error code: %s)." % error_string(error))
+			else:
+				printerr("Error while opening track %s" % error_string(error))
+		else:
+			printerr("Invalid file")
 	else:
-		printerr("Couldn't load glTF scene (error code: %s)." % error_string(error))
+		var track := ResourceLoader.load(track_name) as Track
+		if track:
+			var error := load_track_from_bytes(track.track_bytes)
+			if error == OK:
+				track_res = track
+			else:
+				printerr("Couldn't load track scene (error code: %s)." % error_string(error))
+		else:
+			printerr("Failed to load track")
 
 
 func track_ready() -> void:
