@@ -104,6 +104,7 @@ look_at_mode = 2
 tween_resource = SubResource("Resource_u3ywf")
 camera_3d_resource = SubResource("Resource_4kke7")
 follow_damping = true
+follow_damping_value = Vector3(0.05, 0.05, 0.05)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_rychs")
