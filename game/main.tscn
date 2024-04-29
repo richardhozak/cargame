@@ -4,8 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://cfiu0ul16lw6" path="res://hud.tscn" id="2_ju410"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_m8wjj"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_m11bp"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3D_resource.gd" id="5_c2vil"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3D.gd" id="5_m8fvt"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="5_c2vil"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="5_m8fvt"]
 [ext_resource type="Texture2D" uid="uid://bdau8ntkwx6cp" path="res://evening_road_01_puresky_4k.hdr" id="7_pdd3v"]
 
 [sub_resource type="Resource" id="Resource_u3ywf"]
@@ -102,7 +102,6 @@ script = ExtResource("5_m8fvt")
 follow_mode = 2
 look_at_mode = 2
 tween_resource = SubResource("Resource_u3ywf")
-tween_onload = false
 camera_3d_resource = SubResource("Resource_4kke7")
 follow_damping = true
 

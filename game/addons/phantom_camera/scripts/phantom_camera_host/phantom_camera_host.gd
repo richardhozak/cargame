@@ -112,7 +112,6 @@ func _exit_tree() -> void:
 
 func _ready() -> void:
 	if not is_instance_valid(_active_pcam): return
-
 	if _is_2D:
 		_active_pcam_2d_glob_transform = _active_pcam.get_global_transform()
 	else:
@@ -150,7 +149,7 @@ func _assign_new_active_pcam(pcam: Node) -> void:
 	_active_pcam = pcam
 	_active_pcam_priority = pcam.get_priority()
 	_active_pcam_has_damping = pcam.follow_damping
-	
+
 	if _active_pcam.show_viewfinder_in_play:
 		_viewfinder_needed_check = true
 
@@ -171,7 +170,7 @@ func _assign_new_active_pcam(pcam: Node) -> void:
 
 	_tween_duration = 0
 
-	if pcam.tween_onload or not pcam.get_has_tweened():
+	if pcam.tween_on_load or not pcam.get_has_tweened():
 		_trigger_pcam_tween = true
 
 
@@ -203,18 +202,18 @@ func _pcam_tween(delta: float) -> void:
 			camera_2d.global_position = interpolation_destination.round()
 		else:
 			camera_2d.global_position = interpolation_destination
-		
+
 		camera_2d.rotation = _tween_interpolate_value(_prev_active_pcam_2d_transform.get_rotation(), _active_pcam_2d_glob_transform.get_rotation())
 		camera_2d.zoom = _tween_interpolate_value(_camera_zoom, _active_pcam.zoom)
 	else:
 		camera_3d.global_position = \
 			_tween_interpolate_value(_prev_active_pcam_3d_transform.origin, _active_pcam_3d_glob_transform.origin)
 
-		var prev_active_pcam_3d_basis = Quaternion(_prev_active_pcam_3d_transform.basis.orthonormalized())
+		var prev_active_pcam_3d_quat: Quaternion = Quaternion(_prev_active_pcam_3d_transform.basis.orthonormalized())
 		camera_3d.quaternion = \
 			Tween.interpolate_value(
-				prev_active_pcam_3d_basis, \
-				prev_active_pcam_3d_basis.inverse() * Quaternion(_active_pcam_3d_glob_transform.basis.orthonormalized()),
+				prev_active_pcam_3d_quat, \
+				prev_active_pcam_3d_quat.inverse() * Quaternion(_active_pcam_3d_glob_transform.basis.orthonormalized()),
 				_tween_duration, \
 				_active_pcam.get_tween_duration(), \
 				_active_pcam.get_tween_transition(),
@@ -258,13 +257,7 @@ func _pcam_follow(delta: float) -> void:
 			camera_2d.global_transform = snap_to_pixel_glob_transform
 		else:
 			camera_2d.global_transform =_active_pcam_2d_glob_transform
-		if _active_pcam.get_has_multiple_follow_targets():
-			if _active_pcam.follow_damping:
-				camera_2d.zoom = camera_2d.zoom.lerp(_active_pcam.zoom, delta * _active_pcam.follow_damping_value)
-			else:
-				camera_2d.zoom = _active_pcam.zoom
-		else:
-			camera_2d.zoom = _active_pcam.zoom
+		camera_2d.zoom = _active_pcam.zoom
 	else:
 		camera_3d.global_transform = _active_pcam_3d_glob_transform
 
@@ -278,7 +271,7 @@ func _process_pcam(delta: float) -> void:
 		if _viewfinder_needed_check:
 			_show_viewfinder_in_play()
 			_viewfinder_needed_check = false
-			
+
 		# TODO - Should be able to find a more efficient way
 		if Engine.is_editor_hint():
 			if not _is_2D:
@@ -335,7 +328,7 @@ func _show_viewfinder_in_play() -> void:
 		if not Engine.is_editor_hint() && OS.has_feature("editor"): # Only appears when running in the editor
 			var canvas_layer: CanvasLayer = CanvasLayer.new()
 			get_tree().get_root().get_child(0).add_child(canvas_layer)
-			
+
 			if not is_instance_valid(_viewfinder_node):
 				var _viewfinder_scene := load("res://addons/phantom_camera/panel/viewfinder/viewfinder_panel.tscn")
 				_viewfinder_node = _viewfinder_scene.instantiate()
@@ -355,11 +348,11 @@ func pcam_added_to_scene(pcam: Node) -> void:
 	if is_instance_of(pcam, PhantomCamera2D) or is_instance_of(pcam, PhantomCamera3D):
 		_pcam_list.append(pcam)
 
-		if not pcam.tween_onload:
-			pcam.set_has_tweened(self, true) # Skips its tween if it has the highest priority onload
+		if not pcam.tween_on_load:
+			pcam.set_has_tweened(self, true) # Skips its tween if it has the highest priority on load
 
 		_find_pcam_with_highest_priority()
-	
+
 	else:
 		printerr("This function should only be called from PhantomCamera scripts")
 
@@ -378,7 +371,7 @@ func pcam_removed_from_scene(pcam: Node) -> void:
 		printerr("This function should only be called from PhantomCamera scripts")
 
 ## Triggers a recalculation to determine which PhantomCamera has the highest
-## priority. 
+## priority.
 func pcam_priority_updated(pcam: Node) -> void:
 	if Engine.is_editor_hint() and _active_pcam.priority_override: return
 
