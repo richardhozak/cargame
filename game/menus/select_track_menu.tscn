@@ -14,9 +14,25 @@ func _init() -> void:
 	track_group.pressed.connect(_on_track_button_pressed)
 
 
+func _ready() -> void:
+	var track_files := DirAccess.get_files_at(\"res://tracks\")
+	for track_file in track_files:
+		var track_uri := \"%s/%s\" % [\"res://tracks\", track_file]
+		var track := ResourceLoader.load(track_uri) as Track
+		if !track:
+			printerr(\"Failed to load track %s\" % track_file)
+			continue
+
+		var button := CheckBox.new()
+		button.text = track.track_name
+		button.toggle_mode = true
+		button.set_meta(\"track_uri\", track_uri)
+		%Buttons.add_child(button)
+
+
 func _on_track_button_pressed(button: BaseButton) -> void:
-	if button is LinkButton:
-		selected_track = button.uri
+	if button is CheckBox:
+		selected_track = button.get_meta(\"track_uri\")
 		%SelectedLabel.text = \"Selected: \" + button.text
 
 
@@ -26,7 +42,7 @@ func _on_button_pressed() -> void:
 
 
 func _on_v_box_container_child_entered_tree(node: Node) -> void:
-	if node is LinkButton:
+	if node is CheckBox:
 		node.button_group = track_group
 "
 
@@ -64,51 +80,10 @@ layout_mode = 2
 text = "Select Track"
 horizontal_alignment = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Buttons" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 auto_translate_mode = 1
 layout_mode = 2
-
-[node name="LinkButton1" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
-auto_translate_mode = 1
-layout_mode = 2
-toggle_mode = true
-text = "Track 1"
-uri = "res://tracks/track1.res"
-
-[node name="LinkButton2" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
-auto_translate_mode = 1
-layout_mode = 2
-toggle_mode = true
-text = "Track 2"
-uri = "res://tracks/track2.res"
-
-[node name="LinkButton3" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
-auto_translate_mode = 1
-layout_mode = 2
-toggle_mode = true
-text = "Track 3"
-uri = "res://tracks/track3.res"
-
-[node name="LinkButton4" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
-auto_translate_mode = 1
-layout_mode = 2
-toggle_mode = true
-text = "Track 4"
-uri = "res://tracks/track4.res"
-
-[node name="LinkButton5" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
-auto_translate_mode = 1
-layout_mode = 2
-toggle_mode = true
-text = "Track 5"
-uri = "res://tracks/track5.res"
-
-[node name="LinkButton6" type="LinkButton" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer"]
-auto_translate_mode = 1
-layout_mode = 2
-toggle_mode = true
-text = "Track 6"
-uri = "res://tracks/track6.res"
 
 [node name="SelectedLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -121,5 +96,5 @@ auto_translate_mode = 1
 layout_mode = 2
 text = "Start"
 
-[connection signal="child_entered_tree" from="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" to="." method="_on_v_box_container_child_entered_tree"]
+[connection signal="child_entered_tree" from="PanelContainer/MarginContainer/VBoxContainer/Buttons" to="." method="_on_v_box_container_child_entered_tree"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
