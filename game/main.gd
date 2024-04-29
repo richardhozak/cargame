@@ -15,6 +15,7 @@ var spectate_group := ButtonGroup.new()
 var fastest_validation_replay := Replay.new()
 var loaded_track_bytes: PackedByteArray
 var track_res: Track
+var personal_best: Replay
 
 const Player = preload("res://player.tscn")
 const PlayerSpectateItem = preload("res://player_spectate_item.tscn")
@@ -305,6 +306,11 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	if is_local:
 		loaded_player = player
 		spectate_button.button_pressed = true
+		if personal_best && is_playing_single_player():
+			spawn_player(-id, "Personal Best", PackedByteArray())
+			var personal_best_player := loaded_track.get_node_or_null(str(-id)) as Player
+			if personal_best_player:
+				personal_best_player.play_replay(personal_best)
 
 	# bind inputs simulated inputs, server distributes them to clients, clients just need to send them to server
 	if multiplayer.is_server():
@@ -450,6 +456,10 @@ func host_game() -> void:
 	hello.rpc_id(1, player_name)
 
 
+func is_playing_single_player() -> bool:
+	return multiplayer.multiplayer_peer is OfflineMultiplayerPeer
+
+
 func join_game() -> void:
 	# Create client.
 	multiplayer.allow_object_decoding = true
@@ -550,6 +560,9 @@ func load_track(track_uri: String) -> void:
 		loaded_track = null
 		loaded_mesh = null
 
+	if personal_best != null:
+		personal_best = null
+
 	if validating:
 		if track_uri.get_extension() == "glb" || track_uri.get_extension() == "gltf":
 			var buffer := FileAccess.get_file_as_bytes(track_uri)
@@ -568,10 +581,12 @@ func load_track(track_uri: String) -> void:
 	else:
 		var track := ResourceLoader.load(track_uri) as Track
 		if track:
+			personal_best = Replays.get_personal_best(track.track_id)
 			var error := load_track_from_bytes(track.track_bytes)
 			if error == OK:
 				track_res = track
 			else:
+				personal_best = null
 				printerr("Couldn't load track scene (error code: %s)." % error_string(error))
 		else:
 			printerr("Failed to load track")

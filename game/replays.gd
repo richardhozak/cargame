@@ -1,8 +1,10 @@
 extends Node
 
 const REPLAY_DIR := "user://replays"
+const PERSONAL_BESTS_DIR := "user://replays/pbs"
 
 var loaded_replays: Dictionary
+var personal_best_replays: Dictionary
 
 
 func _ready() -> void:
@@ -16,8 +18,41 @@ func _ready() -> void:
 
 		loaded_replays[replay_uri] = replay
 
+	var personal_bests := DirAccess.get_files_at(PERSONAL_BESTS_DIR)
+	for replay_file in personal_bests:
+		var replay_uri := "%s/%s" % [PERSONAL_BESTS_DIR, replay_file]
+		var replay := ResourceLoader.load(replay_uri) as TrackReplay
+		if !replay:
+			printerr("Failed to load replay %s" % replay_file)
+			continue
+
+		if personal_best_replays.has(replay.track_id):
+			var stored_replay := personal_best_replays[replay.track_id] as TrackReplay
+			if replay.replay.get_count() <= stored_replay.replay.get_count():
+				personal_best_replays[replay.track_id] = replay
+		else:
+			personal_best_replays[replay.track_id] = replay
+
+
+func save_personal_best(track_id: String, player_name: String, replay: Replay) -> SaveResult:
+	return _save_replay(track_id, player_name, replay, PERSONAL_BESTS_DIR)
+
 
 func save_replay(track_id: String, player_name: String, replay: Replay) -> SaveResult:
+	return _save_replay(track_id, player_name, replay, REPLAY_DIR)
+
+
+func get_personal_best(track_id: String) -> Replay:
+	var replay := personal_best_replays.get(track_id) as TrackReplay
+	if replay:
+		return replay.replay
+	else:
+		return null
+
+
+func _save_replay(
+	track_id: String, player_name: String, replay: Replay, directory: String
+) -> SaveResult:
 	var track_replay := TrackReplay.new()
 	track_replay.track_id = track_id
 	track_replay.player_name = player_name
@@ -25,11 +60,11 @@ func save_replay(track_id: String, player_name: String, replay: Replay) -> SaveR
 
 	var result := OK
 	var replay_name := Time.get_datetime_string_from_system(false, true)
-	result = DirAccess.make_dir_recursive_absolute(REPLAY_DIR)
+	result = DirAccess.make_dir_recursive_absolute(directory)
 	if result != OK:
 		return SaveResult.new(result)
 
-	var replay_uri := "%s/%s.res" % [REPLAY_DIR, replay_name]
+	var replay_uri := "%s/%s.res" % [directory, replay_name]
 	result = ResourceSaver.save(track_replay, replay_uri, ResourceSaver.FLAG_COMPRESS)
 
 	if result != OK:
