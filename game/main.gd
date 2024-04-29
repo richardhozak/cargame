@@ -369,11 +369,23 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 			$menu.set_fastest_time(fastest_time)
 			$menu.set_time(Replays.human_time(step.step, true))
 		else:
+			var achievement := ""
 			var current_replay := loaded_player.get_replay()
 			if (
 				(personal_best and current_replay.get_count() <= personal_best.get_count())
 				or !personal_best
 			):
+				achievement = "New personal best!"
+
+				var old_medal := ""
+				if personal_best:
+					old_medal = get_time_medal(personal_best.get_count() - 180)
+
+				var new_medal := get_time_medal(current_replay.get_count() - 180)
+
+				if old_medal != new_medal:
+					achievement = "You've earned new medal: %s!" % new_medal
+
 				personal_best = current_replay
 
 				var result := Replays.save_personal_best(
@@ -392,6 +404,8 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 
 			change_menu(MenuState.FINISHED)
 			$menu.set_time(Replays.human_time(step.step, step.just_finished))
+			$menu.set_personal_best(Replays.human_time(personal_best.get_count() - 180, true))
+			$menu.set_achievement(achievement)
 
 	if step.input.restart:
 		match current_menu_state:
@@ -732,6 +746,19 @@ func _on_load_track_model_menu_canceled():
 
 func _on_pause_menu_load_replay() -> void:
 	change_menu(MenuState.LOAD_REPLAY)
+
+
+func get_time_medal(step: int) -> String:
+	if step <= track_res.author_time:
+		return "Author"
+	elif step <= track_res.gold_time:
+		return "Gold"
+	elif step <= track_res.silver_time:
+		return "Silver"
+	elif step <= track_res.bronze_time:
+		return "Bronze"
+	else:
+		return ""
 
 
 func _on_replay_menu_replay_toggled(replay_uri: String, toggled: bool) -> void:

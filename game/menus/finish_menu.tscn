@@ -27,7 +27,16 @@ func _on_quit_pressed() -> void:
 
 
 func set_time(time: String) -> void:
-	%Time.text = time
+	%FinishTime.text = time
+
+
+func set_personal_best(time: String) -> void:
+	%PersonalBestTime.text = time
+
+
+func set_achievement(text: String) -> void:
+	%AchievementLabel.text = \"[center][i]%s[/i][/center]\" % text
+	%AchievementLabel.visible = text != \"\"
 
 
 func set_replay_label(text: String) -> void:
@@ -75,16 +84,43 @@ layout_mode = 2
 [node name="TimeLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 auto_translate_mode = 1
 layout_mode = 2
-text = "Time:"
+text = "Finish time:"
 horizontal_alignment = 1
 
-[node name="Time" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="FinishTime" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 auto_translate_mode = 1
 layout_mode = 2
 size_flags_horizontal = 3
 text = "00:00.000"
 horizontal_alignment = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+
+[node name="TimeLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Personal best:"
+horizontal_alignment = 1
+
+[node name="PersonalBestTime" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+layout_mode = 2
+size_flags_horizontal = 3
+text = "00:00.000"
+horizontal_alignment = 2
+
+[node name="AchievementLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+visible = false
+layout_mode = 2
+bbcode_enabled = true
+text = "[center][i]New personal best![/i][/center]"
+fit_content = true
 
 [node name="Restart" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
