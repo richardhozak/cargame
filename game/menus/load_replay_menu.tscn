@@ -8,17 +8,17 @@ const LoadReplayButton := preload(\"res://load_replay_button.tscn\")
 
 signal replay_toggled(replay_uri: String, toggled: bool)
 
-var track_uri: String
+var track_id: String
 var selected_replay_uris: Array[String]
 
 
 func _enter_tree() -> void:
-	if track_uri.is_empty():
+	if track_id.is_empty():
 		return
 
 	for replay_uri in Replays.loaded_replays:
 		var replay: TrackReplay = Replays.loaded_replays[replay_uri]
-		if replay.track_name != track_uri:
+		if replay.track_id != track_id:
 			continue
 
 		var button := LoadReplayButton.instantiate()

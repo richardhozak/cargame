@@ -143,11 +143,11 @@ func change_menu(menu_state: MenuState) -> void:
 			var menu := preload("res://menus/load_replay_menu.tscn").instantiate()
 			menu.name = "menu"
 
-			var replay_track_uris = get_tree().get_nodes_in_group("replays").map(
+			var replay_uris = get_tree().get_nodes_in_group("replays").map(
 				func(node): return node.get_meta("replay_uri")
 			)
-			menu.selected_replay_uris.assign(replay_track_uris)
-			menu.track_uri = selected_track_uri
+			menu.selected_replay_uris.assign(replay_uris)
+			menu.track_id = track_res.track_id
 			menu.replay_toggled.connect(_on_replay_menu_replay_toggled)
 			add_child(menu)
 		MenuState.LOAD_TRACK_MODEL:
@@ -245,9 +245,9 @@ func hello(peer_name: String) -> void:
 
 
 @rpc("authority", "call_local", "reliable")
-func load_level(level_name: String) -> void:
-	prints("loading level", level_name, multiplayer.is_server())
-	load_track(level_name)
+func load_level(track_uri: String) -> void:
+	prints("loading level", track_uri, multiplayer.is_server())
+	load_track(track_uri)
 
 
 @rpc("any_peer", "call_local", "reliable")
@@ -544,15 +544,15 @@ func load_track_from_bytes(buffer: PackedByteArray) -> Error:
 	return error
 
 
-func load_track(track_name: String) -> void:
+func load_track(track_uri: String) -> void:
 	if loaded_track != null:
 		remove_child(loaded_track)
 		loaded_track = null
 		loaded_mesh = null
 
 	if validating:
-		if track_name.get_extension() == "glb" || track_name.get_extension() == "gltf":
-			var buffer := FileAccess.get_file_as_bytes(track_name)
+		if track_uri.get_extension() == "glb" || track_uri.get_extension() == "gltf":
+			var buffer := FileAccess.get_file_as_bytes(track_uri)
 			var error := FileAccess.get_open_error()
 			if error == OK:
 				print("Load track")
@@ -566,7 +566,7 @@ func load_track(track_name: String) -> void:
 		else:
 			printerr("Invalid file")
 	else:
-		var track := ResourceLoader.load(track_name) as Track
+		var track := ResourceLoader.load(track_uri) as Track
 		if track:
 			var error := load_track_from_bytes(track.track_bytes)
 			if error == OK:
@@ -673,11 +673,9 @@ func _on_finish_menu_restart() -> void:
 
 
 func _on_finish_menu_save_replay() -> void:
-	if loaded_player:
-		var result := Replays.save_replay(
-			selected_track_uri, player_name, loaded_player.get_replay()
-		)
-
+	if loaded_player && track_res:
+		var replay := loaded_player.get_replay()
+		var result := Replays.save_replay(track_res.track_id, player_name, replay)
 		$menu.set_replay_label(result.message)
 
 

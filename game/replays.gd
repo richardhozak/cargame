@@ -17,9 +17,9 @@ func _ready() -> void:
 		loaded_replays[replay_uri] = replay
 
 
-func save_replay(track_name: String, player_name: String, replay: Replay) -> SaveResult:
+func save_replay(track_id: String, player_name: String, replay: Replay) -> SaveResult:
 	var track_replay := TrackReplay.new()
-	track_replay.track_name = track_name
+	track_replay.track_id = track_id
 	track_replay.player_name = player_name
 	track_replay.replay = replay
 
