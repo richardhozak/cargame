@@ -369,6 +369,27 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 			$menu.set_fastest_time(fastest_time)
 			$menu.set_time(Replays.human_time(step.step, true))
 		else:
+			var current_replay := loaded_player.get_replay()
+			if (
+				(personal_best and current_replay.get_count() <= personal_best.get_count())
+				or !personal_best
+			):
+				personal_best = current_replay
+
+				var result := Replays.save_personal_best(
+					track_res.track_id, player_name, personal_best
+				)
+				if result.result != OK:
+					printerr("Failed to save PB %s", error_string(result.result))
+
+				var pb_id := str(-multiplayer.get_unique_id())
+				var personal_best_player: Player = loaded_track.get_node_or_null(pb_id)
+				if !personal_best_player && is_playing_single_player():
+					spawn_player(-multiplayer.get_unique_id(), "Personal Best", PackedByteArray())
+					personal_best_player = loaded_track.get_node(pb_id)
+
+				personal_best_player.play_replay(personal_best)
+
 			change_menu(MenuState.FINISHED)
 			$menu.set_time(Replays.human_time(step.step, step.just_finished))
 
