@@ -145,7 +145,7 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.name = "menu"
 
 			var replay_uris = get_tree().get_nodes_in_group("replays").map(
-				func(node): return node.get_meta("replay_uri")
+				func(node): return node.get_meta("replay_uri", "")
 			)
 			menu.selected_replay_uris.assign(replay_uris)
 			menu.track_id = track_res.track_id

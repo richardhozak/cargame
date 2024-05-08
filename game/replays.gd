@@ -39,7 +39,11 @@ func save_personal_best(track_id: String, player_name: String, replay: Replay) -
 
 
 func save_replay(track_id: String, player_name: String, replay: Replay) -> SaveResult:
-	return _save_replay(track_id, player_name, replay, REPLAY_DIR)
+	var result := _save_replay(track_id, player_name, replay, REPLAY_DIR)
+	if result.result == OK:
+		loaded_replays[result.replay_uri] = result.replay
+
+	return result
 
 
 func get_personal_best(track_id: String) -> Replay:
@@ -71,8 +75,7 @@ func _save_replay(
 		printerr("Could not save replay (error: %s)" % error_string(result))
 		return SaveResult.new(result)
 
-	loaded_replays[replay_uri] = track_replay
-	return SaveResult.new(OK, "Replay saved as '%s'" % replay_name)
+	return SaveResult.new(OK, replay_uri, track_replay, "Replay saved as '%s'" % replay_name)
 
 
 static func human_time(step: int, full: bool = false, pad: bool = true) -> String:
@@ -95,8 +98,15 @@ static func human_time(step: int, full: bool = false, pad: bool = true) -> Strin
 class SaveResult:
 	var result: Error
 	var message: String
+	var replay_uri: String
+	var replay: TrackReplay
 
-	func _init(p_result: Error, p_message := "") -> void:
+	func _init(
+		p_result: Error, p_replay_uri := "", p_replay: TrackReplay = null, p_message := ""
+	) -> void:
+		replay_uri = p_replay_uri
+		replay = p_replay
+
 		if p_message.is_empty() && p_result != OK:
 			message = "Error %s" % error_string(p_result)
 		else:
