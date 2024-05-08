@@ -11,30 +11,25 @@ func get_count() -> int:
 
 
 func add_input(input: CarPhysicsInput) -> void:
-	var input_bytes := PackedByteArray()
-	assert(input_bytes.resize(INPUT_SIZE) == OK)
-	input_bytes.encode_u8(0, input.up)
-	input_bytes.encode_u8(1, input.down)
-	input_bytes.encode_u8(2, input.left)
-	input_bytes.encode_u8(3, input.right)
-	input_bytes.encode_u8(4, input.brake)
-	input_bytes.encode_u8(5, input.respawn)
-	input_bytes.encode_u8(6, input.restart)
-	data.append_array(input_bytes)
+	data.push_back(input.up)
+	data.push_back(input.down)
+	data.push_back(input.left)
+	data.push_back(input.right)
+	data.push_back(input.brake)
+	data.push_back(input.respawn)
+	data.push_back(input.restart)
 	count += 1
 
 
 func get_input(index: int) -> CarPhysicsInput:
 	var input := CarPhysicsInput.new()
 	var begin := index * INPUT_SIZE
-	var end := begin + INPUT_SIZE
-	var input_bytes := data.slice(begin, end)
-	assert(input_bytes.size() == INPUT_SIZE)
-	input.up = input_bytes.decode_u8(0)
-	input.down = input_bytes.decode_u8(1)
-	input.left = input_bytes.decode_u8(2)
-	input.right = input_bytes.decode_u8(3)
-	input.brake = input_bytes.decode_u8(4)
-	input.respawn = input_bytes.decode_u8(5)
-	input.restart = input_bytes.decode_u8(6)
+	assert(begin < data.size())
+	input.up = data.decode_u8(begin + 0)
+	input.down = data.decode_u8(begin + 1)
+	input.left = data.decode_u8(begin + 2)
+	input.right = data.decode_u8(begin + 3)
+	input.brake = data.decode_u8(begin + 4)
+	input.respawn = data.decode_u8(begin + 5)
+	input.restart = data.decode_u8(begin + 6)
 	return input

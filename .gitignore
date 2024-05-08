@@ -21,3 +21,7 @@
 *.includes
 *.idb
 *.exp
+*.dll
+
+build*/
+export/
