@@ -63,10 +63,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -250.0
-offset_top = -220.0
-offset_right = 250.0
-offset_bottom = 220.0
+offset_left = -315.0
+offset_top = -331.0
+offset_right = 315.0
+offset_bottom = 331.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -89,16 +89,22 @@ layout_mode = 2
 text = "Select Track"
 horizontal_alignment = 1
 
-[node name="Buttons" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Buttons" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer"]
 unique_name_in_owner = true
 auto_translate_mode = 1
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="SelectedLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 auto_translate_mode = 1
 layout_mode = 2
-size_flags_vertical = 10
+size_flags_vertical = 8
 text = "Selected: None, please select"
 
 [node name="Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
@@ -106,5 +112,5 @@ auto_translate_mode = 1
 layout_mode = 2
 text = "Start"
 
-[connection signal="child_entered_tree" from="PanelContainer/MarginContainer/VBoxContainer/Buttons" to="." method="_on_v_box_container_child_entered_tree"]
+[connection signal="child_entered_tree" from="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/Buttons" to="." method="_on_v_box_container_child_entered_tree"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
