@@ -348,24 +348,15 @@ class Physics::impl : public ContactListener
 
         const Vec3 track_scale = physics_vec3(track.scale);
 
-        std::cerr << "track scale " << track_scale << "\n";
-
         BodyInterface& body_interface = physics_system.GetBodyInterface();
 
         Ref<StaticCompoundShapeSettings> compound_shape = new StaticCompoundShapeSettings;
 
-        int i = 0;
         for (const auto& mesh : track.meshes)
         {
-            i++;
-            std::cerr << "mesh " << i << " " << mesh_kind_name(mesh.kind) << "\n";
             const auto translation = physics_vec3(mesh.position);
             const auto rotation = Quat(physics_vec4(mesh.rotation));
             const auto scale = physics_vec3(mesh.scale);
-
-            std::cerr << "translation " << translation << "\n";
-            std::cerr << "rotation    " << rotation << "\n";
-            std::cerr << "scale       " << scale << "\n";
 
             VertexList vertex_list;
             for (const auto& vertex : mesh.vertices)
@@ -376,7 +367,6 @@ class Physics::impl : public ContactListener
             IndexedTriangleList indexed_triangle_list;
             for (size_t i = 0; i < mesh.indices.size(); i += 3)
             {
-                std::cerr << "indices " << mesh.indices[i] << ", " << mesh.indices[i + 2] << ", " << mesh.indices[i + 1] << "\n";
                 indexed_triangle_list.emplace_back(IndexedTriangle(mesh.indices[i], mesh.indices[i + 2], mesh.indices[i + 1]));
             }
 
