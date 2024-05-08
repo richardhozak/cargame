@@ -63,7 +63,9 @@ func _save_replay(
 	track_replay.replay = replay
 
 	var result := OK
-	var replay_name := Time.get_datetime_string_from_system(false, true)
+	var replay_name := (
+		Time.get_datetime_string_from_system(false, true).replace(":", "-").validate_filename()
+	)
 	result = DirAccess.make_dir_recursive_absolute(directory)
 	if result != OK:
 		return SaveResult.new(result)
