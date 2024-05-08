@@ -31,6 +31,7 @@ extends PanelContainer
 		if not is_inside_tree():
 			await ready
 		author_time = value
+		%AuthorTime.text = Replays.human_time(author_time, true, false)
 		_update_personal_best()
 
 @export var gold_time: int = 0:
@@ -79,6 +80,9 @@ func _update_personal_best():
 		%PBIconGold.visible = personal_best <= gold_time
 		%PBIconAuthor.visible = personal_best <= author_time
 
+	%AuthorIcon.visible = %PBIconAuthor.visible
+	%AuthorTime.visible = %PBIconAuthor.visible
+
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_36sfu"]
@@ -95,8 +99,8 @@ font_color = Color(0, 0.501961, 0, 1)
 
 [node name="PanelContainer" type="PanelContainer"]
 auto_translate_mode = 1
-offset_right = 432.0
-offset_bottom = 97.0
+offset_right = 429.0
+offset_bottom = 117.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_hiprr")
 script = SubResource("GDScript_767ll")
 personal_best = 20
@@ -142,27 +146,11 @@ size_flags_vertical = 0
 text = "Track Name"
 text_overrun_behavior = 3
 
-[node name="PersonalBestContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-unique_name_in_owner = true
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 10
 mouse_filter = 2
 
-[node name="PersonalBestLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
-auto_translate_mode = 1
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-text = "Personal Best:
-"
-
-[node name="PBTime" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
-unique_name_in_owner = true
-auto_translate_mode = 1
-layout_mode = 2
-text = "00:00.000"
-
-[node name="PBIconBronze" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
-unique_name_in_owner = true
+[node name="BronzeIcon" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 auto_translate_mode = 2
 layout_mode = 2
 localize_numeral_system = false
@@ -175,8 +163,12 @@ vertical_alignment = 1
 script = ExtResource("2_d8ops")
 icon_name = "circle"
 
-[node name="PBIconSilver" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+[node name="BronzeTime" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
+layout_mode = 2
+text = "00:00.000"
+
+[node name="SilverIcon" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 auto_translate_mode = 2
 layout_mode = 2
 localize_numeral_system = false
@@ -189,8 +181,12 @@ vertical_alignment = 1
 script = ExtResource("2_d8ops")
 icon_name = "circle"
 
-[node name="PBIconGold" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+[node name="SilverTime" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
+layout_mode = 2
+text = "00:00.000"
+
+[node name="GoldIcon" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 auto_translate_mode = 2
 layout_mode = 2
 localize_numeral_system = false
@@ -203,7 +199,12 @@ vertical_alignment = 1
 script = ExtResource("2_d8ops")
 icon_name = "circle"
 
-[node name="PBIconAuthor" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+[node name="GoldTime" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "00:00.000"
+
+[node name="AuthorIcon" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 auto_translate_mode = 2
 layout_mode = 2
@@ -217,48 +218,46 @@ vertical_alignment = 1
 script = ExtResource("2_d8ops")
 icon_name = "circle"
 
-[node name="GridContainer" type="GridContainer" parent="MarginContainer/HBoxContainer"]
+[node name="AuthorTime" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
+text = "00:00.000"
+
+[node name="PersonalBestContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 10
 mouse_filter = 2
-columns = 2
 
-[node name="FontAwesome2" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
-auto_translate_mode = 2
+[node name="PersonalBestLabel" type="RichTextLabel" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+auto_translate_mode = 1
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-localize_numeral_system = false
-theme_override_fonts/font = ExtResource("1_q8b28")
-theme_override_font_sizes/font_size = 16
-text = ""
-label_settings = SubResource("LabelSettings_vq1ke")
-horizontal_alignment = 1
-vertical_alignment = 1
-script = ExtResource("2_d8ops")
-icon_name = "circle"
+bbcode_enabled = true
+text = "[i]Personal Best:[/i]"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
 
-[node name="GoldTime" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+[node name="PBTime" type="RichTextLabel" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
 unique_name_in_owner = true
+auto_translate_mode = 1
 layout_mode = 2
 text = "00:00.000"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
 
-[node name="FontAwesome3" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
-auto_translate_mode = 2
-layout_mode = 2
-localize_numeral_system = false
-theme_override_fonts/font = ExtResource("1_q8b28")
-theme_override_font_sizes/font_size = 16
-text = ""
-label_settings = SubResource("LabelSettings_bikmh")
-horizontal_alignment = 1
-vertical_alignment = 1
-script = ExtResource("2_d8ops")
-icon_name = "circle"
-
-[node name="SilverTime" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+[node name="PersonalBestContainer2" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "00:00.000"
+size_flags_horizontal = 0
+size_flags_vertical = 10
+mouse_filter = 2
 
-[node name="FontAwesome4" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+[node name="PBIconBronze" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer2"]
+unique_name_in_owner = true
 auto_translate_mode = 2
 layout_mode = 2
 localize_numeral_system = false
@@ -271,7 +270,44 @@ vertical_alignment = 1
 script = ExtResource("2_d8ops")
 icon_name = "circle"
 
-[node name="BronzeTime" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+[node name="PBIconSilver" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer2"]
 unique_name_in_owner = true
+auto_translate_mode = 2
 layout_mode = 2
-text = "00:00.000"
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_bikmh")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
+
+[node name="PBIconGold" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer2"]
+unique_name_in_owner = true
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_vq1ke")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
+
+[node name="PBIconAuthor" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer2"]
+unique_name_in_owner = true
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_efkrb")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
