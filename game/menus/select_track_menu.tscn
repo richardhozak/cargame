@@ -9,6 +9,8 @@ signal selected(track_uri: String)
 var track_group := ButtonGroup.new()
 var selected_track := \"\"
 
+const MenuItem := preload(\"res://track_menu_item.tscn\")
+
 func _init() -> void:
 	track_group.allow_unpress = false
 	track_group.pressed.connect(_on_track_button_pressed)
@@ -23,17 +25,23 @@ func _ready() -> void:
 			printerr(\"Failed to load track %s\" % track_file)
 			continue
 
-		var button := CheckBox.new()
-		button.text = track.track_name
-		button.toggle_mode = true
-		button.set_meta(\"track_uri\", track_uri)
+		var personal_best := Replays.get_personal_best(track.track_id)
+
+		var button := MenuItem.instantiate()
+		button.track_uri = track_uri
+		button.track_name = track.track_name
+		button.author_time = track.author_time
+		button.gold_time = track.gold_time
+		button.silver_time = track.silver_time
+		button.bronze_time = track.bronze_time
+		button.personal_best = personal_best.get_count() - 180 if personal_best else -1
 		%Buttons.add_child(button)
 
 
 func _on_track_button_pressed(button: BaseButton) -> void:
-	if button is CheckBox:
-		selected_track = button.get_meta(\"track_uri\")
-		%SelectedLabel.text = \"Selected: \" + button.text
+	var parent = button.get_parent()
+	selected_track = parent.track_uri
+	%SelectedLabel.text = \"Selected: \" + parent.track_name
 
 
 func _on_button_pressed() -> void:
@@ -42,8 +50,7 @@ func _on_button_pressed() -> void:
 
 
 func _on_v_box_container_child_entered_tree(node: Node) -> void:
-	if node is CheckBox:
-		node.button_group = track_group
+	node.button_group = track_group
 "
 
 [node name="CanvasLayer" type="CanvasLayer"]

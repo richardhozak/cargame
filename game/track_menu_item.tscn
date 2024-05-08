@@ -1,0 +1,277 @@
+[gd_scene load_steps=9 format=3 uid="uid://bw2761bolu5af"]
+
+[ext_resource type="FontFile" uid="uid://dkhvrkwgnwvvw" path="res://addons/fontawesome/fonts/fa-solid-900.woff2" id="1_q8b28"]
+[ext_resource type="Script" path="res://addons/fontawesome/FontAwesome.gd" id="2_d8ops"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hiprr"]
+
+[sub_resource type="GDScript" id="GDScript_767ll"]
+script/source = "@tool
+extends PanelContainer
+
+@export var track_uri: String
+
+@export var button_group: ButtonGroup:
+	get:
+		return %Button.button_group
+	set(value):
+		if not is_inside_tree():
+			await ready
+		%Button.button_group = value
+
+@export var personal_best: int = -1:
+	set(value):
+		if not is_inside_tree():
+			await ready
+		personal_best = value
+		_update_personal_best()
+
+@export var author_time: int = 0:
+	set(value):
+		if not is_inside_tree():
+			await ready
+		author_time = value
+		_update_personal_best()
+
+@export var gold_time: int = 0:
+	set(value):
+		if not is_inside_tree():
+			await ready
+		gold_time = value
+		%GoldTime.text = Replays.human_time(gold_time, true, false)
+		_update_personal_best()
+
+@export var silver_time: int = 0:
+	set(value):
+		if not is_inside_tree():
+			await ready
+		silver_time = value
+		%SilverTime.text = Replays.human_time(silver_time, true, false)
+		_update_personal_best()
+
+@export var bronze_time: int = 0:
+	set(value):
+		if not is_inside_tree():
+			await ready
+		bronze_time = value
+		%BronzeTime.text = Replays.human_time(bronze_time, true, false)
+		_update_personal_best()
+
+@export var track_name: String:
+	get:
+		return %TrackName.text
+	set(value):
+		if not is_inside_tree():
+			await ready
+		%TrackName.text = value
+
+func _update_personal_best():
+	if personal_best == -1:
+		%PBTime.text = \"None\"
+		%PBIconBronze.visible = false
+		%PBIconSilver.visible = false
+		%PBIconGold.visible = false
+		%PBIconAuthor.visible = false
+	else:
+		%PBTime.text = Replays.human_time(personal_best, true, false)
+		%PBIconBronze.visible = personal_best <= bronze_time
+		%PBIconSilver.visible = personal_best <= silver_time
+		%PBIconGold.visible = personal_best <= gold_time
+		%PBIconAuthor.visible = personal_best <= author_time
+
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_36sfu"]
+font_color = Color(0.803922, 0.498039, 0.196078, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_bikmh"]
+font_color = Color(0.752941, 0.752941, 0.752941, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_vq1ke"]
+font_color = Color(1, 0.843137, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_efkrb"]
+font_color = Color(0, 0.501961, 0, 1)
+
+[node name="PanelContainer" type="PanelContainer"]
+auto_translate_mode = 1
+offset_right = 432.0
+offset_bottom = 97.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_hiprr")
+script = SubResource("GDScript_767ll")
+personal_best = 20
+author_time = null
+gold_time = null
+silver_time = null
+bronze_time = null
+track_name = "Track Name"
+
+[node name="Button" type="Button" parent="."]
+unique_name_in_owner = true
+auto_translate_mode = 1
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+auto_translate_mode = 1
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="TrackName" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Track Name"
+text_overrun_behavior = 3
+
+[node name="PersonalBestContainer" type="HBoxContainer" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 10
+mouse_filter = 2
+
+[node name="PersonalBestLabel" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+auto_translate_mode = 1
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Personal Best:
+"
+
+[node name="PBTime" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+layout_mode = 2
+text = "00:00.000"
+
+[node name="PBIconBronze" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_36sfu")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
+
+[node name="PBIconSilver" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_bikmh")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
+
+[node name="PBIconGold" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_vq1ke")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
+
+[node name="PBIconAuthor" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_efkrb")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+columns = 2
+
+[node name="FontAwesome2" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_vq1ke")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
+
+[node name="GoldTime" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "00:00.000"
+
+[node name="FontAwesome3" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_bikmh")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
+
+[node name="SilverTime" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "00:00.000"
+
+[node name="FontAwesome4" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+auto_translate_mode = 2
+layout_mode = 2
+localize_numeral_system = false
+theme_override_fonts/font = ExtResource("1_q8b28")
+theme_override_font_sizes/font_size = 16
+text = ""
+label_settings = SubResource("LabelSettings_36sfu")
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("2_d8ops")
+icon_name = "circle"
+
+[node name="BronzeTime" type="Label" parent="MarginContainer/HBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "00:00.000"
