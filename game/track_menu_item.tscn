@@ -104,10 +104,6 @@ offset_bottom = 117.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_hiprr")
 script = SubResource("GDScript_767ll")
 personal_best = 20
-author_time = null
-gold_time = null
-silver_time = null
-bronze_time = null
 track_name = "Track Name"
 
 [node name="Button" type="Button" parent="."]
@@ -207,6 +203,7 @@ text = "00:00.000"
 [node name="AuthorIcon" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 auto_translate_mode = 2
+visible = false
 layout_mode = 2
 localize_numeral_system = false
 theme_override_fonts/font = ExtResource("1_q8b28")
@@ -220,6 +217,7 @@ icon_name = "circle"
 
 [node name="AuthorTime" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 text = "00:00.000"
 
@@ -234,6 +232,7 @@ mouse_filter = 2
 auto_translate_mode = 1
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+mouse_filter = 2
 bbcode_enabled = true
 text = "[i]Personal Best:[/i]"
 fit_content = true
@@ -244,7 +243,8 @@ autowrap_mode = 0
 unique_name_in_owner = true
 auto_translate_mode = 1
 layout_mode = 2
-text = "00:00.000"
+mouse_filter = 2
+text = "None"
 fit_content = true
 scroll_active = false
 autowrap_mode = 0
@@ -259,6 +259,7 @@ mouse_filter = 2
 [node name="PBIconBronze" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer2"]
 unique_name_in_owner = true
 auto_translate_mode = 2
+visible = false
 layout_mode = 2
 localize_numeral_system = false
 theme_override_fonts/font = ExtResource("1_q8b28")
@@ -273,6 +274,7 @@ icon_name = "circle"
 [node name="PBIconSilver" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer2"]
 unique_name_in_owner = true
 auto_translate_mode = 2
+visible = false
 layout_mode = 2
 localize_numeral_system = false
 theme_override_fonts/font = ExtResource("1_q8b28")
@@ -287,6 +289,7 @@ icon_name = "circle"
 [node name="PBIconGold" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer2"]
 unique_name_in_owner = true
 auto_translate_mode = 2
+visible = false
 layout_mode = 2
 localize_numeral_system = false
 theme_override_fonts/font = ExtResource("1_q8b28")
@@ -301,6 +304,7 @@ icon_name = "circle"
 [node name="PBIconAuthor" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer/PersonalBestContainer2"]
 unique_name_in_owner = true
 auto_translate_mode = 2
+visible = false
 layout_mode = 2
 localize_numeral_system = false
 theme_override_fonts/font = ExtResource("1_q8b28")
