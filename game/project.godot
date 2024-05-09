@@ -81,6 +81,11 @@ menu={
 ]
 }
 
+[phantom_camera]
+
+updater/enable_updater=false
+updater/show_new_release_info_on_editor_launch_in_output=false
+
 [rendering]
 
 anti_aliasing/quality/msaa_3d=2
