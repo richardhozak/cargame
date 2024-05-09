@@ -8,7 +8,6 @@
 
 #include "Jolt/Math/MathTypes.h"
 #include "Jolt/Physics/StateRecorderImpl.h"
-#include "physics.h"
 #include <Tests/Vehicle/VehicleTest.h>
 #include <Jolt/Physics/Vehicle/VehicleConstraint.h>
 #include <Jolt/Math/Quat.h>

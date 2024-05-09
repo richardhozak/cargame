@@ -1,6 +1,3 @@
-#include <atomic>
-#include <cstdint>
-#include <iostream>
 
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
@@ -43,12 +40,14 @@
 // STL includes
 #include <iostream>
 #include <cstdarg>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <mutex>
 #include <optional>
-#include <thread>
 #include <array>
+#include <set>
+#include <string>
 
 #include "physics.h"
 
@@ -120,12 +119,6 @@ struct Initialization
         Factory::sInstance = nullptr;
     }
 };
-
-#include <algorithm>
-#include <functional>
-#include <set>
-#include <string>
-#include <unordered_map>
 
 Vec3 physics_vec3(const physics::Vector3& vec)
 {
