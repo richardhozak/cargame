@@ -161,7 +161,7 @@ func change_menu(menu_state: MenuState) -> void:
 			var menu := preload("res://menus/create_track_menu.tscn").instantiate()
 			menu.name = "menu"
 			menu.track_bytes = loaded_track_bytes
-			menu.author_time = fastest_validation_replay.get_count() - 180
+			menu.author_time = fastest_validation_replay.get_count() - 300
 			menu.author_name = player_name
 			add_child(menu)
 
@@ -362,7 +362,7 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 				fastest_validation_replay = current_replay
 
 			var fastest_time := Replays.human_time(
-				fastest_validation_replay.get_count() - 180, true
+				fastest_validation_replay.get_count() - 300, true
 			)
 			$HUD/ValidatingLabel.text = "Validated with" + fastest_time
 			change_menu(MenuState.FINISHED_WITH_VALIDATION)
@@ -379,9 +379,9 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 
 				var old_medal := ""
 				if personal_best:
-					old_medal = get_time_medal(personal_best.get_count() - 180)
+					old_medal = get_time_medal(personal_best.get_count() - 300)
 
-				var new_medal := get_time_medal(current_replay.get_count() - 180)
+				var new_medal := get_time_medal(current_replay.get_count() - 300)
 
 				if old_medal != new_medal:
 					achievement = "You've earned new medal: %s!" % new_medal
@@ -404,7 +404,7 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 
 			change_menu(MenuState.FINISHED)
 			$menu.set_time(Replays.human_time(step.step, step.just_finished))
-			$menu.set_personal_best(Replays.human_time(personal_best.get_count() - 180, true))
+			$menu.set_personal_best(Replays.human_time(personal_best.get_count() - 300, true))
 			$menu.set_achievement(achievement)
 
 	if step.input.restart:
@@ -650,7 +650,7 @@ func display_car_stats(speed: float, rpm: float, gear: int) -> void:
 
 func display_countdown(step: int) -> void:
 	if step < 0:
-		var seconds := step / 60.0
+		var seconds := step / 100.0
 		seconds = absf(floorf(seconds))
 		$HUD/Countdown.visible = true
 		$HUD/Countdown.text = String.num(seconds)

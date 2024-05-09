@@ -264,7 +264,7 @@ class Physics::impl : public ContactListener
         load_track(track);
 
         // start with a countdown
-        step = -3 * 60;
+        step = -3 * 100;
 
         vehicle_test = setup_vehicle();
 
@@ -560,8 +560,8 @@ void Physics::load_state(const std::string& bytes)
 
 State Physics::simulate(const Input& input)
 {
-    // We simulate the physics world in discrete time steps. 60 Hz is a good rate to update the physics system.
-    const float cDeltaTime = 1.0f / 60.0f;
+    // We simulate the physics world in discrete time steps. 100 Hz is a good rate to update the physics system.
+    const float cDeltaTime = 1.0f / 100.0f;
 
     impl->last_finished = impl->finished;
 
@@ -615,7 +615,7 @@ State Physics::simulate(const Input& input)
         params.mKeyboard = &kbd;
         impl->vehicle_test->PrePhysicsUpdate(params);
 
-        // If you take larger steps than 1 / 60th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 60th of a second (round up).
+        // If you take larger steps than 1 / 100th of a second you need to do multiple collision steps in order to keep the simulation stable. Do 1 collision step per 1 / 100th of a second (round up).
         const int cCollisionSteps = 1;
 
         if (!impl->finished)

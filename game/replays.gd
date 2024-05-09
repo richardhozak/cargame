@@ -83,7 +83,7 @@ func _save_replay(
 static func human_time(step: int, full: bool = false, pad: bool = true) -> String:
 	var is_negative := step < 0
 	step = absi(step)
-	var seconds := step as float / 60.0
+	var seconds := step as float / 100.0
 	var minutes := (seconds / 60.0) as int
 	var remaining_seconds := fmod(seconds, 60.0)
 	var prefix := "-" if is_negative else " "

@@ -34,7 +34,7 @@ func _ready() -> void:
 		button.gold_time = track.gold_time
 		button.silver_time = track.silver_time
 		button.bronze_time = track.bronze_time
-		button.personal_best = personal_best.get_count() - 180 if personal_best else -1
+		button.personal_best = personal_best.get_count() - 300 if personal_best else -1
 		%Buttons.add_child(button)
 
 
