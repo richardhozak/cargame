@@ -6,6 +6,8 @@
 [sub_resource type="GDScript" id="GDScript_cp7gj"]
 script/source = "extends CanvasLayer
 
+signal done
+
 var author_name: String
 var track_bytes: PackedByteArray
 
@@ -91,6 +93,8 @@ func _on_save_track_menu_file_selected(path: String) -> void:
 	var error := ResourceSaver.save(track, path, ResourceSaver.FLAG_COMPRESS)
 	if error != OK:
 		printerr(\"Error while saving track %s\" % error_string(error))
+	else:
+		done.emit()
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_ysiy5"]

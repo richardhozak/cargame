@@ -163,6 +163,7 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.track_bytes = loaded_track_bytes
 			menu.author_time = fastest_validation_replay.get_count() - 300
 			menu.author_name = player_name
+			menu.done.connect(_on_create_track_menu_done)
 			add_child(menu)
 
 	current_menu_state = menu_state
@@ -746,6 +747,10 @@ func _on_load_track_model_menu_canceled():
 
 func _on_pause_menu_load_replay() -> void:
 	change_menu(MenuState.LOAD_REPLAY)
+
+
+func _on_create_track_menu_done() -> void:
+	change_menu(MenuState.MAIN_MENU)
 
 
 func get_time_medal(step: int) -> String:
