@@ -20,7 +20,6 @@ public:
     JPH_DECLARE_RTTI_VIRTUAL(JPH_NO_EXPORT, VehicleConstraintTest)
 
     void InitStartingTransform(Mat44Arg transform);
-    void InitConfiguration(const physics::Configuration& configuration);
 
     // Destructor
     virtual ~VehicleConstraintTest() override;

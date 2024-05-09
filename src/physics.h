@@ -85,7 +85,7 @@ struct Input;
 class Physics
 {
 public:
-    Physics(const Track& track, const Configuration& configuration);
+    Physics(const Track& track);
     State simulate(const Input& input);
     std::string save_state() const;
     void load_state(const std::string& bytes);
@@ -97,6 +97,6 @@ private:
     std::shared_ptr<impl> impl;
 };
 
-std::unique_ptr<Physics> new_physics(const Track& track, const Configuration& configuration);
+std::unique_ptr<Physics> new_physics(const Track& track);
 
 }  // namespace physics

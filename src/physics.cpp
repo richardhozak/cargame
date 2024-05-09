@@ -51,7 +51,6 @@
 #include <array>
 
 #include "physics.h"
-#include "configuration.h"
 
 // Disable common warnings triggered by Jolt, you can use JPH_SUPPRESS_WARNING_PUSH / JPH_SUPPRESS_WARNING_POP to store and restore the warning state
 JPH_SUPPRESS_WARNINGS
@@ -251,7 +250,6 @@ class Physics::impl : public ContactListener
 
     std::unique_ptr<VehicleConstraintTest> vehicle_test;
     // std::unique_ptr<VehicleSixDOFTest> vehicle_test;
-    const Configuration configuration;
     std::string start_state;
 
     Mat44 starting_transform = Mat44::sIdentity();
@@ -263,17 +261,17 @@ class Physics::impl : public ContactListener
     Mutex checkpoint_mutex;
     std::optional<BodyID> last_collected_checkpoint;
 
-    impl(const Track& track, const Configuration& configuration)
+    impl(const Track& track)
       : temp_allocator(10 * 1024 * 1024)
       , job_system(cMaxPhysicsJobs, cMaxPhysicsBarriers, thread::hardware_concurrency() - 1)
-      , configuration(configuration)
     {
         physics_system.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
         physics_system.SetContactListener(this);
 
         load_track(track);
 
-        step = static_cast<int64_t>(configuration.start_countdown_seconds) * 60 * -1;
+        // start with a countdown
+        step = -3 * 60;
 
         vehicle_test = setup_vehicle();
 
@@ -423,7 +421,6 @@ class Physics::impl : public ContactListener
         test->SetPhysicsSystem(&physics_system);
         test->SetJobSystem(&job_system);
         test->SetTempAllocator(&temp_allocator);
-        test->InitConfiguration(configuration);
 
         // move the position a bit up so car does not start inside a track
         test->InitStartingTransform(starting_transform.PostTranslated(Vec3(0.0, 1.0, 0.0)));
@@ -492,8 +489,8 @@ class Physics::impl : public ContactListener
     }
 };
 
-Physics::Physics(const Track& track, const Configuration& configuration)
-  : impl(new class Physics::impl(track, configuration))
+Physics::Physics(const Track& track)
+  : impl(new class Physics::impl(track))
 {
     impl->start_state = save_state();
 }
@@ -650,11 +647,11 @@ size_t Physics::collected_checkpoint_count() const
     return impl->collected_checkpoints.size();
 }
 
-std::unique_ptr<Physics> new_physics(const Track& track, const Configuration& configuration)
+std::unique_ptr<Physics> new_physics(const Track& track)
 {
     cerr << "Creating physics with " << track.meshes.size() << " meshes\n";
     static Initialization initialization;
-    return std::make_unique<Physics>(track, configuration);
+    return std::make_unique<Physics>(track);
 }
 
 }  // namespace physics

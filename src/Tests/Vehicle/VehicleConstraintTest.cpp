@@ -2,8 +2,6 @@
 // SPDX-FileCopyrightText: 2021 Jorrit Rouwe
 // SPDX-License-Identifier: MIT
 
-#include "configuration.h"
-
 #include <Tests/Vehicle/VehicleConstraintTest.h>
 #include <Jolt/Physics/Collision/Shape/BoxShape.h>
 #include <Jolt/Physics/Collision/Shape/OffsetCenterOfMassShape.h>
@@ -19,35 +17,6 @@ JPH_IMPLEMENT_RTTI_VIRTUAL(VehicleConstraintTest)
 void VehicleConstraintTest::InitStartingTransform(Mat44Arg transform)
 {
     starting_transform = transform;
-}
-
-void VehicleConstraintTest::InitConfiguration(const physics::Configuration& configuration)
-{
-    sMaxRollAngle = DegreesToRadians(configuration.max_roll_angle);
-    sMaxSteeringAngle = DegreesToRadians(configuration.max_steering_angle);
-    sCollisionMode = int(configuration.collision_mode);
-    sFourWheelDrive = configuration.four_wheel_drive;
-    sAntiRollbar = configuration.anti_rollbar;
-    sLimitedSlipDifferentials = configuration.limited_slip_differentials;
-    sMaxEngineTorque = configuration.max_engine_torque;
-    sClutchStrength = configuration.clutch_strength;
-    sFrontSuspensionMinLength = configuration.front_suspension_min_length;
-    sFrontSuspensionMaxLength = configuration.front_suspension_max_length;
-    sFrontSuspensionFrequency = configuration.front_suspension_frequency;
-    sFrontSuspensionDamping = configuration.front_suspension_damping;
-    sRearSuspensionMinLength = configuration.rear_suspension_min_length;
-    sRearSuspensionMaxLength = configuration.rear_suspension_max_length;
-    sRearSuspensionFrequency = configuration.rear_suspension_frequency;
-    sRearSuspensionDamping = configuration.rear_suspension_damping;
-    sMaxHandBrakeTorque = configuration.max_handbrake_torque;
-    sMaxBrakeTorque = configuration.max_brake_torque;
-    sBodyMass = configuration.body_mass;
-    sWheelRadius = configuration.wheel_radius;
-    sWheelWidth = configuration.wheel_width;
-    sWheelMass = configuration.wheel_mass;
-    sVehicleLength = configuration.vehicle_length;
-    sVehicleWidth = configuration.vehicle_width;
-    sVehicleHeight = configuration.vehicle_height;
 }
 
 VehicleConstraintTest::~VehicleConstraintTest()

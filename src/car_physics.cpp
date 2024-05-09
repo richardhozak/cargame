@@ -10,7 +10,6 @@
 #include "car_physics_step.hpp"
 #include "car_physics_step.hpp"
 #include "car_physics_track_mesh.hpp"
-#include "configuration.h"
 #include "physics.h"
 
 using namespace godot;
@@ -58,11 +57,10 @@ void CarPhysics::_ready()
     CarPhysicsTrackMesh* mesh = Object::cast_to<CarPhysicsTrackMesh>(static_cast<Object*>(get_parent()->get_meta("mesh")));
     UtilityFunctions::print("mesh size", mesh->meshes.size());
 
-    physics::Configuration cfg;
     physics::Track track;
     track.scale = physics::Vector3{10.0, 10.0, 10.0};
     track.meshes = mesh->meshes;
-    physics = physics::new_physics(track, cfg);
+    physics = physics::new_physics(track);
 }
 
 Transform3D physics_matrix_to_transform(const physics::Matrix4& mat)
