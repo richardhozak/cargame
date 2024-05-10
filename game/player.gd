@@ -78,6 +78,7 @@ func set_spectate_camera(camera: PhantomCamera3D) -> void:
 	if spectate_camera:
 		spectate_camera.set_follow_target(%Eye)
 		spectate_camera.set_look_at_target(%LookAt)
+		%AudioListener.make_current()
 
 
 func restart() -> void:

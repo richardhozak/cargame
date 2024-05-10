@@ -359,6 +359,10 @@ stream = ExtResource("4_f5p6p")
 volume_db = -1.0
 autoplay = true
 
+[node name="AudioListener" type="AudioListener3D" parent="Node3D/Body"]
+unique_name_in_owner = true
+transform = Transform3D(-1, 1.26517e-12, -8.74228e-08, -1.28689e-13, 1, 0, 8.74228e-08, 0, -1, 0, 0.3, 0)
+
 [node name="Eye" type="Node3D" parent="Node3D"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.000117642, 4.84773, 6.99996)
