@@ -28,6 +28,10 @@ func set_color(color: Color) -> void:
 	material.albedo_color = color
 	$Node3D/Body/CSGBox3D.material = material
 
+	var body := $Node3D/Body/body as MeshInstance3D
+	var shader_material := body.get_active_material(0) as ShaderMaterial
+	shader_material.set_shader_parameter("car_color", color)
+
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(str(name).to_int())
