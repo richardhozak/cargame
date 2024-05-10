@@ -360,6 +360,7 @@ volume_db = -1.0
 unit_size = 20.0
 max_db = 0.5
 autoplay = true
+doppler_tracking = 2
 
 [node name="AudioListener" type="AudioListener3D" parent="Node3D/Body"]
 unique_name_in_owner = true
