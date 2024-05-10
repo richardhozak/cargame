@@ -49,7 +49,7 @@ private:
     static inline bool sFourWheelDrive = false;
     static inline bool sAntiRollbar = true;
     static inline bool sLimitedSlipDifferentials = true;
-    static inline float sMaxEngineTorque = 500.0f;
+    static inline float sMaxEngineTorque = 600.0f;
     static inline float sClutchStrength = 10.0f;
     static inline float sFrontCasterAngle = 0.0f;
     static inline float sFrontKingPinAngle = 0.0f;
@@ -75,7 +75,7 @@ private:
     static inline float sMaxBrakeTorque = 1500.0f;
     static inline float sBodyMass = 1500.0f;
     static inline float sWheelRadius = 0.3f;
-    static inline float sWheelWidth = 0.25f;
+    static inline float sWheelWidth = 0.3f;
     static inline float sWheelMass = 20.0f;
     static inline float sVehicleLength = 4.0f;
     static inline float sVehicleWidth = 1.8f;
