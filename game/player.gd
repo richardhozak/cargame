@@ -55,16 +55,19 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 	%CarSpeedLabel.text = "%.f" % absf(step.speed * 3.6)
 
 	if step.just_finished:
+		%FinishAudioListener.global_transform = %AudioListener.global_transform
 		%FinishEye.global_transform = %Eye.global_transform
 		%FinishLookAt.global_transform = %LookAt.global_transform
 		if spectate_camera:
 			spectate_camera.set_follow_target(%FinishEye)
 			spectate_camera.set_look_at_target(%FinishLookAt)
+			%FinishAudioListener.make_current()
 
 	if step.input.restart:
 		if spectate_camera:
 			spectate_camera.set_follow_target(%Eye)
 			spectate_camera.set_look_at_target(%LookAt)
+			%AudioListener.make_current()
 
 	if step.simulated && replay_input == -1:
 		if step.input.restart:

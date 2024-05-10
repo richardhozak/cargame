@@ -373,4 +373,7 @@ unique_name_in_owner = true
 [node name="FinishEye" type="Node3D" parent="."]
 unique_name_in_owner = true
 
+[node name="FinishAudioListener" type="AudioListener3D" parent="."]
+unique_name_in_owner = true
+
 [editable path="Node3D/Body/hatchback-sports"]
