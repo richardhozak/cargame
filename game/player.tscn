@@ -1,8 +1,9 @@
-[gd_scene load_steps=17 format=4 uid="uid://8w67xbxm66t5"]
+[gd_scene load_steps=18 format=4 uid="uid://8w67xbxm66t5"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_5y57b"]
 [ext_resource type="Texture2D" uid="uid://cfwvcjlmco4gr" path="res://Textures/colormap.png" id="2_22mjb"]
 [ext_resource type="PackedScene" uid="uid://dqbx5ud80auo1" path="res://car.tscn" id="2_ky3rw"]
+[ext_resource type="AudioStream" uid="uid://btjjtcnlj8t76" path="res://car_engine_sound.wav" id="4_f5p6p"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d0yxd"]
 resource_name = "colormap"
@@ -350,6 +351,13 @@ update_rotation = false
 transform = Transform3D(-1, -4.64716e-05, -9.73221e-08, -4.64716e-05, 1, -1.29998e-05, 9.79262e-08, -1.29998e-05, -1, 0, 1.3, 0)
 billboard = 1
 text = "Player Name"
+
+[node name="EngineSound" type="AudioStreamPlayer3D" parent="Node3D/Body"]
+unique_name_in_owner = true
+transform = Transform3D(-1, -4.64716e-05, -9.73221e-08, -4.64716e-05, 1, -1.29998e-05, 9.79262e-08, -1.29998e-05, -1, 0.000108321, -1.84764, 1.84742e-05)
+stream = ExtResource("4_f5p6p")
+volume_db = -1.0
+autoplay = true
 
 [node name="Eye" type="Node3D" parent="Node3D"]
 unique_name_in_owner = true

@@ -44,6 +44,14 @@ func _enter_tree() -> void:
 
 
 func _on_step_simulated(step: CarPhysicsStep) -> void:
+	const min_pitch := 1.0
+	const max_pitch := 2.0
+	const min_rpm := 1000
+	const max_rpm := 6000
+
+	var pitch := remap(step.rpm, min_rpm, max_rpm, min_pitch, max_pitch)
+	%EngineSound.pitch_scale = pitch
+
 	%CarSpeedLabel.text = "%.f" % absf(step.speed * 3.6)
 
 	if step.just_finished:
