@@ -357,6 +357,8 @@ unique_name_in_owner = true
 transform = Transform3D(-1, -4.64716e-05, -9.73221e-08, -4.64716e-05, 1, -1.29998e-05, 9.79262e-08, -1.29998e-05, -1, 0.000108321, -1.84764, 1.84742e-05)
 stream = ExtResource("4_f5p6p")
 volume_db = -1.0
+unit_size = 20.0
+max_db = 0.5
 autoplay = true
 
 [node name="AudioListener" type="AudioListener3D" parent="Node3D/Body"]
