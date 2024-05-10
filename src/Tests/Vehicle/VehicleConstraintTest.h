@@ -75,7 +75,7 @@ private:
     static inline float sMaxBrakeTorque = 1500.0f;
     static inline float sBodyMass = 1500.0f;
     static inline float sWheelRadius = 0.3f;
-    static inline float sWheelWidth = 0.1f;
+    static inline float sWheelWidth = 0.25f;
     static inline float sWheelMass = 20.0f;
     static inline float sVehicleLength = 4.0f;
     static inline float sVehicleWidth = 1.8f;
