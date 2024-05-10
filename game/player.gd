@@ -45,7 +45,7 @@ func _enter_tree() -> void:
 
 func _on_step_simulated(step: CarPhysicsStep) -> void:
 	const min_pitch := 1.0
-	const max_pitch := 2.0
+	const max_pitch := 2.5
 	const min_rpm := 1000
 	const max_rpm := 6000
 
