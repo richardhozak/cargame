@@ -85,6 +85,7 @@ func change_menu(menu_state: MenuState) -> void:
 					prints("Disconnect from game")
 					disconnect_from_game()
 			create_server = false
+			fastest_validation_replay = Replay.new()
 
 			var menu := preload("res://menus/main_menu.tscn").instantiate()
 			menu.name = "menu"
