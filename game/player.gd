@@ -44,6 +44,8 @@ func _enter_tree() -> void:
 
 
 func _on_step_simulated(step: CarPhysicsStep) -> void:
+	%CarSpeedLabel.text = "%.f" % absf(step.speed * 3.6)
+
 	if step.just_finished:
 		%FinishEye.global_transform = %Eye.global_transform
 		%FinishLookAt.global_transform = %LookAt.global_transform
