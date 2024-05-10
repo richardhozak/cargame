@@ -72,7 +72,7 @@ void VehicleConstraintTest::Initialize()
 
     // Wheels, left front
     WheelSettingsWV* w1 = new WheelSettingsWV;
-    w1->mPosition = Vec3(half_vehicle_width, -0.9f * half_vehicle_height, half_vehicle_length - 2.0f * wheel_radius);
+    w1->mPosition = Vec3(half_vehicle_width, half_vehicle_height / 2.0f, half_vehicle_length - 2.0f * wheel_radius);
     w1->mSuspensionDirection = front_suspension_dir;
     w1->mSteeringAxis = front_steering_axis;
     w1->mWheelUp = front_wheel_up;
@@ -88,7 +88,7 @@ void VehicleConstraintTest::Initialize()
 
     // Right front
     WheelSettingsWV* w2 = new WheelSettingsWV;
-    w2->mPosition = Vec3(-half_vehicle_width, -0.9f * half_vehicle_height, half_vehicle_length - 2.0f * wheel_radius);
+    w2->mPosition = Vec3(-half_vehicle_width, half_vehicle_height / 2.0f, half_vehicle_length - 2.0f * wheel_radius);
     w2->mSuspensionDirection = flip_x * front_suspension_dir;
     w2->mSteeringAxis = flip_x * front_steering_axis;
     w2->mWheelUp = flip_x * front_wheel_up;
@@ -104,7 +104,7 @@ void VehicleConstraintTest::Initialize()
 
     // Left rear
     WheelSettingsWV* w3 = new WheelSettingsWV;
-    w3->mPosition = Vec3(half_vehicle_width, -0.9f * half_vehicle_height, -half_vehicle_length + 2.0f * wheel_radius);
+    w3->mPosition = Vec3(half_vehicle_width, half_vehicle_height / 2.0f, -half_vehicle_length + 2.0f * wheel_radius);
     w3->mSuspensionDirection = rear_suspension_dir;
     w3->mSteeringAxis = rear_steering_axis;
     w3->mWheelUp = rear_wheel_up;
@@ -120,7 +120,7 @@ void VehicleConstraintTest::Initialize()
 
     // Right rear
     WheelSettingsWV* w4 = new WheelSettingsWV;
-    w4->mPosition = Vec3(-half_vehicle_width, -0.9f * half_vehicle_height, -half_vehicle_length + 2.0f * wheel_radius);
+    w4->mPosition = Vec3(-half_vehicle_width, half_vehicle_height / 2.0f, -half_vehicle_length + 2.0f * wheel_radius);
     w4->mSuspensionDirection = flip_x * rear_suspension_dir;
     w4->mSteeringAxis = flip_x * rear_steering_axis;
     w4->mWheelUp = flip_x * rear_wheel_up;
