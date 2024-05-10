@@ -803,7 +803,7 @@ func _apply_replay_colors():
 			var percent_fast := 100.0 - percent_slow
 			var ratio := percent_fast / 100.0
 			var lighter_amount := ratio * 0.6
-			player.set_color(Color.BLUE.lightened(lighter_amount))
+			player.color = Color.BLUE.lightened(lighter_amount)
 
 
 func sort_slower(a: Player, b: Player) -> bool:

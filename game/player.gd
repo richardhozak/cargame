@@ -14,6 +14,11 @@ class_name Player extends CarPhysics
 	set(value):
 		$Node3D/Body/Label3D.visible = value
 
+@export var color: Color:
+	set(value):
+		color = value
+		_update_color()
+
 var spectate_camera: PhantomCamera3D = null
 
 var replay := Replay.new()
@@ -23,7 +28,7 @@ var playing_replay: bool = false
 var initial_state := PackedByteArray()
 
 
-func set_color(color: Color) -> void:
+func _update_color() -> void:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
 	$Node3D/Body/CSGBox3D.material = material
