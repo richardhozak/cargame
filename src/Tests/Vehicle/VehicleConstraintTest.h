@@ -72,8 +72,8 @@ private:
     static inline float sRearSuspensionFrequency = 1.25f;
     static inline float sRearSuspensionDamping = 0.75f;
     static inline float sMaxHandBrakeTorque = 4000.0f;
-    static inline float sMaxBrakeTorque = 1500.0f;
-    static inline float sBodyMass = 1500.0f;
+    static inline float sMaxBrakeTorque = 3000.0f;
+    static inline float sBodyMass = 1000.0f;
     static inline float sWheelRadius = 0.45f;
     static inline float sWheelWidth = 0.45f;
     static inline float sWheelMass = 20.0f;
