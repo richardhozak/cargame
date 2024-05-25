@@ -49,7 +49,11 @@ private:
     static inline bool sFourWheelDrive = false;
     static inline bool sAntiRollbar = true;
     static inline bool sLimitedSlipDifferentials = true;
-    static inline float sMaxEngineTorque = 800.0f;
+    static inline float sMaxTorque = 800.0f;
+    static inline float sMinRPM = 1000.0f;
+    static inline float sMaxRPM = 6000.0f;
+    static inline float sInertia = 0.5f;
+    static inline float sAngularDamping = 0.2f;
     static inline float sSwitchTime = 0.5f;
     static inline float sClutchReleaseTime = 0.3f;
     static inline float sSwitchLatency = 0.5f;

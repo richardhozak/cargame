@@ -237,7 +237,13 @@ void VehicleConstraintTest::PrePhysicsUpdate(const PreUpdateParams& inParams)
     WheeledVehicleController* controller = static_cast<WheeledVehicleController*>(mVehicleConstraint->GetController());
 
     // Update vehicle statistics
-    controller->GetEngine().mMaxTorque = sMaxEngineTorque;
+    auto& engine = controller->GetEngine();
+    engine.mMaxTorque = sMaxTorque;
+    engine.mMinRPM = sMinRPM;
+    engine.mMaxRPM = sMaxRPM;
+    engine.mInertia = sInertia;
+    engine.mAngularDamping = sAngularDamping;
+
     auto& transmission = controller->GetTransmission();
     transmission.mSwitchTime = sSwitchTime;
     transmission.mClutchReleaseTime = sClutchReleaseTime;
