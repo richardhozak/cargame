@@ -49,7 +49,7 @@ private:
     static inline bool sFourWheelDrive = false;
     static inline bool sAntiRollbar = true;
     static inline bool sLimitedSlipDifferentials = true;
-    static inline float sMaxEngineTorque = 600.0f;
+    static inline float sMaxEngineTorque = 800.0f;
     static inline float sClutchStrength = 10.0f;
     static inline float sFrontCasterAngle = 0.0f;
     static inline float sFrontKingPinAngle = 0.0f;
@@ -57,9 +57,9 @@ private:
     static inline float sFrontToe = 0.0f;
     static inline float sFrontSuspensionForwardAngle = 0.0f;
     static inline float sFrontSuspensionSidewaysAngle = 0.0f;
-    static inline float sFrontSuspensionMinLength = 0.3f;
-    static inline float sFrontSuspensionMaxLength = 0.5f;
-    static inline float sFrontSuspensionFrequency = 1.5f;
+    static inline float sFrontSuspensionMinLength = 0.0f;
+    static inline float sFrontSuspensionMaxLength = 0.3f;
+    static inline float sFrontSuspensionFrequency = 1.25f;
     static inline float sFrontSuspensionDamping = 0.5f;
     static inline float sRearSuspensionForwardAngle = 0.0f;
     static inline float sRearSuspensionSidewaysAngle = 0.0f;
@@ -67,10 +67,10 @@ private:
     static inline float sRearKingPinAngle = 0.0f;
     static inline float sRearCamber = 0.0f;
     static inline float sRearToe = 0.0f;
-    static inline float sRearSuspensionMinLength = 0.3f;
-    static inline float sRearSuspensionMaxLength = 0.5f;
-    static inline float sRearSuspensionFrequency = 1.5f;
-    static inline float sRearSuspensionDamping = 0.5f;
+    static inline float sRearSuspensionMinLength = 0.0f;
+    static inline float sRearSuspensionMaxLength = 0.3f;
+    static inline float sRearSuspensionFrequency = 1.25f;
+    static inline float sRearSuspensionDamping = 0.75f;
     static inline float sMaxHandBrakeTorque = 4000.0f;
     static inline float sMaxBrakeTorque = 1500.0f;
     static inline float sBodyMass = 1500.0f;
