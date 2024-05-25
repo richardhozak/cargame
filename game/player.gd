@@ -31,9 +31,9 @@ var initial_state := PackedByteArray()
 func _update_color() -> void:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
-	$Node3D/Body/CSGBox3D.material = material
+	$Body/CSGBox3D.material = material
 
-	var body := $Node3D/Body/body as MeshInstance3D
+	var body := $Body/body as MeshInstance3D
 	var shader_material := body.get_active_material(0) as ShaderMaterial
 	shader_material.set_shader_parameter("car_color", color)
 
