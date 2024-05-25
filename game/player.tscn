@@ -1,6 +1,7 @@
-[gd_scene load_steps=16 format=4 uid="uid://8w67xbxm66t5"]
+[gd_scene load_steps=17 format=4 uid="uid://8w67xbxm66t5"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_5y57b"]
+[ext_resource type="FontFile" uid="uid://dj8wkuvqbimdd" path="res://fonts/FiraMono-Medium.ttf" id="2_8o6ah"]
 [ext_resource type="Texture2D" uid="uid://cfwvcjlmco4gr" path="res://Textures/colormap.png" id="2_22mjb"]
 [ext_resource type="AudioStream" uid="uid://btjjtcnlj8t76" path="res://car_engine_sound.wav" id="4_f5p6p"]
 [ext_resource type="PackedScene" uid="uid://dsdtl3mpkh6nl" path="res://race.glb" id="4_m3mf6"]
@@ -191,6 +192,12 @@ script = ExtResource("1_5y57b")
 
 [node name="Body" type="Node3D" parent="."]
 transform = Transform3D(-1, -4.64716e-05, 9.79262e-08, -4.64716e-05, 1, -1.29998e-05, -9.73221e-08, -1.29998e-05, -1, 0, 0, 0)
+
+[node name="CarSpeedLabel" type="Label3D" parent="Body"]
+unique_name_in_owner = true
+transform = Transform3D(-1, 1.26517e-12, 8.74228e-08, -2.78675e-11, 1, 0, -8.74228e-08, 0, -1, 8.25541e-08, -0.0217764, -1.92)
+text = "123"
+font = ExtResource("2_8o6ah")
 
 [node name="body" type="MeshInstance3D" parent="Body"]
 transform = Transform3D(1.5, -6.97074e-05, 2.77117e-07, 6.97074e-05, 1.5, 1.94997e-05, -2.78023e-07, -1.94997e-05, 1.5, 0, -0.2, 0)

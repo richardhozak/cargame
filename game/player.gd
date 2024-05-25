@@ -52,7 +52,7 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 	var pitch := remap(step.rpm, min_rpm, max_rpm, min_pitch, max_pitch)
 	%EngineSound.pitch_scale = pitch
 
-	#%CarSpeedLabel.text = "%.f" % absf(step.speed * 3.6)
+	%CarSpeedLabel.text = "%.f" % absf(step.speed * 3.6)
 
 	if step.just_finished:
 		%FinishAudioListener.global_transform = %AudioListener.global_transform
