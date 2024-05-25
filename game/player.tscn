@@ -1,8 +1,8 @@
-[gd_scene load_steps=20 format=4 uid="uid://8w67xbxm66t5"]
+[gd_scene load_steps=19 format=4 uid="uid://8w67xbxm66t5"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_5y57b"]
 [ext_resource type="FontFile" uid="uid://dj8wkuvqbimdd" path="res://fonts/FiraMono-Medium.ttf" id="2_8o6ah"]
-[ext_resource type="Texture2D" uid="uid://cfwvcjlmco4gr" path="res://Textures/colormap.png" id="2_22mjb"]
+[ext_resource type="Texture2D" uid="uid://cfwvcjlmco4gr" path="res://textures/colormap.png" id="2_22mjb"]
 [ext_resource type="AudioStream" uid="uid://btjjtcnlj8t76" path="res://car_engine_sound.wav" id="4_f5p6p"]
 [ext_resource type="PackedScene" uid="uid://dsdtl3mpkh6nl" path="res://race.glb" id="4_m3mf6"]
 
@@ -58,9 +58,6 @@ void fragment() {
 }
 "
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_k3xxu"]
-load_path = "res://.godot/imported/colormap.png-4d3010a0b5f96e5a1a2a5a260bb10630.ctex"
-
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_184tg"]
 resource_local_to_scene = true
 resource_name = "colormap"
@@ -77,7 +74,7 @@ shader_parameter/uv1_offset = Vector3(0, 0, 0)
 shader_parameter/uv2_scale = Vector3(1, 1, 1)
 shader_parameter/uv2_offset = Vector3(0, 0, 0)
 shader_parameter/car_color = Color(1, 0, 0, 1)
-shader_parameter/texture_albedo = SubResource("CompressedTexture2D_k3xxu")
+shader_parameter/texture_albedo = ExtResource("2_22mjb")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_hsmpu"]
 _surfaces = [{
