@@ -238,7 +238,13 @@ void VehicleConstraintTest::PrePhysicsUpdate(const PreUpdateParams& inParams)
 
     // Update vehicle statistics
     controller->GetEngine().mMaxTorque = sMaxEngineTorque;
-    controller->GetTransmission().mClutchStrength = sClutchStrength;
+    auto& transmission = controller->GetTransmission();
+    transmission.mSwitchTime = sSwitchTime;
+    transmission.mClutchReleaseTime = sClutchReleaseTime;
+    transmission.mSwitchLatency = sSwitchLatency;
+    transmission.mShiftUpRPM = sShiftUpRPM;
+    transmission.mShiftDownRPM = sShiftDownRPM;
+    transmission.mClutchStrength = sClutchStrength;
 
     // Set slip ratios to the same for everything
     float limited_slip_ratio = sLimitedSlipDifferentials ? 1.4f : FLT_MAX;

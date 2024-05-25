@@ -50,6 +50,11 @@ private:
     static inline bool sAntiRollbar = true;
     static inline bool sLimitedSlipDifferentials = true;
     static inline float sMaxEngineTorque = 800.0f;
+    static inline float sSwitchTime = 0.5f;
+    static inline float sClutchReleaseTime = 0.3f;
+    static inline float sSwitchLatency = 0.5f;
+    static inline float sShiftUpRPM = 4000.0f;
+    static inline float sShiftDownRPM = 2000.0f;
     static inline float sClutchStrength = 10.0f;
     static inline float sFrontCasterAngle = 0.0f;
     static inline float sFrontKingPinAngle = 0.0f;
