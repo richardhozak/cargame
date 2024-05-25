@@ -8,6 +8,7 @@
 #include <Jolt/Physics/Vehicle/WheeledVehicleController.h>
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 #include <Layers.h>
+#include <iostream>
 
 JPH_IMPLEMENT_RTTI_VIRTUAL(VehicleConstraintTest)
 {
@@ -35,7 +36,7 @@ void VehicleConstraintTest::Initialize()
 
     const float wheel_radius = sWheelRadius;
     const float wheel_width = sWheelWidth;
-    const float half_wheel_width = sWheelWidth / 2.0f;
+    // const float half_wheel_width = sWheelWidth / 2.0f;
     const float half_vehicle_length = sVehicleLength / 2.0f;
     const float half_vehicle_width = sVehicleWidth / 2.0f;
     const float half_vehicle_height = sVehicleHeight / 2.0f;
@@ -72,8 +73,10 @@ void VehicleConstraintTest::Initialize()
     Vec3 flip_x(-1, 1, 1);
 
     // Wheels, left front
+
+    const auto w1_pos = Vec3(0.75f, 0.1, 0.95f);
     WheelSettingsWV* w1 = new WheelSettingsWV;
-    w1->mPosition = Vec3(half_vehicle_width - half_wheel_width, half_vehicle_height / 2.0f, half_vehicle_length - 0.75);
+    w1->mPosition = w1_pos;
     w1->mSuspensionDirection = front_suspension_dir;
     w1->mSteeringAxis = front_steering_axis;
     w1->mWheelUp = front_wheel_up;
@@ -88,8 +91,9 @@ void VehicleConstraintTest::Initialize()
     w1->mInertia = wheel_inertia;
 
     // Right front
+    const auto w2_pos = Vec3(-0.75f, 0.1f, 0.95f);
     WheelSettingsWV* w2 = new WheelSettingsWV;
-    w2->mPosition = Vec3(-half_vehicle_width + half_wheel_width, half_vehicle_height / 2.0f, half_vehicle_length - 0.75);
+    w2->mPosition = w2_pos;
     w2->mSuspensionDirection = flip_x * front_suspension_dir;
     w2->mSteeringAxis = flip_x * front_steering_axis;
     w2->mWheelUp = flip_x * front_wheel_up;
@@ -104,8 +108,9 @@ void VehicleConstraintTest::Initialize()
     w2->mInertia = wheel_inertia;
 
     // Left rear
+    const auto w3_pos = Vec3(0.75f, 0.1f, -1.32f);
     WheelSettingsWV* w3 = new WheelSettingsWV;
-    w3->mPosition = Vec3(half_vehicle_width - half_wheel_width, half_vehicle_height / 2.0f, -half_vehicle_length + 0.8);
+    w3->mPosition = w3_pos;
     w3->mSuspensionDirection = rear_suspension_dir;
     w3->mSteeringAxis = rear_steering_axis;
     w3->mWheelUp = rear_wheel_up;
@@ -120,8 +125,9 @@ void VehicleConstraintTest::Initialize()
     w3->mInertia = wheel_inertia;
 
     // Right rear
+    const auto w4_pos = Vec3(-0.75f, 0.1f, -1.32f);
     WheelSettingsWV* w4 = new WheelSettingsWV;
-    w4->mPosition = Vec3(-half_vehicle_width + half_wheel_width, half_vehicle_height / 2.0f, -half_vehicle_length + 0.8);
+    w4->mPosition = w4_pos;
     w4->mSuspensionDirection = flip_x * rear_suspension_dir;
     w4->mSteeringAxis = flip_x * rear_steering_axis;
     w4->mWheelUp = flip_x * rear_wheel_up;
@@ -136,6 +142,11 @@ void VehicleConstraintTest::Initialize()
     w4->mInertia = wheel_inertia;
 
     vehicle.mWheels = {w1, w2, w3, w4};
+
+    std::cerr << "w1 " << w1_pos << "\n";
+    std::cerr << "w2 " << w2_pos << "\n";
+    std::cerr << "w3 " << w3_pos << "\n";
+    std::cerr << "w4 " << w4_pos << "\n";
 
     for (WheelSettings* w : vehicle.mWheels)
     {

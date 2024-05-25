@@ -88,11 +88,11 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
     Node3D* wheel2_node = get_node<Node3D>(wheel2);
     Node3D* wheel3_node = get_node<Node3D>(wheel3);
     Node3D* wheel4_node = get_node<Node3D>(wheel4);
-    body_node->set_transform(physics_matrix_to_transform(state.body_transform));
-    wheel1_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[0]));
-    wheel2_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[1]));
-    wheel3_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[2]));
-    wheel4_node->set_transform(physics_matrix_to_transform(state.wheel_transforms[3]));
+    body_node->set_global_transform(physics_matrix_to_transform(state.body_transform));
+    wheel1_node->set_global_transform(physics_matrix_to_transform(state.wheel_transforms[0]));
+    wheel2_node->set_global_transform(physics_matrix_to_transform(state.wheel_transforms[1]));
+    wheel3_node->set_global_transform(physics_matrix_to_transform(state.wheel_transforms[2]));
+    wheel4_node->set_global_transform(physics_matrix_to_transform(state.wheel_transforms[3]));
 
     bool input_simulated = !(state.finished && state.last_finished);
     bool just_finished = state.finished && !state.last_finished;

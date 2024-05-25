@@ -4,15 +4,15 @@ class_name Player extends CarPhysics
 
 @export var player_name: String:
 	get:
-		return $Node3D/Body/Label3D.text
+		return $Body/PlayerNameLabel.text
 	set(value):
-		$Node3D/Body/Label3D.text = value
+		$Body/PlayerNameLabel.text = value
 
 @export var show_player_name: bool:
 	get:
-		return $Node3D/Body/Label3D.visible
+		return $Body/PlayerNameLabel.visible
 	set(value):
-		$Node3D/Body/Label3D.visible = value
+		$Body/PlayerNameLabel.visible = value
 
 @export var color: Color:
 	set(value):
@@ -52,7 +52,7 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 	var pitch := remap(step.rpm, min_rpm, max_rpm, min_pitch, max_pitch)
 	%EngineSound.pitch_scale = pitch
 
-	%CarSpeedLabel.text = "%.f" % absf(step.speed * 3.6)
+	#%CarSpeedLabel.text = "%.f" % absf(step.speed * 3.6)
 
 	if step.just_finished:
 		%FinishAudioListener.global_transform = %AudioListener.global_transform
