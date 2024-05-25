@@ -1,69 +1,9 @@
-[gd_scene load_steps=17 format=4 uid="uid://8w67xbxm66t5"]
+[gd_scene load_steps=16 format=4 uid="uid://8w67xbxm66t5"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_5y57b"]
 [ext_resource type="Texture2D" uid="uid://cfwvcjlmco4gr" path="res://Textures/colormap.png" id="2_22mjb"]
 [ext_resource type="AudioStream" uid="uid://btjjtcnlj8t76" path="res://car_engine_sound.wav" id="4_f5p6p"]
 [ext_resource type="PackedScene" uid="uid://dsdtl3mpkh6nl" path="res://race.glb" id="4_m3mf6"]
-
-[sub_resource type="GDScript" id="GDScript_h6s3u"]
-script/source = "@tool
-extends Node
-
-@export var vehicle_length: float = 4.0:
-	set(value):
-		vehicle_length = value
-		_update_vehicle_properties()
-
-@export var vehicle_width: float = 1.8:
-	set(value):
-		vehicle_width = value
-		_update_vehicle_properties()
-
-@export var vehicle_height: float = 0.4:
-	set(value):
-		vehicle_height = value
-		_update_vehicle_properties()
-
-@export var wheel_radius: float = 0.45:
-	set(value):
-		wheel_radius = value
-		_update_vehicle_properties()
-
-@export var wheel_width: float = 0.5:
-	set(value):
-		wheel_width = value
-		_update_vehicle_properties()
-
-@export var body: CSGBox3D:
-	set(value):
-		body = value
-		_update_vehicle_properties()
-
-@export_category(\"Wheels\")
-@export var wheel_front_left: CSGCylinder3D:
-	set(value):
-		wheel_front_left = value
-		_update_vehicle_properties()
-
-@export var wheel_front_right: CSGCylinder3D:
-	set(value):
-		wheel_front_right = value
-		_update_vehicle_properties()
-
-@export var wheel_back_left: CSGCylinder3D:
-	set(value):
-		wheel_back_left = value
-		_update_vehicle_properties()
-
-@export var wheel_back_right: CSGCylinder3D:
-	set(value):
-		wheel_back_right = value
-		_update_vehicle_properties()
-
-func _update_vehicle_properties():
-	print(\"update vehicle properties\")
-	prints(wheel_front_left, wheel_front_right, wheel_back_left, wheel_back_right)
-"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d8voh"]
 resource_name = "colormap"
@@ -248,9 +188,6 @@ wheel3 = NodePath("Body/Wheel3")
 wheel4 = NodePath("Body/Wheel4")
 body = NodePath("Body")
 script = ExtResource("1_5y57b")
-
-[node name="Positioner" type="Node" parent="."]
-script = SubResource("GDScript_h6s3u")
 
 [node name="Body" type="Node3D" parent="."]
 transform = Transform3D(-1, -4.64716e-05, 9.79262e-08, -4.64716e-05, 1, -1.29998e-05, -9.73221e-08, -1.29998e-05, -1, 0, 0, 0)
