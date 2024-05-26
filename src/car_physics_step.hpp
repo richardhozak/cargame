@@ -3,6 +3,7 @@
 #include <godot_cpp/classes/ref_counted.hpp>
 
 #include "car_physics_input.hpp"
+#include "car_physics_transforms.hpp"
 
 #include <cstdint>
 
@@ -42,6 +43,9 @@ public:
     void set_collected_checkpoints(const int64_t& p_collected_checkpoints);
     int64_t get_collected_checkpoints() const;
 
+    void set_transforms(const Ref<CarPhysicsTransforms>& p_transforms);
+    Ref<CarPhysicsTransforms> get_transforms() const;
+
 private:
     int64_t step;
     Ref<CarPhysicsInput> input;
@@ -52,6 +56,7 @@ private:
     bool just_finished;
     int64_t available_checkpoints;
     int64_t collected_checkpoints;
+    Ref<CarPhysicsTransforms> transforms;
 };
 
 }  // namespace godot

@@ -14,11 +14,6 @@ class CarPhysics : public Node3D
 {
     GDCLASS(CarPhysics, Node3D)
 private:
-    NodePath wheel1;
-    NodePath wheel2;
-    NodePath wheel3;
-    NodePath wheel4;
-    NodePath body;
     std::unique_ptr<physics::Physics> physics;
 
 protected:
@@ -32,21 +27,6 @@ public:
     void load_state(const PackedByteArray& state);
     size_t checkpoint_count() const;
     size_t collected_checkpoint_count() const;
-
-    void set_wheel1(const NodePath& p_wheel1);
-    NodePath get_wheel1() const;
-
-    void set_wheel2(const NodePath& p_wheel2);
-    NodePath get_wheel2() const;
-
-    void set_wheel3(const NodePath& p_wheel3);
-    NodePath get_wheel3() const;
-
-    void set_wheel4(const NodePath& p_wheel4);
-    NodePath get_wheel4() const;
-
-    void set_body(const NodePath& p_body);
-    NodePath get_body() const;
 };
 
 }  // namespace godot

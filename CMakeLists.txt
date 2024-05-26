@@ -177,6 +177,8 @@ add_library(physics SHARED
 	src/car_physics_step.hpp
 	src/car_physics_track_mesh.cpp
 	src/car_physics_track_mesh.hpp
+	src/car_physics_transforms.cpp
+	src/car_physics_transforms.hpp
 	src/car_physics.cpp
 	src/car_physics.hpp
 	src/register_types.cpp

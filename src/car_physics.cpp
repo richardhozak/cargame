@@ -5,11 +5,13 @@
 #include <godot_cpp/core/property_info.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
+#include <godot_cpp/classes/time.hpp>
 
 #include "car_physics_input.hpp"
 #include "car_physics_step.hpp"
 #include "car_physics_step.hpp"
 #include "car_physics_track_mesh.hpp"
+#include "car_physics_transforms.hpp"
 #include "physics.h"
 
 using namespace godot;
@@ -21,26 +23,6 @@ void CarPhysics::_bind_methods()
     ClassDB::bind_method(D_METHOD("load_state", "p_state"), &CarPhysics::load_state);
     ClassDB::bind_method(D_METHOD("checkpoint_count"), &CarPhysics::checkpoint_count);
     ClassDB::bind_method(D_METHOD("collected_checkpoint_count"), &CarPhysics::collected_checkpoint_count);
-
-    ClassDB::bind_method(D_METHOD("get_wheel1"), &CarPhysics::get_wheel1);
-    ClassDB::bind_method(D_METHOD("set_wheel1", "p_wheel1"), &CarPhysics::set_wheel1);
-    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "wheel1", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel1", "get_wheel1");
-
-    ClassDB::bind_method(D_METHOD("get_wheel2"), &CarPhysics::get_wheel2);
-    ClassDB::bind_method(D_METHOD("set_wheel2", "p_wheel2"), &CarPhysics::set_wheel2);
-    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "wheel2", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel2", "get_wheel2");
-
-    ClassDB::bind_method(D_METHOD("get_wheel3"), &CarPhysics::get_wheel3);
-    ClassDB::bind_method(D_METHOD("set_wheel3", "p_wheel3"), &CarPhysics::set_wheel3);
-    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "wheel3", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel3", "get_wheel3");
-
-    ClassDB::bind_method(D_METHOD("get_wheel4"), &CarPhysics::get_wheel4);
-    ClassDB::bind_method(D_METHOD("set_wheel4", "p_wheel4"), &CarPhysics::set_wheel4);
-    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "wheel4", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_wheel4", "get_wheel4");
-
-    ClassDB::bind_method(D_METHOD("get_body"), &CarPhysics::get_body);
-    ClassDB::bind_method(D_METHOD("set_body", "p_body"), &CarPhysics::set_body);
-    ClassDB::add_property("CarPhysics", PropertyInfo(Variant::NODE_PATH, "body", PROPERTY_HINT_NODE_PATH_VALID_TYPES, "Node3D"), "set_body", "get_body");
 
     ADD_SIGNAL(MethodInfo("simulated", PropertyInfo(Variant::OBJECT, "step", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT, "CarPhysicsStep")));
 }
@@ -83,16 +65,14 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
     }
 
     physics::State state = physics->simulate(input->as_physics_input());
-    Node3D* body_node = get_node<Node3D>(body);
-    Node3D* wheel1_node = get_node<Node3D>(wheel1);
-    Node3D* wheel2_node = get_node<Node3D>(wheel2);
-    Node3D* wheel3_node = get_node<Node3D>(wheel3);
-    Node3D* wheel4_node = get_node<Node3D>(wheel4);
-    body_node->set_global_transform(physics_matrix_to_transform(state.body_transform));
-    wheel1_node->set_global_transform(physics_matrix_to_transform(state.wheel_transforms[0]));
-    wheel2_node->set_global_transform(physics_matrix_to_transform(state.wheel_transforms[1]));
-    wheel3_node->set_global_transform(physics_matrix_to_transform(state.wheel_transforms[2]));
-    wheel4_node->set_global_transform(physics_matrix_to_transform(state.wheel_transforms[3]));
+
+    Ref<CarPhysicsTransforms> transforms;
+    transforms.instantiate();
+    transforms->set_body(physics_matrix_to_transform(state.body_transform));
+    transforms->set_wheel1(physics_matrix_to_transform(state.wheel_transforms[0]));
+    transforms->set_wheel2(physics_matrix_to_transform(state.wheel_transforms[1]));
+    transforms->set_wheel3(physics_matrix_to_transform(state.wheel_transforms[2]));
+    transforms->set_wheel4(physics_matrix_to_transform(state.wheel_transforms[3]));
 
     bool input_simulated = !(state.finished && state.last_finished);
     bool just_finished = state.finished && !state.last_finished;
@@ -109,6 +89,7 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
     step->set_just_finished(just_finished);
     step->set_available_checkpoints(physics->checkpoint_count());
     step->set_collected_checkpoints(physics->collected_checkpoint_count());
+    step->set_transforms(transforms);
 
     emit_signal("simulated", step);
 }
@@ -151,49 +132,4 @@ size_t CarPhysics::checkpoint_count() const
 size_t CarPhysics::collected_checkpoint_count() const
 {
     return physics->collected_checkpoint_count();
-}
-
-void CarPhysics::set_wheel1(const NodePath& p_wheel1)
-{
-    wheel1 = p_wheel1;
-}
-NodePath CarPhysics::get_wheel1() const
-{
-    return wheel1;
-}
-
-void CarPhysics::set_wheel2(const NodePath& p_wheel2)
-{
-    wheel2 = p_wheel2;
-}
-NodePath CarPhysics::get_wheel2() const
-{
-    return wheel2;
-}
-
-void CarPhysics::set_wheel3(const NodePath& p_wheel3)
-{
-    wheel3 = p_wheel3;
-}
-NodePath CarPhysics::get_wheel3() const
-{
-    return wheel3;
-}
-
-void CarPhysics::set_wheel4(const NodePath& p_wheel4)
-{
-    wheel4 = p_wheel4;
-}
-NodePath CarPhysics::get_wheel4() const
-{
-    return wheel4;
-}
-
-void CarPhysics::set_body(const NodePath& p_body)
-{
-    body = p_body;
-}
-NodePath CarPhysics::get_body() const
-{
-    return body;
 }

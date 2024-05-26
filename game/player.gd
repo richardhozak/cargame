@@ -44,6 +44,12 @@ func _enter_tree() -> void:
 
 
 func _on_step_simulated(step: CarPhysicsStep) -> void:
+	$Body.global_transform = step.transforms.body
+	$Body/Wheel1.global_transform = step.transforms.wheel1
+	$Body/Wheel2.global_transform = step.transforms.wheel2
+	$Body/Wheel3.global_transform = step.transforms.wheel3
+	$Body/Wheel4.global_transform = step.transforms.wheel4
+
 	const min_pitch := 1.0
 	const max_pitch := 2.5
 	const min_rpm := 1000

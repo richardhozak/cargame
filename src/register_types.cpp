@@ -9,6 +9,7 @@
 #include "car_physics_input.hpp"
 #include "car_physics_step.hpp"
 #include "car_physics_track_mesh.hpp"
+#include "car_physics_transforms.hpp"
 #include "car_physics.hpp"
 
 using namespace godot;
@@ -24,6 +25,7 @@ void initialize_physics_module(ModuleInitializationLevel p_level)
     ClassDB::register_class<CarPhysicsInput>();
     ClassDB::register_class<CarPhysicsStep>();
     ClassDB::register_class<CarPhysicsTrackMesh>();
+    ClassDB::register_class<CarPhysicsTransforms>();
     ClassDB::register_class<CarPhysics>();
 }
 

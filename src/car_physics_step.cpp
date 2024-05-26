@@ -42,6 +42,10 @@ void CarPhysicsStep::_bind_methods()
     ClassDB::bind_method(D_METHOD("get_collected_checkpoints"), &CarPhysicsStep::get_collected_checkpoints);
     ClassDB::bind_method(D_METHOD("set_collected_checkpoints", "p_collected_checkpoints"), &CarPhysicsStep::set_collected_checkpoints);
     ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::INT, "collected_checkpoints"), "set_collected_checkpoints", "get_collected_checkpoints");
+
+    ClassDB::bind_method(D_METHOD("get_transforms"), &CarPhysicsStep::get_transforms);
+    ClassDB::bind_method(D_METHOD("set_transforms", "p_transforms"), &CarPhysicsStep::set_transforms);
+    ClassDB::add_property("CarPhysicsStep", PropertyInfo(Variant::OBJECT, "transforms"), "set_transforms", "get_transforms");
 }
 
 CarPhysicsStep::CarPhysicsStep()
@@ -127,4 +131,13 @@ void CarPhysicsStep::set_collected_checkpoints(const int64_t& p_collected_checkp
 int64_t CarPhysicsStep::get_collected_checkpoints() const
 {
     return collected_checkpoints;
+}
+
+void CarPhysicsStep::set_transforms(const Ref<CarPhysicsTransforms>& p_transforms)
+{
+    transforms = p_transforms;
+}
+Ref<CarPhysicsTransforms> CarPhysicsStep::get_transforms() const
+{
+    return transforms;
 }
