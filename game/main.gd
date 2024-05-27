@@ -286,7 +286,6 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	player.name = str(id)
 	player.player_name = peer_name
 	player.initial_state = initial_state
-	player.set_disable_scale(true)
 
 	if is_replay:
 		player.add_to_group("replays")

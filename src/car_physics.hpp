@@ -1,8 +1,8 @@
 #pragma once
 
-#include <godot_cpp/classes/node3d.hpp>
-
+#include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
+
 #include <memory>
 
 #include "car_physics_input.hpp"
@@ -10,9 +10,9 @@
 
 namespace godot {
 
-class CarPhysics : public Node3D
+class CarPhysics : public Node
 {
-    GDCLASS(CarPhysics, Node3D)
+    GDCLASS(CarPhysics, Node)
 private:
     std::unique_ptr<physics::Physics> physics;
 
