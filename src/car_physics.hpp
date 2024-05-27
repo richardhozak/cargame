@@ -21,8 +21,6 @@ protected:
     void _notification(int32_t p_notification);
 
 public:
-    // virtual void _ready() override;
-
     void simulate(const Ref<CarPhysicsInput>& input);
     PackedByteArray save_state() const;
     void load_state(const PackedByteArray& state);
