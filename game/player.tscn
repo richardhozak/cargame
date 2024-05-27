@@ -254,15 +254,11 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_qky4q")
 
 [node name="CarPhysics" type="CarPhysics"]
-wheel1 = NodePath("Body/Wheel1")
-wheel2 = NodePath("Body/Wheel2")
-wheel3 = NodePath("Body/Wheel3")
-wheel4 = NodePath("Body/Wheel4")
-body = NodePath("Body")
 script = ExtResource("1_5y57b")
 
 [node name="Body" type="Node3D" parent="."]
 transform = Transform3D(-1, -4.64716e-05, 9.79262e-08, -4.64716e-05, 1, -1.29998e-05, -9.73221e-08, -1.29998e-05, -1, 0, 0, 0)
+top_level = true
 
 [node name="CarSpeedLabel" type="Label3D" parent="Body"]
 unique_name_in_owner = true
@@ -308,7 +304,8 @@ unique_name_in_owner = true
 transform = Transform3D(-1, 1.26517e-12, -8.74228e-08, -1.28689e-13, 1, 0, 8.74228e-08, 0, -1, 0, 0.3, 0)
 
 [node name="Wheel1" type="Node3D" parent="Body"]
-transform = Transform3D(1.3767e-11, -1, -4.26326e-14, 1, -1.26517e-12, 2.1065e-05, -2.1065e-05, 0, 1, 0.75, 0.1, 0.95)
+transform = Transform3D(-4.64716e-05, 1, 9.69473e-08, 1, 4.64716e-05, 8.0652e-06, 8.0652e-06, 9.73221e-08, -1, -0.750005, 0.0999528, -0.950001)
+top_level = true
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Body/Wheel1"]
 transform = Transform3D(1, 7.84922e-13, 0, 7.84922e-13, 1, 0, 0, 0, 1, 0, 0, 0)
@@ -323,7 +320,8 @@ mesh = SubResource("ArrayMesh_sp8ko")
 skeleton = NodePath("")
 
 [node name="Wheel2" type="Node3D" parent="Body"]
-transform = Transform3D(6.48428e-12, -1, 2.84217e-14, 1, -1.26517e-12, 2.11344e-05, -2.11344e-05, 0, 1, -0.75, 0.1, 0.95)
+transform = Transform3D(-4.64716e-05, 1, 9.6944e-08, 1, 4.64716e-05, 8.1346e-06, 8.1346e-06, 9.73221e-08, -1, 0.749995, 0.100023, -0.950001)
+top_level = true
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Body/Wheel2"]
 visible = false
@@ -337,7 +335,8 @@ mesh = SubResource("ArrayMesh_vyrw6")
 skeleton = NodePath("")
 
 [node name="Wheel3" type="Node3D" parent="Body"]
-transform = Transform3D(1.01767e-11, -1, 2.84217e-14, 1, -1.26517e-12, 2.05753e-05, -2.05753e-05, 0, 1, 0.75, 0.1, -1.32)
+transform = Transform3D(-4.64716e-05, 1, 9.697e-08, 1, 4.64716e-05, 7.5755e-06, 7.5755e-06, 9.73221e-08, -1, -0.750005, 0.0999823, 1.32)
+top_level = true
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Body/Wheel3"]
 visible = false
@@ -351,7 +350,8 @@ mesh = SubResource("ArrayMesh_fl51p")
 skeleton = NodePath("")
 
 [node name="Wheel4" type="Node3D" parent="Body"]
-transform = Transform3D(2.86599e-12, -1, 4.9738e-14, 1, -1.26517e-12, 2.09321e-05, -2.09321e-05, 0, 1, -0.75, 0.1, -1.32)
+transform = Transform3D(-4.64716e-05, 1, 9.69534e-08, 1, 4.64716e-05, 7.9323e-06, 7.9323e-06, 9.73221e-08, -1, 0.749995, 0.100052, 1.32)
+top_level = true
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="Body/Wheel4"]
 visible = false

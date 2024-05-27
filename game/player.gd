@@ -43,6 +43,13 @@ func _enter_tree() -> void:
 	simulated.connect(_on_step_simulated)
 
 
+func _ready() -> void:
+	await ready
+	if initial_state.size() > 0:
+		load_state(initial_state)
+		initial_state = PackedByteArray()
+
+
 func _on_step_simulated(step: CarPhysicsStep) -> void:
 	$Body.global_transform = step.transforms.body
 	$Body/Wheel1.global_transform = step.transforms.wheel1
@@ -101,10 +108,6 @@ func restart() -> void:
 func _physics_process(_delta: float) -> void:
 	if paused:
 		return
-
-	if initial_state.size() > 0:
-		load_state(initial_state)
-		initial_state = PackedByteArray()
 
 	if !is_multiplayer_authority() && !playing_replay:
 		if replay.get_count() == 0:

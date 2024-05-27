@@ -27,8 +27,14 @@ void CarPhysics::_bind_methods()
     ADD_SIGNAL(MethodInfo("simulated", PropertyInfo(Variant::OBJECT, "step", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT, "CarPhysicsStep")));
 }
 
-void CarPhysics::_ready()
+void CarPhysics::_notification(int32_t p_what)
 {
+    if (p_what != NOTIFICATION_READY)
+    {
+        return;
+    }
+
+    UtilityFunctions::print("CarPhysics ready");
     if (!get_parent()->has_meta("mesh"))
     {
         UtilityFunctions::printerr("does not have meta");
@@ -73,6 +79,19 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
     transforms->set_wheel2(physics_matrix_to_transform(state.wheel_transforms[1]));
     transforms->set_wheel3(physics_matrix_to_transform(state.wheel_transforms[2]));
     transforms->set_wheel4(physics_matrix_to_transform(state.wheel_transforms[3]));
+
+    // Node3D* body_node = get_node<Node3D>(body);
+    // Node3D* wheel1_node = get_node<Node3D>(wheel1);
+    // Node3D* wheel2_node = get_node<Node3D>(wheel2);
+    // Node3D* wheel3_node = get_node<Node3D>(wheel3);
+    // Node3D* wheel4_node = get_node<Node3D>(wheel4);
+    // body_node->set_global_transform(transforms->get_body());
+    // wheel1_node->set_global_transform(transforms->get_wheel1());
+    // wheel2_node->set_global_transform(transforms->get_wheel2());
+    // wheel3_node->set_global_transform(transforms->get_wheel3());
+    // wheel4_node->set_global_transform(transforms->get_wheel4());
+
+    // const auto update_nodes_end = time.get_ticks_usec();
 
     bool input_simulated = !(state.finished && state.last_finished);
     bool just_finished = state.finished && !state.last_finished;

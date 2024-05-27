@@ -18,9 +18,10 @@ private:
 
 protected:
     static void _bind_methods();
+    void _notification(int32_t p_notification);
 
 public:
-    void _ready() override;
+    // virtual void _ready() override;
 
     void simulate(const Ref<CarPhysicsInput>& input);
     PackedByteArray save_state() const;
