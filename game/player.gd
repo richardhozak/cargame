@@ -20,11 +20,7 @@ class_name Player extends CarPhysics
 		_update_color()
 
 var spectate_camera: PhantomCamera3D = null
-
-var replay := Replay.new()
-var replay_input: int = -1
-var playing_replay: bool = false
-
+var driver: PlayerInput
 var initial_state := PackedByteArray()
 
 
@@ -82,12 +78,6 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 			spectate_camera.set_look_at_target(%LookAt)
 			%AudioListener.make_current()
 
-	if step.simulated && replay_input == -1:
-		if step.input.restart:
-			replay = Replay.new()
-		else:
-			replay.add_input(step.input)
-
 
 func set_spectate_camera(camera: PhantomCamera3D) -> void:
 	spectate_camera = camera
@@ -98,66 +88,13 @@ func set_spectate_camera(camera: PhantomCamera3D) -> void:
 
 
 func restart() -> void:
-	if replay_input != -1:
-		replay_input = 0
-	var input := CarPhysicsInput.new()
-	input.restart = true
-	self.simulate(input)
+	if driver is LocalPlayerInput || driver is ReplayPlayerInput:
+		driver.restart()
 
 
 func _physics_process(_delta: float) -> void:
 	if paused:
 		return
 
-	if !is_multiplayer_authority() && !playing_replay:
-		if replay.get_count() == 0:
-			return
-
-		if replay_input < replay.get_count():
-			var input := replay.get_input(replay_input)
-			self.simulate(input)
-			replay_input += 1
-			return
-
-		return
-
-	if replay_input == -1:
-		var input := CarPhysicsInput.new()
-		input.up = Input.is_action_pressed("up")
-		input.down = Input.is_action_pressed("down")
-		input.left = Input.is_action_pressed("left")
-		input.right = Input.is_action_pressed("right")
-		input.brake = Input.is_action_pressed("brake")
-		input.respawn = Input.is_action_pressed("respawn")
-		input.restart = Input.is_action_pressed("restart")
+	for input in driver.get_next_inputs():
 		self.simulate(input)
-	else:
-		if replay_input >= replay.get_count():
-			self.simulate(CarPhysicsInput.new())
-			return
-
-		if replay_input == 0:
-			var input := CarPhysicsInput.new()
-			input.restart = true
-			self.simulate(input)
-
-		var input := replay.get_input(replay_input)
-		self.simulate(input)
-		replay_input += 1
-
-
-func simulate_input(input: CarPhysicsInput) -> void:
-	if replay_input == -1:
-		replay_input = 0
-
-	replay.add_input(input)
-
-
-func play_replay(to_play: Replay) -> void:
-	playing_replay = true
-	replay_input = 0
-	replay = to_play
-
-
-func get_replay() -> Replay:
-	return replay

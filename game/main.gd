@@ -305,13 +305,16 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 
 	# set camera for local player
 	if is_local:
+		player.driver = LocalPlayerInput.new()
 		loaded_player = player
 		spectate_button.button_pressed = true
 		if personal_best && is_playing_single_player():
 			spawn_player(-id, "Personal Best", PackedByteArray())
 			var personal_best_player := loaded_track.get_node_or_null(str(-id)) as Player
 			if personal_best_player:
-				personal_best_player.play_replay(personal_best)
+				personal_best_player.driver = ReplayPlayerInput.new(personal_best)
+	else:
+		player.driver = RemotePlayerInput.new()
 
 	# bind inputs simulated inputs, server distributes them to clients, clients just need to send them to server
 	if multiplayer.is_server():
@@ -332,18 +335,20 @@ func player_spawned(id: int) -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func input_simulated(input: CarPhysicsInput) -> void:
 	var peer_id := multiplayer.get_remote_sender_id()
-	var node := loaded_track.get_node_or_null(str(peer_id))
+	var node := loaded_track.get_node_or_null(str(peer_id)) as Player
 	if node:
-		node.simulate_input(input)
+		var driver := node.driver as RemotePlayerInput
+		driver.queue_input(input)
 	else:
 		printerr("no player with id ", peer_id)
 
 
 @rpc("authority", "call_local", "reliable")
 func simulate_input(peer_id: int, input: CarPhysicsInput) -> void:
-	var node := loaded_track.get_node_or_null(str(peer_id))
+	var node := loaded_track.get_node_or_null(str(peer_id)) as Player
 	if node:
-		node.simulate_input(input)
+		var driver := node.driver as RemotePlayerInput
+		driver.queue_input(input)
 	else:
 		printerr("no player with id ", peer_id)
 
@@ -354,8 +359,9 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 		input_simulated.rpc_id(1, step.input)
 
 	if step.just_finished:
+		var driver := loaded_player.driver as LocalPlayerInput
 		if validating:
-			var current_replay := loaded_player.get_replay()
+			var current_replay := driver.get_replay()
 			if (
 				(current_replay.get_count() <= fastest_validation_replay.get_count())
 				|| fastest_validation_replay.get_count() == 0
@@ -371,7 +377,7 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 			$menu.set_time(Replays.human_time(step.step, true))
 		else:
 			var achievement := ""
-			var current_replay := loaded_player.get_replay()
+			var current_replay := driver.get_replay()
 			if (
 				(personal_best and current_replay.get_count() <= personal_best.get_count())
 				or !personal_best
@@ -401,7 +407,7 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 					spawn_player(-multiplayer.get_unique_id(), "Personal Best", PackedByteArray())
 					personal_best_player = loaded_track.get_node(pb_id)
 
-				personal_best_player.play_replay(personal_best)
+				personal_best_player.driver = ReplayPlayerInput.new(personal_best)
 
 			change_menu(MenuState.FINISHED)
 			$menu.set_time(Replays.human_time(step.step, step.just_finished))
@@ -725,7 +731,8 @@ func _on_finish_menu_restart() -> void:
 
 func _on_finish_menu_save_replay() -> void:
 	if loaded_player && track_res:
-		var replay := loaded_player.get_replay()
+		var driver := loaded_player.driver as LocalPlayerInput
+		var replay := driver.get_replay()
 		var result := Replays.save_replay(track_res.track_id, player_name, replay)
 		$menu.set_replay_label(result.message)
 
@@ -777,7 +784,7 @@ func _on_replay_menu_replay_toggled(replay_uri: String, toggled: bool) -> void:
 		var replay_player := loaded_track.get_node_or_null(str(player_id)) as Player
 		if replay_player:
 			replay_player.set_meta("replay_uri", replay_uri)
-			replay_player.play_replay(replay.replay)
+			replay_player.driver = ReplayPlayerInput.new(replay.replay)
 	else:
 		despawn_player(player_id)
 
@@ -792,13 +799,13 @@ func _apply_replay_colors():
 	replays.sort_custom(sort_slower)
 
 	if replays.size() >= 2:
-		var slowest := replays.front().get_replay().get_count() as int
-		var fastest := replays.back().get_replay().get_count() as int
+		var slowest := replays.front().driver.get_replay().get_count() as int
+		var fastest := replays.back().driver.get_replay().get_count() as int
 		var diff := slowest - fastest
 		var one_percent := diff as float / 100.0
 
 		for player in replays:
-			var count := player.get_replay().get_count() as int
+			var count := player.driver.get_replay().get_count() as int
 			var percent_slow := (count - fastest) / one_percent
 			var percent_fast := 100.0 - percent_slow
 			var ratio := percent_fast / 100.0
@@ -807,4 +814,4 @@ func _apply_replay_colors():
 
 
 func sort_slower(a: Player, b: Player) -> bool:
-	return a.get_replay().get_count() > b.get_replay().get_count()
+	return a.driver.get_replay().get_count() > b.driver.get_replay().get_count()
