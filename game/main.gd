@@ -544,7 +544,6 @@ func override_materials(node: Node):
 		for index in mesh.get_surface_count():
 			var material := mesh.surface_get_material(index)
 			if material is BaseMaterial3D:
-				prints(material.albedo_color)
 				if material.albedo_color.is_equal_approx(Color(1, 0, 0, 1)):
 					material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 					material.albedo_color = Color(1, 0, 0, 0.5)
