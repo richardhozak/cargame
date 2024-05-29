@@ -3,11 +3,14 @@ use godot::prelude::*;
 #[derive(GodotClass)]
 #[class(base=RefCounted)]
 pub struct ServerInfo {
-    pub fullname: String,
+    #[export]
+    pub fullname: GString,
     #[export]
     pub hostname: GString,
     #[export]
     pub addresses: Array<Gd<ServerAddress>>,
+    #[export]
+    pub properties: Dictionary,
 
     base: Base<RefCounted>,
 }
@@ -16,9 +19,10 @@ pub struct ServerInfo {
 impl IRefCounted for ServerInfo {
     fn init(base: Base<RefCounted>) -> Self {
         Self {
-            fullname: String::new(),
+            fullname: GString::new(),
             hostname: GString::new(),
             addresses: Array::new(),
+            properties: Dictionary::new(),
             base,
         }
     }
@@ -27,10 +31,12 @@ impl IRefCounted for ServerInfo {
         let Self {
             hostname,
             addresses,
+            properties,
             ..
         } = &self;
 
-        format!("ServerInfo(hostname={hostname}, addresses={addresses})").into()
+        format!("ServerInfo(hostname={hostname}, addresses={addresses}, properties={properties})")
+            .into()
     }
 }
 

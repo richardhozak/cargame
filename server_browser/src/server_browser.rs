@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use godot::{engine::notify::NodeNotification, prelude::*};
 use mdns_sd::{Receiver, ServiceDaemon, ServiceEvent, ServiceInfo};
 
@@ -42,7 +44,7 @@ impl ServerBrowser {
     }
 
     #[func]
-    pub fn register(&mut self, port: u16) {
+    pub fn register(&mut self, port: u16, properties: Dictionary) {
         godot_print!("Registering service {} on port {}", self.service_name, port);
 
         let service_type = format!("_{}._udp.local.", self.service_name);
@@ -51,13 +53,26 @@ impl ServerBrowser {
 
         godot_print!("Service hostname {}", service_hostname);
 
+        let mut service_properties: HashMap<String, String> = HashMap::new();
+
+        for (key, value) in properties.iter_shared() {
+            match (key.try_to::<GString>(), value.try_to::<GString>()) {
+                (Ok(key), Ok(value)) => {
+                    service_properties.insert(key.to_string(), value.to_string());
+                }
+                _ => godot_warn!(
+                    "Found invalid property {key}:{value}, key and value must be strings"
+                ),
+            }
+        }
+
         let service_info = ServiceInfo::new(
             &service_type,
             &instance_name,
             &service_hostname,
             "",
             port,
-            None,
+            service_properties,
         )
         .expect("valid service info")
         .enable_addr_auto();
@@ -71,6 +86,17 @@ impl ServerBrowser {
         godot_print!("Registered service {}", service_fullname);
 
         self.service_fullname = Some(service_fullname);
+    }
+
+    #[func]
+    pub fn unregister(&mut self) {
+        godot_print!("Unregistering service");
+
+        if let Some(service_fullname) = &self.service_fullname {
+            if let Err(err) = self.service.unregister(service_fullname) {
+                godot_warn!("Failed to unregister service {err}");
+            }
+        }
     }
 }
 
@@ -99,20 +125,28 @@ impl INode for ServerBrowser {
             for event in receiver.try_iter() {
                 match event {
                     ServiceEvent::ServiceResolved(info) => {
+                        let fullname = info.get_fullname().into();
+
                         let mut server_info = if let Some(server_info) = self
                             .server_list
                             .iter_shared()
-                            .find(|server| server.bind().fullname == info.get_fullname())
+                            .find(|server| server.bind().fullname == fullname)
                         {
                             server_info
                         } else {
                             let mut server_info = ServerInfo::new_gd();
-                            server_info.bind_mut().fullname = info.get_fullname().to_string();
+                            server_info.bind_mut().fullname = fullname;
                             self.server_list.push(server_info);
                             self.server_list.back().unwrap()
                         };
 
                         let mut server_info = server_info.bind_mut();
+
+                        let mut properties = Dictionary::new();
+                        for property in info.get_properties().iter() {
+                            properties
+                                .insert(property.key().to_godot(), property.val_str().to_godot());
+                        }
 
                         let hostname = info.get_hostname();
                         let hostname = info
@@ -129,10 +163,12 @@ impl INode for ServerBrowser {
                                     info.get_port(),
                                 )
                             }));
+                        server_info.properties = properties;
 
                         changed = true;
                     }
                     ServiceEvent::ServiceRemoved(_, fullname) => {
+                        let fullname = fullname.into();
                         let index = self.server_list.iter_shared().enumerate().find_map(
                             |(index, server_info)| {
                                 if server_info.bind().fullname == fullname {

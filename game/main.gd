@@ -39,6 +39,7 @@ enum MenuState {
 	LOAD_REPLAY,
 	LOAD_TRACK_MODEL,
 	CREATE_TRACK,
+	JOIN,
 }
 
 
@@ -171,6 +172,11 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.author_time = fastest_validation_replay.get_count() - 300
 			menu.author_name = player_name
 			menu.done.connect(_on_create_track_menu_done)
+			add_child(menu)
+		MenuState.JOIN:
+			var menu := preload("res://menus/join_menu.tscn").instantiate()
+			menu.name = "menu"
+			menu.join_server.connect(_on_join_menu_join)
 			add_child(menu)
 
 	current_menu_state = menu_state
@@ -484,6 +490,7 @@ func disconnect_from_game() -> void:
 		loaded_track.queue_free()
 		loaded_track = null
 	multiplayer.multiplayer_peer = null
+	server_browser.unregister()
 
 
 func host_game() -> void:
@@ -498,7 +505,7 @@ func host_game() -> void:
 		multiplayer.multiplayer_peer = peer
 		multiplayer.peer_connected.connect(peer_connected)
 		multiplayer.peer_disconnected.connect(peer_disconnected)
-		server_browser.register(peer.host.get_local_port())
+		server_browser.register(peer.host.get_local_port(), {"host": player_name})
 	else:
 		multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 
@@ -695,8 +702,7 @@ func _on_main_menu_host() -> void:
 
 
 func _on_main_menu_join() -> void:
-	change_menu(MenuState.NONE)
-	join_game()
+	change_menu(MenuState.JOIN)
 
 
 func _on_main_menu_search_servers() -> void:
@@ -719,6 +725,13 @@ func _on_select_track_menu_selected(track_uri: String) -> void:
 	validating = false
 	selected_track_uri = track_uri
 	host_game()
+
+
+func _on_join_menu_join(server: ServerInfo) -> void:
+	change_menu(MenuState.NONE)
+	ip_address = server.addresses[0].ip
+	port = server.addresses[0].port
+	join_game()
 
 
 func _on_main_menu_single_player() -> void:

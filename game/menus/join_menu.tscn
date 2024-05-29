@@ -1,0 +1,131 @@
+[gd_scene load_steps=2 format=3 uid="uid://c4wmjh17avdci"]
+
+[sub_resource type="GDScript" id="GDScript_1jw8b"]
+resource_name = "SelectTrackMenu"
+script/source = "extends CanvasLayer
+
+signal join_server(server: ServerInfo)
+
+@onready var server_browser: ServerBrowser = $ServerBrowser
+var server_group := ButtonGroup.new()
+
+
+func _ready() -> void:
+	server_browser.browse()
+
+
+func format_server_text(server: ServerInfo) -> String:
+	var text := server.hostname
+	if server.properties.has(\"host\"):
+		text += \" (%s)\" % server.properties[\"host\"]
+	return text
+
+
+func _on_server_browser_server_list_changed() -> void:
+	var pressed_fullname := \"\"
+	var pressed_button = server_group.get_pressed_button()
+	if pressed_button:
+		pressed_fullname = pressed_button.get_meta(\"server\").fullname
+
+	server_group = ButtonGroup.new()
+	for child in %Buttons.get_children():
+		child.queue_free()
+
+	for server: ServerInfo in server_browser.server_list:
+		print(\"Found server \", server)
+		var button := Button.new()
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.toggle_mode = true
+		button.text = format_server_text(server)
+		button.button_group = server_group
+		button.button_pressed = pressed_fullname == server.fullname
+		button.set_meta(\"server\", server)
+		%Buttons.add_child(button)
+
+
+func _on_join_pressed() -> void:
+	var button := server_group.get_pressed_button()
+	if button:
+		var server := button.get_meta(\"server\") as ServerInfo
+		join_server.emit(server)
+
+
+func _on_refresh_pressed() -> void:
+	server_browser.browse()
+"
+
+[node name="CanvasLayer" type="CanvasLayer"]
+script = SubResource("GDScript_1jw8b")
+
+[node name="ServerBrowser" type="ServerBrowser" parent="."]
+service_name = "cargame"
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+auto_translate_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -315.0
+offset_top = -331.0
+offset_right = 315.0
+offset_bottom = 331.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "LAN Server Browser"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Buttons" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SelectedLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+layout_mode = 2
+size_flags_vertical = 8
+text = "Selected: None, please select"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Refresh" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Refresh"
+
+[node name="Join" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Join"
+
+[connection signal="server_list_changed" from="ServerBrowser" to="." method="_on_server_browser_server_list_changed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Refresh" to="." method="_on_refresh_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Join" to="." method="_on_join_pressed"]
