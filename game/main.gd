@@ -55,18 +55,6 @@ class PeerState:
 var peers := Dictionary()
 
 
-func print_info(fn: String) -> void:
-	prints(
-		fn,
-		"player",
-		player_name,
-		"remote",
-		multiplayer.get_remote_sender_id(),
-		"is_server",
-		multiplayer.is_server()
-	)
-
-
 func _ready() -> void:
 	spectate_group.allow_unpress = false
 	spectate_group.pressed.connect(_on_spectate_pressed)
@@ -279,7 +267,6 @@ func level_loaded() -> void:
 
 @rpc("authority", "call_local", "reliable")
 func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) -> void:
-	print_info("spawn_player")
 	var is_replay := id < 0
 	var is_local := multiplayer.get_unique_id() == id
 	prints("spawn player", id, peer_name, "is server", multiplayer.is_server())
