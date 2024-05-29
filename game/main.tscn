@@ -105,6 +105,7 @@ script = ExtResource("5_m8fvt")
 follow_mode = 2
 look_at_mode = 2
 tween_resource = SubResource("Resource_u3ywf")
+tween_on_load = false
 camera_3d_resource = SubResource("Resource_4kke7")
 follow_damping = true
 follow_damping_value = Vector3(0.05, 0.05, 0.05)
