@@ -1,10 +1,13 @@
-[gd_scene load_steps=19 format=4 uid="uid://8w67xbxm66t5"]
+[gd_scene load_steps=24 format=4 uid="uid://8w67xbxm66t5"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_5y57b"]
 [ext_resource type="FontFile" uid="uid://dj8wkuvqbimdd" path="res://fonts/FiraMono-Medium.ttf" id="2_8o6ah"]
 [ext_resource type="Texture2D" uid="uid://cfwvcjlmco4gr" path="res://textures/colormap.png" id="2_22mjb"]
 [ext_resource type="AudioStream" uid="uid://btjjtcnlj8t76" path="res://car_engine_sound.wav" id="4_f5p6p"]
 [ext_resource type="PackedScene" uid="uid://dsdtl3mpkh6nl" path="res://race.glb" id="4_m3mf6"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="6_cl2j1"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="7_sewnf"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="8_hkxsy"]
 
 [sub_resource type="Shader" id="Shader_d7h35"]
 code = "// NOTE: Shader automatically converted from Godot Engine 4.3.dev6's StandardMaterial3D.
@@ -253,6 +256,19 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_qky4q")
 
+[sub_resource type="Resource" id="Resource_wa6dk"]
+script = ExtResource("7_sewnf")
+duration = 0.5
+transition = 7
+ease = 2
+
+[sub_resource type="Resource" id="Resource_gcerl"]
+script = ExtResource("8_hkxsy")
+cull_mask = 1048575
+h_offset = 0.0
+v_offset = 0.0
+fov = 60.0
+
 [node name="CarPhysics" type="CarPhysics"]
 script = ExtResource("1_5y57b")
 
@@ -380,3 +396,17 @@ unique_name_in_owner = true
 [node name="race" parent="." instance=ExtResource("4_m3mf6")]
 transform = Transform3D(-1.5, 0, -1.31134e-07, 0, 1.5, 0, 1.31134e-07, 0, -1.5, 0, -0.35, 0)
 visible = false
+
+[node name="FollowCamera" type="Node3D" parent="." node_paths=PackedStringArray("follow_target", "look_at_target")]
+transform = Transform3D(1, 1.28952e-06, -7.73648e-06, 0, 0.986392, 0.164412, 7.84321e-06, -0.164412, 0.986392, -0.0001401, 3.00009, 6.99996)
+script = ExtResource("6_cl2j1")
+follow_mode = 2
+follow_target = NodePath("../Eye")
+look_at_mode = 2
+look_at_target = NodePath("../Body/LookAt")
+tween_resource = SubResource("Resource_wa6dk")
+tween_on_load = false
+inactive_update_mode = 1
+camera_3d_resource = SubResource("Resource_gcerl")
+follow_damping = true
+follow_damping_value = Vector3(0.05, 0.05, 0.05)

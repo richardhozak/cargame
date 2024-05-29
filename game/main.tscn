@@ -1,25 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://cadk3rrmdrx4t"]
+[gd_scene load_steps=8 format=3 uid="uid://cadk3rrmdrx4t"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_p3uq5"]
 [ext_resource type="PackedScene" uid="uid://cfiu0ul16lw6" path="res://hud.tscn" id="2_ju410"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_m8wjj"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_m11bp"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="5_c2vil"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="5_m8fvt"]
 [ext_resource type="Texture2D" uid="uid://bdau8ntkwx6cp" path="res://evening_road_01_puresky_4k.hdr" id="7_pdd3v"]
-
-[sub_resource type="Resource" id="Resource_u3ywf"]
-script = ExtResource("4_m11bp")
-duration = 1.0
-transition = 0
-ease = 2
-
-[sub_resource type="Resource" id="Resource_4kke7"]
-script = ExtResource("5_c2vil")
-cull_mask = 1048575
-h_offset = 0.0
-v_offset = 0.0
-fov = 60.0
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j14pt"]
 panorama = ExtResource("7_pdd3v")
@@ -95,20 +79,11 @@ horizontal_alignment = 2
 vertical_alignment = 1
 
 [node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 1.28952e-06, -7.73648e-06, 0, 0.986392, 0.164412, 7.84321e-06, -0.164412, 0.986392, -0.0001401, 3.00009, 6.99996)
 fov = 60.0
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D"]
 script = ExtResource("2_m8wjj")
-
-[node name="PhantomCamera3D" type="Node3D" parent="."]
-script = ExtResource("5_m8fvt")
-follow_mode = 2
-look_at_mode = 2
-tween_resource = SubResource("Resource_u3ywf")
-tween_on_load = false
-camera_3d_resource = SubResource("Resource_4kke7")
-follow_damping = true
-follow_damping_value = Vector3(0.05, 0.05, 0.05)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_rychs")

@@ -19,7 +19,6 @@ class_name Player extends CarPhysics
 		color = value
 		_update_color()
 
-var spectate_camera: PhantomCamera3D = null
 var driver: PlayerInput
 var initial_state := PackedByteArray()
 
@@ -65,26 +64,32 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 
 	if step.just_finished:
 		%FinishAudioListener.global_transform = %AudioListener.global_transform
-		%FinishEye.global_transform = %Eye.global_transform
-		%FinishLookAt.global_transform = %LookAt.global_transform
-		if spectate_camera:
-			spectate_camera.set_follow_target(%FinishEye)
-			spectate_camera.set_look_at_target(%FinishLookAt)
-			%FinishAudioListener.make_current()
+		%FinishAudioListener.make_current()
+		$FollowCamera.look_at_mode = PhantomCamera3D.LookAtMode.NONE
+		$FollowCamera.follow_mode = PhantomCamera3D.FollowMode.NONE
 
-	if step.input.restart:
-		if spectate_camera:
-			spectate_camera.set_follow_target(%Eye)
-			spectate_camera.set_look_at_target(%LookAt)
-			%AudioListener.make_current()
+	if step.input.restart && $FollowCamera.priority == 1:
+		spectate()
 
 
-func set_spectate_camera(camera: PhantomCamera3D) -> void:
-	spectate_camera = camera
-	if spectate_camera:
-		spectate_camera.set_follow_target(%Eye)
-		spectate_camera.set_look_at_target(%LookAt)
-		%AudioListener.make_current()
+func spectate() -> void:
+	var pcam_host: PhantomCameraHost = $FollowCamera.get_pcam_host_owner()
+	var camera := pcam_host.get_active_pcam() as PhantomCamera3D
+	if camera:
+		var parent := camera.get_parent()
+		if parent && parent is Player:
+			parent.show_player_name = true
+		camera.priority = 0
+
+	show_player_name = false
+	$FollowCamera.look_at_mode = PhantomCamera3D.LookAtMode.SIMPLE
+	$FollowCamera.follow_mode = PhantomCamera3D.FollowMode.SIMPLE
+	$FollowCamera.priority = 1
+	%AudioListener.make_current()
+
+
+func is_spectated() -> bool:
+	return $FollowCamera.priority == 1
 
 
 func restart() -> void:

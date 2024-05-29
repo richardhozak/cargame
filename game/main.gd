@@ -229,23 +229,13 @@ func spectate(peer_id: int) -> void:
 		printerr("cannot find peer %d in loaded track" % peer_id)
 		return
 
-	var spectated_peer_id := $PhantomCamera3D.get_meta("spectated_peer_id", 0) as int
-	if spectated_peer_id != 0:
-		var spectated_player := loaded_track.get_node_or_null(str(spectated_peer_id)) as Player
-		if spectated_player:
-			spectated_player.set_spectate_camera(null)
-			spectated_player.show_player_name = true
-			spectated_player.simulated.disconnect(_on_spectated_player_simulated)
-
-	player.show_player_name = false
+	player.spectate()
 
 	if peer_id == multiplayer.get_unique_id():
 		$HUD/SpectatingLabel.text = ""
 	else:
 		$HUD/SpectatingLabel.text = "Spectating: %s" % player.player_name
 
-	player.set_spectate_camera($PhantomCamera3D)
-	$PhantomCamera3D.set_meta("spectated_peer_id", peer_id)
 	player.simulated.connect(_on_spectated_player_simulated)
 
 
@@ -314,7 +304,6 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	if is_replay:
 		return
 
-	# set camera for local player
 	if is_local:
 		player.driver = LocalPlayerInput.new()
 		loaded_player = player
@@ -449,16 +438,12 @@ func despawn_player(id: int) -> void:
 		if button.get_meta("peer_id") == id:
 			button.get_parent().queue_free()
 
-	var node := loaded_track.get_node_or_null(str(id))
-	if node:
-		if $PhantomCamera3D.get_meta("spectated_peer_id") == id:
-			$PhantomCamera3D.set_follow_target(null)
-			$PhantomCamera3D.set_look_at_target(null)
+	var despawned_player := loaded_track.get_node_or_null(str(id)) as Player
+	if despawned_player:
+		if despawned_player.is_spectated():
+			spectate(str(loaded_player.name).to_int())
 
-			var local_peer_id := str(loaded_player.name).to_int()
-			spectate(local_peer_id)
-
-		node.queue_free()
+		despawned_player.queue_free()
 
 
 func peer_connected(id: int) -> void:
@@ -483,8 +468,6 @@ func disconnect_from_game() -> void:
 		button.get_parent().queue_free()
 	loaded_player = null
 	$HUD.visible = false
-	$PhantomCamera3D.set_follow_target(null)
-	$PhantomCamera3D.set_look_at_target(null)
 	if loaded_track:
 		loaded_track.queue_free()
 		loaded_track = null
