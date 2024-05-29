@@ -38,6 +38,9 @@ ssil_enabled = true
 [node name="Main" type="Node3D"]
 script = ExtResource("1_p3uq5")
 
+[node name="ServerBrowser" type="ServerBrowser" parent="."]
+service_name = "cargame"
+
 [node name="DebugMenu" type="CanvasLayer" parent="."]
 visible = false
 

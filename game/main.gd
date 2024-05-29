@@ -4,6 +4,11 @@ const MAX_CLIENTS = 4
 const PORT = 3535
 const IP_ADDRESS = "127.0.0.1"
 
+var ip_address = IP_ADDRESS
+var port = PORT
+
+@onready var server_browser: ServerBrowser = $ServerBrowser
+
 var validating := false
 var create_server := false
 var selected_track_uri := ""
@@ -93,6 +98,7 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.create_track.connect(_on_main_menu_create_track)
 			menu.host.connect(_on_main_menu_host)
 			menu.join.connect(_on_main_menu_join)
+			menu.search_servers.connect(_on_main_menu_search_servers)
 			menu.quit.connect(_on_main_menu_quit)
 			add_child(menu)
 		MenuState.TRACK_SELECT_HOST:
@@ -488,10 +494,11 @@ func host_game() -> void:
 
 	if create_server:
 		var peer := ENetMultiplayerPeer.new()
-		peer.create_server(PORT, MAX_CLIENTS)
+		peer.create_server(0, MAX_CLIENTS)
 		multiplayer.multiplayer_peer = peer
 		multiplayer.peer_connected.connect(peer_connected)
 		multiplayer.peer_disconnected.connect(peer_disconnected)
+		server_browser.register(peer.host.get_local_port())
 	else:
 		multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 
@@ -506,7 +513,7 @@ func join_game() -> void:
 	# Create client.
 	multiplayer.allow_object_decoding = true
 	var peer := ENetMultiplayerPeer.new()
-	peer.create_client(IP_ADDRESS, PORT)
+	peer.create_client(ip_address, port)
 
 	for p in peer.host.get_peers():
 		p.set_timeout(500, 1000, 2000)
@@ -690,6 +697,17 @@ func _on_main_menu_host() -> void:
 func _on_main_menu_join() -> void:
 	change_menu(MenuState.NONE)
 	join_game()
+
+
+func _on_main_menu_search_servers() -> void:
+	server_browser.server_list_changed.connect(
+		func():
+			print("Server list size ", server_browser.server_list.size())
+			if server_browser.server_list.size() > 0:
+				var server = server_browser.server_list[0]
+				print("Found server ", server)
+	)
+	server_browser.browse()
 
 
 func _on_main_menu_quit() -> void:

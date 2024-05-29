@@ -8,6 +8,7 @@ signal single_player
 signal create_track
 signal host
 signal join
+signal search_servers
 signal quit
 
 
@@ -27,10 +28,12 @@ func _on_join_pressed() -> void:
 	join.emit()
 
 
+func _on_search_servers_pressed() -> void:
+	search_servers.emit()
+
+
 func _on_quit_pressed() -> void:
 	quit.emit()
-
-
 "
 
 [node name="CanvasLayer" type="CanvasLayer"]
@@ -89,6 +92,11 @@ auto_translate_mode = 1
 layout_mode = 2
 text = "Join"
 
+[node name="Search servers" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+auto_translate_mode = 1
+layout_mode = 2
+text = "Search servers"
+
 [node name="Quit" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
 auto_translate_mode = 1
 layout_mode = 2
@@ -99,4 +107,5 @@ text = "Quit"
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/CreateTrack" to="." method="_on_create_track_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Host" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Search servers" to="." method="_on_search_servers_pressed"]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
