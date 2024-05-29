@@ -72,16 +72,20 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 		spectate()
 
 
-func spectate() -> void:
-	var pcam_host: PhantomCameraHost = $FollowCamera.get_pcam_host_owner()
-	var camera := pcam_host.get_active_pcam() as PhantomCamera3D
-	if camera:
-		var parent := camera.get_parent()
-		if parent && parent is Player:
-			parent.show_player_name = true
-		camera.priority = 0
-
+func _on_follow_camera_became_active() -> void:
 	show_player_name = false
+
+
+func _on_follow_camera_became_inactive() -> void:
+	if $FollowCamera.priority != 0:
+		$FollowCamera.priority = 0
+	show_player_name = true
+
+
+func spectate() -> void:
+	if is_spectated():
+		return
+
 	$FollowCamera.look_at_mode = PhantomCamera3D.LookAtMode.SIMPLE
 	$FollowCamera.follow_mode = PhantomCamera3D.FollowMode.SIMPLE
 	$FollowCamera.priority = 1

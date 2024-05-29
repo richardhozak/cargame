@@ -410,3 +410,6 @@ inactive_update_mode = 1
 camera_3d_resource = SubResource("Resource_gcerl")
 follow_damping = true
 follow_damping_value = Vector3(0.05, 0.05, 0.05)
+
+[connection signal="became_active" from="FollowCamera" to="." method="_on_follow_camera_became_active"]
+[connection signal="became_inactive" from="FollowCamera" to="." method="_on_follow_camera_became_inactive"]

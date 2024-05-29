@@ -1,8 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://cadk3rrmdrx4t"]
+[gd_scene load_steps=14 format=3 uid="uid://cadk3rrmdrx4t"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_p3uq5"]
 [ext_resource type="PackedScene" uid="uid://cfiu0ul16lw6" path="res://hud.tscn" id="2_ju410"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_m8wjj"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="5_xpi8l"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_c3j8f"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="7_pcsyc"]
 [ext_resource type="Texture2D" uid="uid://bdau8ntkwx6cp" path="res://evening_road_01_puresky_4k.hdr" id="7_pdd3v"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j14pt"]
@@ -18,6 +21,138 @@ tonemap_exposure = 0.5
 ssao_enabled = true
 ssao_intensity = 4.0
 ssil_enabled = true
+
+[sub_resource type="GDScript" id="GDScript_ira5b"]
+script/source = "extends Node3D
+
+# Modifier keys' speed multiplier
+const SHIFT_MULTIPLIER = 2.5
+const ALT_MULTIPLIER = 1.0 / SHIFT_MULTIPLIER
+
+
+@export_range(0.0, 1.0) var sensitivity: float = 0.25
+
+# Mouse state
+var _mouse_position = Vector2(0.0, 0.0)
+var _total_pitch = 0.0
+
+# Movement state
+var _direction = Vector3(0.0, 0.0, 0.0)
+var _velocity = Vector3(0.0, 0.0, 0.0)
+var _acceleration = 30
+var _deceleration = -10
+var _vel_multiplier = 4
+
+# Keyboard state
+var _w = false
+var _s = false
+var _a = false
+var _d = false
+var _q = false
+var _e = false
+var _shift = false
+var _alt = false
+
+func _input(event):
+	# Receives mouse motion
+	if event is InputEventMouseMotion:
+		_mouse_position = event.relative
+
+	# Receives mouse button input
+	if event is InputEventMouseButton:
+		match event.button_index:
+			MOUSE_BUTTON_RIGHT: # Only allows rotation if right click down
+				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED if event.pressed else Input.MOUSE_MODE_VISIBLE)
+			MOUSE_BUTTON_WHEEL_UP: # Increases max velocity
+				_vel_multiplier = clamp(_vel_multiplier * 1.1, 0.2, 20)
+			MOUSE_BUTTON_WHEEL_DOWN: # Decereases max velocity
+				_vel_multiplier = clamp(_vel_multiplier / 1.1, 0.2, 20)
+
+	# Receives key input
+	if event is InputEventKey:
+		match event.keycode:
+			KEY_W:
+				_w = event.pressed
+			KEY_S:
+				_s = event.pressed
+			KEY_A:
+				_a = event.pressed
+			KEY_D:
+				_d = event.pressed
+			KEY_Q:
+				_q = event.pressed
+			KEY_E:
+				_e = event.pressed
+			KEY_SHIFT:
+				_shift = event.pressed
+			KEY_ALT:
+				_alt = event.pressed
+
+# Updates mouselook and movement every frame
+func _process(delta):
+	_update_mouselook()
+	_update_movement(delta)
+
+# Updates camera movement
+func _update_movement(delta):
+	# Computes desired direction from key states
+	_direction = Vector3(
+		(_d as float) - (_a as float),
+		(_e as float) - (_q as float),
+		(_s as float) - (_w as float)
+	)
+
+	# Computes the change in velocity due to desired direction and \"drag\"
+	# The \"drag\" is a constant acceleration on the camera to bring it's velocity to 0
+	var offset = _direction.normalized() * _acceleration * _vel_multiplier * delta \\
+		+ _velocity.normalized() * _deceleration * _vel_multiplier * delta
+
+	# Compute modifiers' speed multiplier
+	var speed_multi = 1
+	if _shift: speed_multi *= SHIFT_MULTIPLIER
+	if _alt: speed_multi *= ALT_MULTIPLIER
+
+	# Checks if we should bother translating the camera
+	if _direction == Vector3.ZERO and offset.length_squared() > _velocity.length_squared():
+		# Sets the velocity to 0 to prevent jittering due to imperfect deceleration
+		_velocity = Vector3.ZERO
+	else:
+		# Clamps speed to stay within maximum value (_vel_multiplier)
+		_velocity.x = clamp(_velocity.x + offset.x, -_vel_multiplier, _vel_multiplier)
+		_velocity.y = clamp(_velocity.y + offset.y, -_vel_multiplier, _vel_multiplier)
+		_velocity.z = clamp(_velocity.z + offset.z, -_vel_multiplier, _vel_multiplier)
+
+		translate(_velocity * delta * speed_multi)
+
+# Updates mouse look
+func _update_mouselook():
+	# Only rotates mouse if the mouse is captured
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		_mouse_position *= sensitivity
+		var yaw = _mouse_position.x
+		var pitch = _mouse_position.y
+		_mouse_position = Vector2(0, 0)
+
+		# Prevents looking up/down too far
+		pitch = clamp(pitch, -90 - _total_pitch, 90 - _total_pitch)
+		_total_pitch += pitch
+
+		rotate_y(deg_to_rad(-yaw))
+		rotate_object_local(Vector3(1,0,0), deg_to_rad(-pitch))
+"
+
+[sub_resource type="Resource" id="Resource_stxot"]
+script = ExtResource("6_c3j8f")
+duration = 1.0
+transition = 0
+ease = 2
+
+[sub_resource type="Resource" id="Resource_6lsr1"]
+script = ExtResource("7_pcsyc")
+cull_mask = 1048575
+h_offset = 0.0
+v_offset = 0.0
+fov = 75.0
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_p3uq5")
@@ -79,8 +214,6 @@ horizontal_alignment = 2
 vertical_alignment = 1
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 1.28952e-06, -7.73648e-06, 0, 0.986392, 0.164412, 7.84321e-06, -0.164412, 0.986392, -0.0001401, 3.00009, 6.99996)
-fov = 60.0
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D"]
 script = ExtResource("2_m8wjj")
@@ -91,3 +224,16 @@ environment = SubResource("Environment_rychs")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.239452, 0.840832, -0.485452, -6.86016e-09, 0.499998, 0.866027, 0.970908, 0.207372, -0.119726, 0, 30, 0)
 shadow_enabled = true
+
+[node name="FlyCameraTarget" type="Node3D" parent="."]
+script = SubResource("GDScript_ira5b")
+
+[node name="FlyCamera" type="Node3D" parent="." node_paths=PackedStringArray("follow_target", "look_at_target")]
+script = ExtResource("5_xpi8l")
+follow_mode = 1
+follow_target = NodePath("../FlyCameraTarget")
+look_at_mode = 1
+look_at_target = NodePath("../FlyCameraTarget")
+tween_resource = SubResource("Resource_stxot")
+inactive_update_mode = 1
+camera_3d_resource = SubResource("Resource_6lsr1")

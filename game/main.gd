@@ -65,6 +65,17 @@ func _ready() -> void:
 	change_menu(MenuState.MAIN_MENU)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("change_camera"):
+		if $FlyCamera.priority == 2:
+			$FlyCamera.priority = 0
+			var spectated_button := spectate_group.get_pressed_button()
+			if spectated_button && spectated_button.has_meta("peer_id"):
+				spectate(spectated_button.get_meta("peer_id"))
+		else:
+			$FlyCamera.priority = 2
+
+
 func change_menu(menu_state: MenuState) -> void:
 	var current_menu := get_node_or_null("menu")
 	if current_menu:
