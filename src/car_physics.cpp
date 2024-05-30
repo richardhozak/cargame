@@ -97,7 +97,7 @@ void CarPhysics::simulate(const Ref<CarPhysicsInput>& input)
     step->set_collected_checkpoints(physics->collected_checkpoint_count());
     step->set_transforms(transforms);
 
-    emit_signal("simulated", step);
+    call_deferred("emit_signal", "simulated", step);
 }
 
 PackedByteArray CarPhysics::save_state() const

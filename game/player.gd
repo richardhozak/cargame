@@ -105,5 +105,4 @@ func _physics_process(_delta: float) -> void:
 	if paused:
 		return
 
-	for input in driver.get_next_inputs():
-		self.simulate(input)
+	Simulation.queue_simulate(self)
