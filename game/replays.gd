@@ -70,7 +70,7 @@ func _save_replay(
 	if result != OK:
 		return SaveResult.new(result)
 
-	var replay_uri := "%s/%s.res" % [directory, replay_name]
+	var replay_uri := "%s/%s.replay" % [directory, replay_name]
 	result = ResourceSaver.save(track_replay, replay_uri, ResourceSaver.FLAG_COMPRESS)
 
 	if result != OK:
