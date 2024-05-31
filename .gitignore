@@ -3,6 +3,7 @@
 .sconsign*.dblite
 *build/
 .cache/
+game/test_scene.tscn
 
 # Binaries
 *.o
