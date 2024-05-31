@@ -199,5 +199,5 @@ install(TARGETS physics DESTINATION .)
 install(TARGETS Jolt DESTINATION .)
 
 add_custom_command(TARGET physics POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:physics> ${CMAKE_SOURCE_DIR}/game/bin/$<TARGET_FILE_NAME:physics>
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:physics> ${CMAKE_SOURCE_DIR}/../game/bin/$<TARGET_FILE_NAME:physics>
 )
