@@ -6,8 +6,7 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hiprr"]
 
 [sub_resource type="GDScript" id="GDScript_767ll"]
-script/source = "@tool
-extends PanelContainer
+script/source = "extends PanelContainer
 
 @export var track_uri: String
 
@@ -66,7 +65,7 @@ extends PanelContainer
 			await ready
 		%TrackName.text = value
 
-func _update_personal_best():
+func _update_personal_best() -> void:
 	if personal_best == -1:
 		%PBTime.text = \"None\"
 		%PBIconBronze.visible = false

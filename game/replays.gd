@@ -80,7 +80,7 @@ func _save_replay(
 	return SaveResult.new(OK, replay_uri, track_replay, "Replay saved as '%s'" % replay_name)
 
 
-static func human_time(step: int, full: bool = false, pad: bool = true) -> String:
+func human_time(step: int, full: bool = false, pad: bool = true) -> String:
 	var is_negative := step < 0
 	step = absi(step)
 	var seconds := step as float / 100.0

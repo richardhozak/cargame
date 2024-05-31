@@ -22,7 +22,7 @@ var loaded_track_bytes: PackedByteArray
 var track_res: Track
 var personal_best: Replay
 
-const Player = preload("res://player.tscn")
+const PlayerScene = preload("res://player.tscn")
 const PlayerSpectateItem = preload("res://player_spectate_item.tscn")
 var loaded_player: Player
 
@@ -281,7 +281,7 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	var is_replay := id < 0
 	var is_local := multiplayer.get_unique_id() == id
 	prints("spawn player", id, peer_name, "is server", multiplayer.is_server())
-	var player := Player.instantiate()
+	var player := PlayerScene.instantiate()
 	player.name = str(id)
 	player.player_name = peer_name
 	player.initial_state = initial_state
@@ -323,11 +323,6 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 
 	if multiplayer.is_server():
 		peers[id].player = player
-
-
-@rpc("any_peer", "call_local", "reliable")
-func player_spawned(id: int) -> void:
-	pass
 
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -444,14 +439,9 @@ func despawn_player(id: int) -> void:
 		despawned_player.queue_free()
 
 
-func peer_connected(id: int) -> void:
+func peer_connected(_id: int) -> void:
 	# TODO: timeout peer if they do not send 'hello'
 	return
-	print("peer connected ", id, " ", multiplayer.is_server())
-	var player := Player.instantiate()
-	player.name = str(id)
-	player.set_disable_scale(true)
-	loaded_track.add_child(player)
 
 
 func peer_disconnected(id: int) -> void:
@@ -777,9 +767,9 @@ func _on_replay_menu_replay_toggled(replay_uri: String, toggled: bool) -> void:
 	# so they do not collide
 	var player_id := -replay_uri.hash()
 	var replay: TrackReplay = Replays.loaded_replays[replay_uri]
-	var player_name := "Replay '%s'" % replay.player_name
+	var replay_player_name := "Replay '%s'" % replay.player_name
 	if toggled:
-		spawn_player(player_id, player_name, PackedByteArray())
+		spawn_player(player_id, replay_player_name, PackedByteArray())
 		var replay_player := loaded_track.get_node_or_null(str(player_id)) as Player
 		if replay_player:
 			replay_player.set_meta("replay_uri", replay_uri)

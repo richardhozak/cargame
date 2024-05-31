@@ -7,7 +7,7 @@ func _get_recognized_extensions() -> PackedStringArray:
 
 
 func _get_resource_type(path: String) -> String:
-	var ext = path.get_extension().to_lower()
+	var ext := path.get_extension().to_lower()
 
 	if ext == "replay":
 		return "Resource"
@@ -19,7 +19,7 @@ func _handles_type(typename: StringName) -> bool:
 	return ClassDB.is_parent_class(typename, "Resource")
 
 
-func _load(path: String, original_path: String, use_sub_threads: bool, cache_mode: int):
+func _load(path: String, _original_path: String, _use_sub_threads: bool, _cache_mode: int):
 	var file := FileAccess.open_compressed(path, FileAccess.READ, FileAccess.COMPRESSION_ZSTD)
 
 	if !file:

@@ -25,7 +25,7 @@ var track_bytes: PackedByteArray
 		_update_medal_times()
 
 
-func _percent_slower_time(steps: int, percent: int):
+func _percent_slower_time(steps: int, percent: int) -> int:
 	return steps + (steps / 100) * percent
 
 

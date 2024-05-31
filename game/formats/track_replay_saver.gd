@@ -17,7 +17,7 @@ func _recognize(resource: Resource) -> bool:
 	return false
 
 
-func _save(resource: Resource, path: String = "", flags: int = 0):
+func _save(resource: Resource, path: String = "", _flags: int = 0) -> Error:
 	resource = resource as TrackReplay
 
 	var file := FileAccess.open_compressed(path, FileAccess.WRITE, FileAccess.COMPRESSION_ZSTD)
