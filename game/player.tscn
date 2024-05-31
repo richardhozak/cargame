@@ -316,10 +316,12 @@ text = "Player Name"
 unique_name_in_owner = true
 transform = Transform3D(-1, -4.64716e-05, -9.73221e-08, -4.64716e-05, 1, -1.29998e-05, 9.79262e-08, -1.29998e-05, -1, 0, 0.15, 0.15)
 stream = ExtResource("4_f5p6p")
-volume_db = -60.0
 unit_size = 20.0
-max_db = 0.5
+max_db = 1.0
 autoplay = true
+max_distance = 200.0
+bus = &"Engine Sounds"
+attenuation_filter_db = -10.0
 doppler_tracking = 2
 
 [node name="AudioListenerContainer" type="Node3D" parent="Body"]

@@ -73,12 +73,14 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 
 func _on_follow_camera_became_active() -> void:
 	show_player_name = false
+	%EngineSound.volume_db = -30
 
 
 func _on_follow_camera_became_inactive() -> void:
 	if $FollowCamera.priority != 0:
 		$FollowCamera.priority = 0
 	show_player_name = true
+	%EngineSound.volume_db = 0
 
 
 func spectate() -> void:
