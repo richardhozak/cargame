@@ -230,13 +230,6 @@ func spectate(peer_id: int) -> void:
 
 	player.spectate()
 
-	if peer_id == multiplayer.get_unique_id():
-		$HUD/SpectatingLabel.text = ""
-	else:
-		$HUD/SpectatingLabel.text = "Spectating: %s" % player.player_name
-
-	player.simulated.connect(_on_spectated_player_simulated)
-
 
 @rpc("any_peer", "call_local", "reliable")
 func hello(peer_name: String) -> void:
@@ -630,41 +623,6 @@ func save_state() -> void:
 func load_state() -> void:
 	if saved_state.size() > 0:
 		loaded_player.load_state(saved_state)
-
-
-func display_car_stats(speed: float, rpm: float, gear: int) -> void:
-	$HUD/CarStats/Gear.text = "%d gear" % gear
-	$HUD/CarStats/Speed.text = "%.f" % absf(speed * 3.6)
-	$HUD/CarStats/Rpm.text = "%.f RPM" % rpm
-
-
-func display_countdown(step: int) -> void:
-	if step < 0:
-		var seconds := step / 100.0
-		seconds = absf(floorf(seconds))
-		$HUD/Countdown.visible = true
-		$HUD/Countdown.text = String.num(seconds)
-	elif step <= 60:
-		$HUD/Countdown.text = "Start"
-	else:
-		$HUD/Countdown.visible = false
-
-
-func checkpoint_text(collected: int, available: int) -> String:
-	if available > 0:
-		return "%s / %s" % [collected, available]
-	else:
-		return ""
-
-
-func _on_spectated_player_simulated(step: CarPhysicsStep) -> void:
-	if step.simulated:
-		display_car_stats(step.speed, step.rpm, step.gear)
-		display_countdown(step.step)
-		$HUD/TrackStats/Time.text = Replays.human_time(step.step, step.just_finished)
-		$HUD/TrackStats/Checkpoints.text = checkpoint_text(
-			step.collected_checkpoints, step.available_checkpoints
-		)
 
 
 func _on_main_menu_host() -> void:

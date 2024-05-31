@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://cadk3rrmdrx4t"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_p3uq5"]
-[ext_resource type="PackedScene" uid="uid://cfiu0ul16lw6" path="res://hud.tscn" id="2_ju410"]
+[ext_resource type="PackedScene" uid="uid://cfiu0ul16lw6" path="res://ui/hud.tscn" id="2_ju410"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_m8wjj"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="5_xpi8l"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_c3j8f"]

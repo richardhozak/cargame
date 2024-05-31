@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://8w67xbxm66t5"]
+[gd_scene load_steps=25 format=4 uid="uid://8w67xbxm66t5"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_5y57b"]
 [ext_resource type="FontFile" uid="uid://dj8wkuvqbimdd" path="res://fonts/FiraMono-Medium.ttf" id="2_8o6ah"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="6_cl2j1"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="7_sewnf"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="8_hkxsy"]
+[ext_resource type="PackedScene" uid="uid://hye0njc2gkxn" path="res://ui/player_hud.tscn" id="9_hu43e"]
 
 [sub_resource type="Shader" id="Shader_d7h35"]
 code = "// NOTE: Shader automatically converted from Godot Engine 4.3.dev6's StandardMaterial3D.
@@ -412,6 +413,8 @@ inactive_update_mode = 1
 camera_3d_resource = SubResource("Resource_gcerl")
 follow_damping = true
 follow_damping_value = Vector3(0.05, 0.05, 0.05)
+
+[node name="HUD" parent="." instance=ExtResource("9_hu43e")]
 
 [connection signal="became_active" from="FollowCamera" to="." method="_on_follow_camera_became_active"]
 [connection signal="became_inactive" from="FollowCamera" to="." method="_on_follow_camera_became_inactive"]

@@ -44,6 +44,8 @@ func _ready() -> void:
 		load_state(initial_state)
 		initial_state = PackedByteArray()
 
+	$HUD.visible = is_spectated()
+
 
 func _on_step_simulated(step: CarPhysicsStep) -> void:
 	$Body.global_transform = step.transforms.body
@@ -51,6 +53,9 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 	$Body/Wheel2.global_transform = step.transforms.wheel2
 	$Body/Wheel3.global_transform = step.transforms.wheel3
 	$Body/Wheel4.global_transform = step.transforms.wheel4
+
+	if $HUD.visible:
+		_update_hud(step)
 
 	const min_pitch := 1.0
 	const max_pitch := 2.5
@@ -74,6 +79,7 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 func _on_follow_camera_became_active() -> void:
 	show_player_name = false
 	%EngineSound.volume_db = -30
+	$HUD.visible = true
 
 
 func _on_follow_camera_became_inactive() -> void:
@@ -81,6 +87,7 @@ func _on_follow_camera_became_inactive() -> void:
 		$FollowCamera.priority = 0
 	show_player_name = true
 	%EngineSound.volume_db = 0
+	$HUD.visible = false
 
 
 func spectate() -> void:
@@ -101,6 +108,11 @@ func spectate() -> void:
 
 	%AudioListener.make_current()
 
+	if name == str(multiplayer.get_unique_id()):
+		$HUD/SpectatingLabel.text = ""
+	else:
+		$HUD/SpectatingLabel.text = "Spectating: %s" % player_name
+
 
 func is_spectated() -> bool:
 	return $FollowCamera.priority == 1
@@ -116,3 +128,38 @@ func _physics_process(_delta: float) -> void:
 		return
 
 	Simulation.queue_simulate(self)
+
+
+func _display_car_stats(speed: float, rpm: float, gear: int) -> void:
+	$HUD/CarStats/Gear.text = "%d gear" % gear
+	$HUD/CarStats/Speed.text = "%.f" % absf(speed * 3.6)
+	$HUD/CarStats/Rpm.text = "%.f RPM" % rpm
+
+
+func _display_countdown(step: int) -> void:
+	if step < 0:
+		var seconds := step / 100.0
+		seconds = absf(floorf(seconds))
+		$HUD/Countdown.visible = true
+		$HUD/Countdown.text = String.num(seconds)
+	elif step <= 60:
+		$HUD/Countdown.text = "Start"
+	else:
+		$HUD/Countdown.visible = false
+
+
+func _checkpoint_text(collected: int, available: int) -> String:
+	if available > 0:
+		return "%s / %s" % [collected, available]
+	else:
+		return ""
+
+
+func _update_hud(step: CarPhysicsStep) -> void:
+	if step.simulated:
+		_display_car_stats(step.speed, step.rpm, step.gear)
+		_display_countdown(step.step)
+		$HUD/TrackStats/Time.text = Replays.human_time(step.step, step.just_finished)
+		$HUD/TrackStats/Checkpoints.text = _checkpoint_text(
+			step.collected_checkpoints, step.available_checkpoints
+		)

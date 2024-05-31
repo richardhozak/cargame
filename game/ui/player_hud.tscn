@@ -1,6 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://cfiu0ul16lw6"]
+[gd_scene load_steps=5 format=3 uid="uid://hye0njc2gkxn"]
 
-[ext_resource type="FontFile" uid="uid://dj8wkuvqbimdd" path="res://fonts/FiraMono-Medium.ttf" id="1_g5uv4"]
+[ext_resource type="FontFile" uid="uid://dj8wkuvqbimdd" path="res://fonts/FiraMono-Medium.ttf" id="1_bufa8"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_deulf"]
 font_size = 32
@@ -9,13 +9,10 @@ font_size = 32
 font_size = 72
 
 [sub_resource type="LabelSettings" id="LabelSettings_hxgyh"]
-font = ExtResource("1_g5uv4")
+font = ExtResource("1_bufa8")
 font_size = 32
 
-[sub_resource type="LabelSettings" id="LabelSettings_ifjya"]
-font_size = 32
-
-[node name="HUD" type="CanvasLayer"]
+[node name="PlayerHUD" type="CanvasLayer"]
 
 [node name="CarStats" type="VBoxContainer" parent="."]
 auto_translate_mode = 1
@@ -96,37 +93,11 @@ label_settings = SubResource("LabelSettings_hxgyh")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
-auto_translate_mode = 1
-offset_left = 15.0
-offset_top = 15.0
-offset_right = 257.0
-offset_bottom = 311.0
-horizontal_scroll_mode = 0
-
-[node name="SpectateContainer" type="VBoxContainer" parent="ScrollContainer"]
-auto_translate_mode = 1
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
 [node name="SpectatingLabel" type="Label" parent="."]
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 200.0
 grow_horizontal = 2
 text = "Spectating: Player"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="ValidatingLabel" type="Label" parent="."]
-auto_translate_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 81.0
-grow_horizontal = 2
-text = "Validating
-"
-label_settings = SubResource("LabelSettings_ifjya")
 horizontal_alignment = 1
 vertical_alignment = 1
