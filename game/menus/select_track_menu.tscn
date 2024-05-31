@@ -1,7 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dhs1kqgn5gaoe"]
 
 [sub_resource type="GDScript" id="GDScript_1jw8b"]
-resource_name = "SelectTrackMenu"
 script/source = "extends CanvasLayer
 
 signal selected(track_uri: String)
