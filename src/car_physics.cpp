@@ -23,6 +23,7 @@ void CarPhysics::_bind_methods()
     ClassDB::bind_method(D_METHOD("load_state", "p_state"), &CarPhysics::load_state);
     ClassDB::bind_method(D_METHOD("checkpoint_count"), &CarPhysics::checkpoint_count);
     ClassDB::bind_method(D_METHOD("collected_checkpoint_count"), &CarPhysics::collected_checkpoint_count);
+    ClassDB::bind_method(D_METHOD("is_finished"), &CarPhysics::is_finished);
 
     ADD_SIGNAL(MethodInfo("simulated", PropertyInfo(Variant::OBJECT, "step", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT, "CarPhysicsStep")));
 }
@@ -138,4 +139,9 @@ size_t CarPhysics::checkpoint_count() const
 size_t CarPhysics::collected_checkpoint_count() const
 {
     return physics->collected_checkpoint_count();
+}
+
+bool CarPhysics::is_finished() const
+{
+    return physics->is_finished();
 }

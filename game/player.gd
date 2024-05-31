@@ -63,10 +63,9 @@ func _on_step_simulated(step: CarPhysicsStep) -> void:
 	%CarSpeedLabel.text = "%.f" % absf(step.speed * 3.6)
 
 	if step.just_finished:
-		%FinishAudioListener.global_transform = %AudioListener.global_transform
-		%FinishAudioListener.make_current()
-		$FollowCamera.look_at_mode = PhantomCamera3D.LookAtMode.NONE
-		$FollowCamera.follow_mode = PhantomCamera3D.FollowMode.NONE
+		%LookAt.top_level = true
+		%EyeSocket.top_level = true
+		%AudioListener.top_level = true
 
 	if step.input.restart && $FollowCamera.priority == 1:
 		spectate()
@@ -83,12 +82,21 @@ func _on_follow_camera_became_inactive() -> void:
 
 
 func spectate() -> void:
-	if is_spectated():
-		return
-
-	$FollowCamera.look_at_mode = PhantomCamera3D.LookAtMode.SIMPLE
-	$FollowCamera.follow_mode = PhantomCamera3D.FollowMode.SIMPLE
 	$FollowCamera.priority = 1
+
+	if !is_finished():
+		if %LookAt.top_level:
+			%LookAt.top_level = false
+			%LookAt.position = Vector3.ZERO
+
+		if %EyeSocket.top_level:
+			%EyeSocket.top_level = false
+			%EyeSocket.position = Vector3.ZERO
+
+		if %AudioListener.top_level:
+			%AudioListener.top_level = false
+			%AudioListener.position = Vector3.ZERO
+
 	%AudioListener.make_current()
 
 

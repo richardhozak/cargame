@@ -640,6 +640,11 @@ size_t Physics::collected_checkpoint_count() const
     return impl->collected_checkpoints.size();
 }
 
+bool Physics::is_finished() const
+{
+    return impl->finished;
+}
+
 std::unique_ptr<Physics> new_physics(const Track& track)
 {
     cerr << "Creating physics with " << track.meshes.size() << " meshes\n";

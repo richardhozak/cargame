@@ -91,6 +91,7 @@ public:
     void load_state(const std::string& bytes);
     size_t checkpoint_count() const;
     size_t collected_checkpoint_count() const;
+    bool is_finished() const;
 
 private:
     class impl;

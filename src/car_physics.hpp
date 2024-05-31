@@ -26,6 +26,7 @@ public:
     void load_state(const PackedByteArray& state);
     size_t checkpoint_count() const;
     size_t collected_checkpoint_count() const;
+    bool is_finished() const;
 };
 
 }  // namespace godot
