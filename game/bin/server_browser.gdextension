@@ -6,9 +6,5 @@ reloadable = false
 [libraries]
 linux.debug.x86_64 =     "res://../server_browser/target/debug/libserver_browser.so"
 linux.release.x86_64 =   "res://../server_browser/target/release/libserver_browser.so"
-windows.debug.x86_64 =   "res://../server_browser/target/debug/server_browser.dll"
-windows.release.x86_64 = "res://../server_browser/target/release/server_browser.dll"
-macos.debug =            "res://../server_browser/target/debug/libserver_browser.dylib"
-macos.release =          "res://../server_browser/target/release/libserver_browser.dylib"
-macos.debug.arm64 =      "res://../server_browser/target/debug/libserver_browser.dylib"
-macos.release.arm64 =    "res://../server_browser/target/release/libserver_browser.dylib"
+windows.debug.x86_64 =   "res://../server_browser/x86_64-pc-windows-gnu/debug/server_browser.dll"
+windows.release.x86_64 = "res://../server_browser/x86_64-pc-windows-gnu/release/server_browser.dll"

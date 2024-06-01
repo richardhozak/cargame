@@ -3,5 +3,7 @@ entry_symbol = "physics_library_init"
 compatibility_minimum = "4.2"
 
 [libraries]
-linux.x86_64 = "res://bin/libphysics.so"
-windows.x86_64 = "res://bin/libphysics.dll"
+linux.debug.x86_64 =     "res://../physics/build/linux-debug/libphysics.so"
+linux.release.x86_64 =   "res://../physics/build/linux-release/libphysics.so"
+windows.debug.x86_64 =   "res://../physics/build/windows-debug/libphysics.dll"
+windows.release.x86_64 = "res://../physics/build/windows-release/libphysics.dll"

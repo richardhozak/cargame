@@ -24,8 +24,13 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release;Distribution")
 # When turning this option on, the library will be compiled using doubles for positions. This allows for much bigger worlds.
 set(DOUBLE_PRECISION OFF)
 
-# When turning this option on, the library will be compiled with debug symbols
-set(GENERATE_DEBUG_SYMBOLS ON)
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+	set(GENERATE_DEBUG_SYMBOLS OFF)
+else()
+	# When turning this option on, the library will be compiled with debug symbols
+	set(GENERATE_DEBUG_SYMBOLS ON)
+endif()
+
 
 # When turning this option on, the library will be compiled in such a way to attempt to keep the simulation deterministic across platforms
 set(CROSS_PLATFORM_DETERMINISTIC ON)
