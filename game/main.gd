@@ -58,7 +58,7 @@ var peers := Dictionary()
 func _ready() -> void:
 	spectate_group.allow_unpress = false
 	spectate_group.pressed.connect(_on_spectate_pressed)
-	player_name = RandomName.get_random_name()
+	player_name = Session.player_profile.player_name
 	$PlayerName/PlayerNameContainer/PlayerName.text = player_name
 	$DebugMenu/Menu/SaveStateButton.pressed.connect(save_state)
 	$DebugMenu/Menu/LoadStateButton.pressed.connect(load_state)
