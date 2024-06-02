@@ -1,8 +1,6 @@
 @tool
 class_name TrackReplaySaver extends ResourceFormatSaver
 
-const VERSION = 1
-
 
 func _get_recognized_extensions(_resource: Resource) -> PackedStringArray:
 	return PackedStringArray(["replay"])
