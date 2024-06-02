@@ -189,8 +189,11 @@ add_library(physics SHARED
 	src/register_types.cpp
 	src/register_types.h
 	src/Tests/Vehicle/VehicleTest.cpp
+	src/Tests/Vehicle/VehicleTest.h
 	src/Tests/Vehicle/VehicleConstraintTest.cpp
+	src/Tests/Vehicle/VehicleConstraintTest.h
 	src/Tests/Vehicle/VehicleSixDOFTest.cpp
+	src/Tests/Vehicle/VehicleSixDOFTest.h
 	src/physics.h
 	src/physics.cpp
 )
