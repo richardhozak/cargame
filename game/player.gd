@@ -96,15 +96,15 @@ func spectate() -> void:
 	if !is_finished():
 		if %LookAt.top_level:
 			%LookAt.top_level = false
-			%LookAt.position = Vector3.ZERO
+			%LookAt.transform = Transform3D.IDENTITY
 
 		if %EyeSocket.top_level:
 			%EyeSocket.top_level = false
-			%EyeSocket.position = Vector3.ZERO
+			%EyeSocket.transform = Transform3D.IDENTITY
 
 		if %AudioListener.top_level:
 			%AudioListener.top_level = false
-			%AudioListener.position = Vector3.ZERO
+			%AudioListener.transform = Transform3D.IDENTITY
 
 	%AudioListener.make_current()
 
