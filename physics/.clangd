@@ -1,3 +1,5 @@
 CompileFlags:
   Remove:
     - -fno-gnu-unique
+  Add:
+    - -include Jolt/Jolt.h
