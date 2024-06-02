@@ -167,8 +167,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHOT_RELOAD_ENABLED")
 # Include godot-cpp
 FetchContent_Declare(
         godot-cpp
-        GIT_REPOSITORY "https://github.com/godotengine/godot-cpp"
-        GIT_TAG "godot-4.2.2-stable"
+        GIT_REPOSITORY "https://github.com/richardhozak/godot-cpp"
+        GIT_TAG "godot4.3beta1"
 )
 FetchContent_MakeAvailable(godot-cpp)
 
