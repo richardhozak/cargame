@@ -1,31 +1,121 @@
 extends Node
 
+const API_KEY := "dev_109b0bf1efd34b65bca7f1040dc199eb"
 const PROFILE_DIR := "user://profiles"
 
 var player_profile: PlayerProfile
 
+@onready var _profile := _get_profile()
+var _session_token: String
+
 
 func _ready():
-	_ensure_profile_dir_exists()
-
-	var profile := _get_profile()
-
-	if _profile_exists(profile):
-		player_profile = _load_player_profile(profile)
+	if _profile_exists(_profile):
+		player_profile = _load_player_profile(_profile)
 	else:
 		print("Creating new profile")
 		player_profile = _create_new_player_profile()
-		var result := _save_player_profile(profile, player_profile)
+		var result := _save_player_profile(_profile, player_profile)
 		if result != OK:
 			printerr("Failed to save player profile %s" % error_string(result))
 			return
 
 	if player_profile:
-		print("Player profile '%s' loaded %s" % [profile, player_profile.player_name])
+		print("Player profile '%s' loaded %s" % [_profile, player_profile.player_name])
 	else:
 		printerr("Failed to load player profile %s" % error_string(FileAccess.get_open_error()))
 
 	assert(player_profile, "Player profile not available")
+	_login()
+
+
+func _parse_json_response_body(bytes: PackedByteArray):
+	var json_body := JSON.new()
+	json_body.parse(bytes.get_string_from_utf8())
+	var body = json_body.get_data()
+	if !body:
+		printerr("Invalid json response body")
+		return null
+
+	return body
+
+
+func _login() -> void:
+	print("Creating guest session ", player_profile.player_id)
+
+	var http_request = HTTPRequest.new()
+	http_request.timeout = 10.0
+	add_child(http_request)
+
+	var request := {"game_key": API_KEY, "game_version": "0.1.0"}
+
+	if player_profile.player_id:
+		print("Logging in with ", player_profile.player_id)
+		request["player_identifier"] = player_profile.player_id
+
+	http_request.request(
+		"https://api.lootlocker.io/game/v2/session/guest",
+		["content-type: application/json"],
+		HTTPClient.METHOD_POST,
+		JSON.stringify(request)
+	)
+
+	var response = await http_request.request_completed
+
+	var result := response[0] as HTTPRequest.Result
+	if result != HTTPRequest.Result.RESULT_SUCCESS:
+		printerr("Failed to get online user profile")
+		return
+
+	var body := _parse_json_response_body(response[3] as PackedByteArray) as Dictionary
+	if !body:
+		printerr("Invalid response from login")
+		return
+
+	var player_name := body.get("player_name", "") as String
+	player_profile.player_id = body.get("player_identifier", "") as String
+	_session_token = body.get("session_token", "") as String
+
+	var save_result := _save_player_profile(_profile, player_profile)
+	if save_result != OK:
+		print("Failed to save profile %s", error_string(save_result))
+		return
+
+	print("Player logged in with ", player_profile.player_id)
+
+	if not player_name or player_name != player_profile.player_name:
+		prints("Update player name from '%s' to '%s'" % [player_name, player_profile.player_name])
+		await _update_player_name(http_request, player_profile.player_name)
+
+
+func _update_player_name(http_request: HTTPRequest, player_name: String):
+	var http_result := http_request.request(
+		"https://api.lootlocker.io/game/player/name",
+		["content-type: application/json", "x-session-token: %s" % _session_token],
+		HTTPClient.METHOD_PATCH,
+		JSON.stringify({"name": player_name})
+	)
+
+	if http_result != HTTPRequest.Result.RESULT_SUCCESS:
+		printerr("Failed to update player's name: ", http_result)
+		return
+
+	var response = await http_request.request_completed
+
+	var result := response[0] as HTTPRequest.Result
+	if result != HTTPRequest.Result.RESULT_SUCCESS:
+		printerr("Failed to update player's name: ", result)
+		return
+
+	var body = _parse_json_response_body(response[3] as PackedByteArray)
+	if !body:
+		printerr("Invalid response from update name")
+		return
+
+	if body.get("name", "") != player_name:
+		printerr("Name update failed ", body)
+	else:
+		print("Name updated ", body)
 
 
 func _parse_cmdline_args() -> Dictionary:
@@ -44,6 +134,8 @@ func _parse_cmdline_args() -> Dictionary:
 
 
 func _get_profile() -> String:
+	_ensure_profile_dir_exists()
+
 	var args := _parse_cmdline_args()
 	var profile := args.get("profile", "") as String
 
