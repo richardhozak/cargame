@@ -35,7 +35,11 @@ func _ready() -> void:
 
 
 func save_personal_best(track_id: String, player_name: String, replay: Replay) -> SaveResult:
-	return _save_replay(track_id, player_name, replay, PERSONAL_BESTS_DIR)
+	var result := _save_replay(track_id, player_name, replay, PERSONAL_BESTS_DIR)
+	if result.result == OK:
+		personal_best_replays[track_id] = result.replay
+
+	return result
 
 
 func save_replay(track_id: String, player_name: String, replay: Replay) -> SaveResult:
@@ -60,7 +64,7 @@ func _save_replay(
 	var track_replay := TrackReplay.new()
 	track_replay.track_id = track_id
 	track_replay.player_name = player_name
-	track_replay.replay = replay
+	track_replay.replay = replay.duplicate()
 
 	var result := OK
 	var replay_name := (

@@ -17,10 +17,9 @@ var loaded_mesh: CarPhysicsTrackMesh
 var player_name: String
 var saved_state: PackedByteArray
 var spectate_group := ButtonGroup.new()
-var fastest_validation_replay := Replay.new()
+var fastest_validation_replay: Replay = null
 var loaded_track_bytes: PackedByteArray
-var track_res: Track
-var personal_best: Replay
+var track: Track = null
 
 const PlayerScene = preload("res://player.tscn")
 const PlayerSpectateItem = preload("res://player_spectate_item.tscn")
@@ -120,7 +119,9 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.name = "menu"
 			menu.load_replay_visible = !validating
 			menu.accept_validation_visible = validating
-			menu.accept_validation_enabled = fastest_validation_replay.get_count() != 0
+			menu.accept_validation_enabled = (
+				fastest_validation_replay && fastest_validation_replay.get_count() != 0
+			)
 			menu.resume.connect(_on_pause_menu_resume)
 			menu.load_replay.connect(_on_pause_menu_load_replay)
 			menu.accept.connect(_on_finish_with_validation_menu_accept)
@@ -154,7 +155,7 @@ func change_menu(menu_state: MenuState) -> void:
 				func(node): return node.get_meta("replay_uri", "")
 			)
 			menu.selected_replay_uris.assign(replay_uris)
-			menu.track_id = track_res.track_id
+			menu.track_id = track.track_id
 			menu.replay_toggled.connect(_on_replay_menu_replay_toggled)
 			add_child(menu)
 		MenuState.LOAD_TRACK_MODEL:
@@ -299,11 +300,13 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 		player.driver = LocalPlayerInput.new()
 		loaded_player = player
 		spectate_button.button_pressed = true
-		if personal_best && is_playing_single_player():
-			spawn_player(-id, "Personal Best", PackedByteArray())
-			var personal_best_player := loaded_track.get_node_or_null(str(-id)) as Player
-			if personal_best_player:
-				personal_best_player.driver = ReplayPlayerInput.new(personal_best)
+		if is_playing_single_player():
+			var personal_best := Replays.get_personal_best(track.track_id)
+			if personal_best:
+				spawn_player(-id, "Personal Best", PackedByteArray())
+				var personal_best_player := loaded_track.get_node_or_null(str(-id)) as Player
+				if personal_best_player:
+					personal_best_player.driver = ReplayPlayerInput.new(personal_best)
 	else:
 		player.driver = RemotePlayerInput.new()
 
@@ -312,7 +315,9 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 		player.simulated.connect(func(step): on_server_input_simulated(id, step.input))
 
 	if is_local:
-		player.simulated.connect(func(step): on_local_step_simulated(step))
+		player.simulated.connect(
+			func(step): on_local_step_simulated(player.driver as LocalPlayerInput, step)
+		)
 
 	if multiplayer.is_server():
 		peers[id].player = player
@@ -339,19 +344,69 @@ func simulate_input(peer_id: int, input: CarPhysicsInput) -> void:
 		printerr("no player with id ", peer_id)
 
 
-func on_local_step_simulated(step: CarPhysicsStep) -> void:
+## Check if replay 'lhs' is faster than replay 'rhs'
+func is_replay_faster(lhs: Replay, rhs: Replay) -> bool:
+	assert(lhs, "lhs replay cannot be null")
+	if !rhs:
+		return true
+
+	return lhs.get_count() <= rhs.get_count()
+
+
+func get_replay_medal(replay: Replay) -> Medal:
+	if not replay:
+		return Medal.NONE
+
+	return get_time_medal(replay.get_count() - 300)
+
+
+enum Medal {
+	NONE = 0,
+	BRONZE = 1,
+	SILVER = 2,
+	GOLD = 3,
+	AUTHOR = 4,
+}
+
+
+func medal_to_string(medal: Medal) -> String:
+	match medal:
+		Medal.NONE:
+			return ""
+		Medal.BRONZE:
+			return "Bronze"
+		Medal.SILVER:
+			return "Silver"
+		Medal.GOLD:
+			return "Gold"
+		Medal.AUTHOR:
+			return "Author"
+
+	return ""
+
+
+func get_time_medal(step: int) -> Medal:
+	if step <= track.author_time:
+		return Medal.AUTHOR
+	elif step <= track.gold_time:
+		return Medal.GOLD
+	elif step <= track.silver_time:
+		return Medal.SILVER
+	elif step <= track.bronze_time:
+		return Medal.BRONZE
+	else:
+		return Medal.NONE
+
+
+func on_local_step_simulated(driver: LocalPlayerInput, step: CarPhysicsStep) -> void:
 	if !multiplayer.is_server():
 		# send input to server
 		input_simulated.rpc_id(1, step.input)
 
 	if step.just_finished:
-		var driver := loaded_player.driver as LocalPlayerInput
 		if validating:
 			var current_replay := driver.get_replay()
-			if (
-				(current_replay.get_count() <= fastest_validation_replay.get_count())
-				|| fastest_validation_replay.get_count() == 0
-			):
+			if is_replay_faster(current_replay, fastest_validation_replay):
 				fastest_validation_replay = current_replay
 
 			var fastest_time := Replays.human_time(
@@ -362,30 +417,23 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 			$menu.set_fastest_time(fastest_time)
 			$menu.set_time(Replays.human_time(step.step, true))
 		else:
-			var achievement := ""
+			var achievements: Array[String] = []
 			var current_replay := driver.get_replay()
-			if (
-				(personal_best and current_replay.get_count() <= personal_best.get_count())
-				or !personal_best
-			):
-				achievement = "New personal best!"
+			var personal_best_replay := Replays.get_personal_best(track.track_id)
 
-				var old_medal := ""
-				if personal_best:
-					old_medal = get_time_medal(personal_best.get_count() - 300)
+			if is_replay_faster(current_replay, personal_best_replay):
+				var res := Replays.save_personal_best(track.track_id, player_name, current_replay)
+				if res.result != OK:
+					printerr("Failed to save PB %s", error_string(res.result))
 
-				var new_medal := get_time_medal(current_replay.get_count() - 300)
+				var current_medal := get_replay_medal(current_replay)
+				var pb_medal := get_replay_medal(personal_best_replay)
 
-				if old_medal != new_medal:
-					achievement = "You've earned new medal: %s!" % new_medal
-
-				personal_best = current_replay
-
-				var result := Replays.save_personal_best(
-					track_res.track_id, player_name, personal_best
-				)
-				if result.result != OK:
-					printerr("Failed to save PB %s", error_string(result.result))
+				achievements.push_back("New personal best!")
+				if current_medal > pb_medal:
+					achievements.push_back(
+						"You've earned new medal: %s!" % medal_to_string(current_medal)
+					)
 
 				var pb_id := str(-multiplayer.get_unique_id())
 				var personal_best_player: Player = loaded_track.get_node_or_null(pb_id)
@@ -393,12 +441,12 @@ func on_local_step_simulated(step: CarPhysicsStep) -> void:
 					spawn_player(-multiplayer.get_unique_id(), "Personal Best", PackedByteArray())
 					personal_best_player = loaded_track.get_node(pb_id)
 
-				personal_best_player.driver = ReplayPlayerInput.new(personal_best)
+				personal_best_player.driver = ReplayPlayerInput.new(current_replay)
 
 			change_menu(MenuState.FINISHED)
 			$menu.set_time(Replays.human_time(step.step, step.just_finished))
-			$menu.set_personal_best(Replays.human_time(personal_best.get_count() - 300, true))
-			$menu.set_achievement(achievement)
+			$menu.set_track_id(track.track_id)
+			$menu.set_achievements(achievements)
 
 	if step.input.restart:
 		match current_menu_state:
@@ -578,9 +626,6 @@ func load_track(track_uri: String) -> void:
 		loaded_track = null
 		loaded_mesh = null
 
-	if personal_best != null:
-		personal_best = null
-
 	if validating:
 		if track_uri.get_extension() == "glb" || track_uri.get_extension() == "gltf":
 			var buffer := FileAccess.get_file_as_bytes(track_uri)
@@ -597,14 +642,10 @@ func load_track(track_uri: String) -> void:
 		else:
 			printerr("Invalid file")
 	else:
-		var track := ResourceLoader.load(track_uri) as Track
+		track = ResourceLoader.load(track_uri) as Track
 		if track:
-			personal_best = Replays.get_personal_best(track.track_id)
 			var error := load_track_from_bytes(track.track_bytes)
-			if error == OK:
-				track_res = track
-			else:
-				personal_best = null
+			if error != OK:
 				printerr("Couldn't load track scene (error code: %s)." % error_string(error))
 		else:
 			printerr("Failed to load track")
@@ -677,10 +718,10 @@ func _on_finish_menu_restart() -> void:
 
 
 func _on_finish_menu_save_replay() -> void:
-	if loaded_player && track_res:
+	if loaded_player && track:
 		var driver := loaded_player.driver as LocalPlayerInput
 		var replay := driver.get_replay()
-		var result := Replays.save_replay(track_res.track_id, player_name, replay)
+		var result := Replays.save_replay(track.track_id, player_name, replay)
 		$menu.set_replay_label(result.message)
 
 
@@ -705,19 +746,6 @@ func _on_pause_menu_load_replay() -> void:
 
 func _on_create_track_menu_done() -> void:
 	change_menu(MenuState.MAIN_MENU)
-
-
-func get_time_medal(step: int) -> String:
-	if step <= track_res.author_time:
-		return "Author"
-	elif step <= track_res.gold_time:
-		return "Gold"
-	elif step <= track_res.silver_time:
-		return "Silver"
-	elif step <= track_res.bronze_time:
-		return "Bronze"
-	else:
-		return ""
 
 
 func _on_replay_menu_replay_toggled(replay_uri: String, toggled: bool) -> void:

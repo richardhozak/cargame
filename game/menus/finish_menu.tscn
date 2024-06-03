@@ -30,13 +30,18 @@ func set_time(time: String) -> void:
 	%FinishTime.text = time
 
 
-func set_personal_best(time: String) -> void:
-	%PersonalBestTime.text = time
+func set_track_id(track_id: String) -> void:
+	var pb := Replays.get_personal_best(track_id)
+	if pb:
+		%PersonalBestTime.text = Replays.human_time(pb.get_count() - 300, true)
+	else:
+		%PersonalBestTime.text = \"\"
 
 
-func set_achievement(text: String) -> void:
+func set_achievements(achievements: Array[String]) -> void:
+	%AchievementLabel.visible = achievements.size() > 0
+	var text := \"\\n\".join(PackedStringArray(achievements))
 	%AchievementLabel.text = \"[center][i]%s[/i][/center]\" % text
-	%AchievementLabel.visible = text != \"\"
 
 
 func set_replay_label(text: String) -> void:
