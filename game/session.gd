@@ -7,9 +7,13 @@ var player_profile: PlayerProfile
 
 @onready var _profile := _get_profile()
 var _session_token: String
+var _http_request := HTTPRequest.new()
 
 
 func _ready():
+	_http_request.timeout = 10.0
+	add_child(_http_request)
+
 	if _profile_exists(_profile):
 		player_profile = _load_player_profile(_profile)
 	else:
@@ -43,24 +47,20 @@ func _parse_json_response_body(bytes: PackedByteArray):
 func _login() -> void:
 	print("Creating guest session ", player_profile.player_id)
 
-	var http_request = HTTPRequest.new()
-	http_request.timeout = 10.0
-	add_child(http_request)
-
 	var request := {"game_key": API_KEY, "game_version": "0.1.0"}
 
 	if player_profile.player_id:
 		print("Logging in with ", player_profile.player_id)
 		request["player_identifier"] = player_profile.player_id
 
-	http_request.request(
+	_http_request.request(
 		"https://api.lootlocker.io/game/v2/session/guest",
 		["content-type: application/json"],
 		HTTPClient.METHOD_POST,
 		JSON.stringify(request)
 	)
 
-	var response = await http_request.request_completed
+	var response = await _http_request.request_completed
 
 	var result := response[0] as HTTPRequest.Result
 	if result != HTTPRequest.Result.RESULT_SUCCESS:
@@ -85,11 +85,11 @@ func _login() -> void:
 
 	if not player_name or player_name != player_profile.player_name:
 		prints("Update player name from '%s' to '%s'" % [player_name, player_profile.player_name])
-		await _update_player_name(http_request, player_profile.player_name)
+		await _update_player_name(player_profile.player_name)
 
 
-func _update_player_name(http_request: HTTPRequest, player_name: String):
-	var http_result := http_request.request(
+func _update_player_name(player_name: String):
+	var http_result := _http_request.request(
 		"https://api.lootlocker.io/game/player/name",
 		["content-type: application/json", "x-session-token: %s" % _session_token],
 		HTTPClient.METHOD_PATCH,
@@ -100,7 +100,7 @@ func _update_player_name(http_request: HTTPRequest, player_name: String):
 		printerr("Failed to update player's name: ", http_result)
 		return
 
-	var response = await http_request.request_completed
+	var response = await _http_request.request_completed
 
 	var result := response[0] as HTTPRequest.Result
 	if result != HTTPRequest.Result.RESULT_SUCCESS:
