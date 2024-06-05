@@ -214,3 +214,33 @@ func submit_replay(track_id: String, replay: Replay) -> void:
 		printerr("Failed to submit replay ", body.get("message"))
 	else:
 		print("Replay submitted")
+
+
+# curl -X GET "https://api.lootlocker.io/game/leaderboards/1/list?count=10"
+func get_leaderboard(track_id: String):
+	var error := _http_request.request(
+		"https://api.lootlocker.io/game/leaderboards/%s/list/?count=10" % track_id,
+		["x-session-token: %s" % _session_token]
+	)
+
+	if error != OK:
+		printerr("Failed to get leaderboard for track '%s': %s" % [track_id, error_string(error)])
+		return null
+
+	var response = await _http_request.request_completed
+
+	var result := response[0] as HTTPRequest.Result
+	if result != HTTPRequest.Result.RESULT_SUCCESS:
+		printerr("Failed to get leaderboard for track, status: ", result)
+		return null
+
+	var body = _parse_json_response_body(response[3] as PackedByteArray) as Dictionary
+	if !body:
+		printerr("Failed to submit replay, failed to parse reponse")
+		return null
+
+	if body.has("items"):
+		return body.get("items")
+	else:
+		printerr("Failed to get leaderboard ", body)
+		return null

@@ -23,6 +23,7 @@ var track: Track = null
 
 const PlayerScene = preload("res://player.tscn")
 const PlayerSpectateItem = preload("res://player_spectate_item.tscn")
+const LeaderboardScene = preload("res://ui/leaderboard.tscn")
 var loaded_player: Player
 
 var current_menu_state: MenuState = MenuState.MAIN_MENU
@@ -613,6 +614,10 @@ func load_track_from_bytes(buffer: PackedByteArray) -> Error:
 		scene_node.set_meta("mesh", physics_mesh)
 		loaded_track = scene_node
 		loaded_mesh = physics_mesh
+
+		var leaderboard := LeaderboardScene.instantiate()
+		leaderboard.track_id = track.track_id
+		scene_node.add_child(leaderboard)
 
 		scene_node.ready.connect(track_ready)
 

@@ -1,0 +1,56 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8cxg85gpkf1x"]
+
+[sub_resource type="GDScript" id="GDScript_d8rcr"]
+resource_name = "Leaderboard"
+script/source = "class_name Leaderboard extends CanvasLayer
+
+var track_id: String
+
+var _leaderboard
+
+func _ready() -> void:
+	_leaderboard = await Session.get_leaderboard(track_id)
+
+	if _leaderboard != null:
+		for record in _leaderboard:
+			print(\"Player \", record)
+			var player_name = record.get(\"player\").get(\"name\")
+			var rank = record.get(\"rank\")
+			var time = int(record.get(\"score\"))
+			var label := Label.new()
+			label.text = \"%s. %s - %s\" % [rank, player_name, Replays.human_time(time - 300)]
+			%PlayerContainer.add_child(label)
+	else:
+		print(\"no leaderboard :(\")
+"
+
+[node name="Leaderboard" type="CanvasLayer"]
+script = SubResource("GDScript_d8rcr")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 10.0
+offset_top = -23.5
+offset_right = 130.0
+offset_bottom = 23.5
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Leaderboard"
+
+[node name="PlayerContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
