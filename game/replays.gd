@@ -35,6 +35,8 @@ func _ready() -> void:
 
 
 func save_personal_best(track_id: String, player_name: String, replay: Replay) -> SaveResult:
+	Session.submit_replay(track_id, replay)
+
 	var result := _save_replay(track_id, player_name, replay, PERSONAL_BESTS_DIR)
 	if result.result == OK:
 		personal_best_replays[track_id] = result.replay

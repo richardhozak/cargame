@@ -172,3 +172,45 @@ func _ensure_profile_dir_exists():
 	if result != OK:
 		push_error("Failed to create profile dir: %s" % error_string(result))
 		assert(false, "Failed to create profile dir: %s" % error_string(result))
+
+
+# curl -X POST "https://api.lootlocker.io/game/leaderboards/1/submit" \
+#   -H "x-session-token: your_token_here" \
+#   -H "Content-Type: application/json" \
+#   -d "{\"score\": 1000, \"metadata\": \"some metadata\"}"
+func submit_replay(track_id: String, replay: Replay) -> void:
+	if not _session_token:
+		printerr("Cannot submit replay, session token not set")
+		return
+
+	assert(replay.data.size() == replay.count * Replay.INPUT_SIZE)
+	var data := replay.data.compress(FileAccess.CompressionMode.COMPRESSION_ZSTD)
+
+	print("Submitting replay")
+
+	var error := _http_request.request(
+		"https://api.lootlocker.io/game/leaderboards/%s/submit" % track_id,
+		["content-type: application/json", "x-session-token: %s" % _session_token],
+		HTTPClient.METHOD_POST,
+		JSON.stringify({"score": replay.count, "metadata": Marshalls.raw_to_base64(data)})
+	)
+	if error != OK:
+		printerr("Failed to submit replay, error: ", error_string(error))
+		return
+
+	var response = await _http_request.request_completed
+
+	var result := response[0] as HTTPRequest.Result
+	if result != HTTPRequest.Result.RESULT_SUCCESS:
+		printerr("Failed to submit replay, status: ", result)
+		return
+
+	var body = _parse_json_response_body(response[3] as PackedByteArray) as Dictionary
+	if !body:
+		printerr("Failed to submit replay, failed to parse reponse")
+		return
+
+	if body.has("message"):
+		printerr("Failed to submit replay ", body.get("message"))
+	else:
+		print("Replay submitted")
