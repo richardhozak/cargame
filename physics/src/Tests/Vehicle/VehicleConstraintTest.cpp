@@ -49,11 +49,15 @@ void VehicleConstraintTest::Initialize()
     mTesters[2] = new VehicleCollisionTesterCastCylinder(Layers::MOVING);
 
     // Create vehicle body
-    RefConst<Shape> car_shape = OffsetCenterOfMassShapeSettings(Vec3(0, -half_vehicle_height, 0), new BoxShape(Vec3(half_vehicle_width, half_vehicle_height, half_vehicle_length))).Create().Get();
+    // make the convex radius a bit bigger so the car's body does not have sharp edges and does not get stuck so easil on slopes
+    const float convex_radius = 0.2f;
+    RefConst<Shape> car_shape = OffsetCenterOfMassShapeSettings(Vec3(0, -half_vehicle_height, 0), new BoxShape(Vec3(half_vehicle_width, half_vehicle_height, half_vehicle_length), convex_radius)).Create().Get();
     BodyCreationSettings car_body_settings(car_shape, initial_position, initial_rotation, EMotionType::Dynamic, Layers::MOVING);
     car_body_settings.mOverrideMassProperties = EOverrideMassProperties::CalculateInertia;
     car_body_settings.mMassPropertiesOverride.mMass = sBodyMass;
     mCarBody = mBodyInterface->CreateBody(car_body_settings);
+    // disable friction so the car does not get stuck on body's edge when going up slopes
+    mCarBody->SetFriction(0.0f);
     mBodyInterface->AddBody(mCarBody->GetID(), EActivation::Activate);
 
     // Create vehicle constraint
