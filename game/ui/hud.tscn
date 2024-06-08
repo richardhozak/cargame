@@ -6,20 +6,6 @@ font_size = 32
 [node name="HUD" type="CanvasLayer"]
 layer = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
-auto_translate_mode = 1
-offset_left = 15.0
-offset_top = 15.0
-offset_right = 257.0
-offset_bottom = 311.0
-horizontal_scroll_mode = 0
-
-[node name="SpectateContainer" type="VBoxContainer" parent="ScrollContainer"]
-auto_translate_mode = 1
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
 [node name="ValidatingLabel" type="Label" parent="."]
 auto_translate_mode = 1
 anchors_preset = 10

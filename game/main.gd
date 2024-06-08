@@ -293,7 +293,6 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	var spectate_item := PlayerSpectateItem.instantiate()
 	spectate_item.button_group = spectate_group
 	spectate_item.player_name = peer_name
-	#$HUD/ScrollContainer/SpectateContainer.add_child(spectate_item)
 	$Scoreboard.spectate_container.add_child(spectate_item)
 
 	var spectate_button: BaseButton = spectate_group.get_buttons().back()
