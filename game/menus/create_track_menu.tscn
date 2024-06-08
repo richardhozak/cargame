@@ -21,7 +21,7 @@ var track_bytes: PackedByteArray
 	set(value):
 		author_time = value
 		if not is_node_ready(): await ready
-		%Author.text = Replays.human_time(value, true, false)
+		%Author.text = Replays.human_time(value)
 		_update_medal_times()
 
 
@@ -36,9 +36,9 @@ func _update_medal_times() -> void:
 	var silver_percent = int(%SilverPercent.value)
 	var bronze_percent = int(%BronzePercent.value)
 
-	%Gold.text = Replays.human_time(_percent_slower_time(steps, gold_percent), true, false)
-	%Silver.text = Replays.human_time(_percent_slower_time(steps, silver_percent), true, false)
-	%Bronze.text = Replays.human_time(_percent_slower_time(steps, bronze_percent), true, false)
+	%Gold.text = Replays.human_time(_percent_slower_time(steps, gold_percent))
+	%Silver.text = Replays.human_time(_percent_slower_time(steps, silver_percent))
+	%Bronze.text = Replays.human_time(_percent_slower_time(steps, bronze_percent))
 
 
 func _on_create_pressed() -> void:
@@ -346,7 +346,4 @@ text = "00:00.000"
 layout_mode = 2
 text = "Create"
 
-[connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2/GoldPercent" to="." method="_update_medal_times" unbinds=1]
-[connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer3/SilverPercent" to="." method="_update_medal_times" unbinds=1]
-[connection signal="value_changed" from="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer4/BronzePercent" to="." method="_update_medal_times" unbinds=1]
 [connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/Create" to="." method="_on_create_pressed"]

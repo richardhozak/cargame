@@ -157,7 +157,7 @@ func _update_hud(step: CarPhysicsStep) -> void:
 	if step.simulated:
 		_display_car_stats(step.speed, step.rpm, step.gear)
 		_display_countdown(step.step)
-		$HUD/TrackStats/Time.text = Replays.human_time(step.step, step.just_finished)
+		$HUD/TrackStats/Time.text = Replays.human_time(step.step, true)
 		$HUD/TrackStats/Checkpoints.text = _checkpoint_text(
 			step.collected_checkpoints, step.available_checkpoints
 		)

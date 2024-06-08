@@ -33,7 +33,7 @@ func set_time(time: String) -> void:
 func set_track_id(track_id: String) -> void:
 	var pb := Replays.get_personal_best(track_id)
 	if pb:
-		%PersonalBestTime.text = Replays.human_time(pb.get_count() - 300, true)
+		%PersonalBestTime.text = Replays.human_time(pb.get_count() - 300)
 	else:
 		%PersonalBestTime.text = \"\"
 

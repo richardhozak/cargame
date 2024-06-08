@@ -86,16 +86,14 @@ func _save_replay(
 	return SaveResult.new(OK, replay_uri, track_replay, "Replay saved as '%s'" % replay_name)
 
 
-func human_time(step: int, full: bool = false, pad: bool = true) -> String:
+func human_time(step: int, pad: bool = false) -> String:
 	var is_negative := step < 0
 	step = absi(step)
 	var seconds := step as float / 100.0
 	var minutes := (seconds / 60.0) as int
 	var remaining_seconds := fmod(seconds, 60.0)
 	var prefix := "-" if is_negative else " "
-	var time := "%s%02d:%06.3f" % [prefix, minutes, remaining_seconds]
-	if !full:
-		time[time.length() - 1] = " "
+	var time := "%s%02d:%05.2f" % [prefix, minutes, remaining_seconds]
 
 	if !pad:
 		time = time.strip_edges()

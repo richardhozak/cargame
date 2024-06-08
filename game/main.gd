@@ -417,13 +417,11 @@ func on_local_step_simulated(driver: LocalPlayerInput, step: CarPhysicsStep) -> 
 			if is_replay_faster(current_replay, fastest_validation_replay):
 				fastest_validation_replay = current_replay.duplicate()
 
-			var fastest_time := Replays.human_time(
-				fastest_validation_replay.get_count() - 300, true
-			)
+			var fastest_time := Replays.human_time(fastest_validation_replay.get_count() - 300)
 			%ValidatingLabel.text = "Validated with " + fastest_time
 			change_menu(MenuState.FINISHED_WITH_VALIDATION)
 			$menu.set_fastest_time(fastest_time)
-			$menu.set_time(Replays.human_time(step.step, true))
+			$menu.set_time(Replays.human_time(step.step))
 		else:
 			var achievements: Array[String] = []
 			var current_replay := driver.get_replay()
@@ -452,7 +450,7 @@ func on_local_step_simulated(driver: LocalPlayerInput, step: CarPhysicsStep) -> 
 				personal_best_player.driver = ReplayPlayerInput.new(current_replay)
 
 			change_menu(MenuState.FINISHED)
-			$menu.set_time(Replays.human_time(step.step, step.just_finished))
+			$menu.set_time(Replays.human_time(step.step))
 			$menu.set_track_id(track.track_id)
 			$menu.set_achievements(achievements)
 

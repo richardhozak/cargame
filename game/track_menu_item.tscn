@@ -30,7 +30,7 @@ script/source = "extends PanelContainer
 		if not is_inside_tree():
 			await ready
 		author_time = value
-		%AuthorTime.text = Replays.human_time(author_time, true, false)
+		%AuthorTime.text = Replays.human_time(author_time)
 		_update_personal_best()
 
 @export var gold_time: int = 0:
@@ -38,7 +38,7 @@ script/source = "extends PanelContainer
 		if not is_inside_tree():
 			await ready
 		gold_time = value
-		%GoldTime.text = Replays.human_time(gold_time, true, false)
+		%GoldTime.text = Replays.human_time(gold_time)
 		_update_personal_best()
 
 @export var silver_time: int = 0:
@@ -46,7 +46,7 @@ script/source = "extends PanelContainer
 		if not is_inside_tree():
 			await ready
 		silver_time = value
-		%SilverTime.text = Replays.human_time(silver_time, true, false)
+		%SilverTime.text = Replays.human_time(silver_time)
 		_update_personal_best()
 
 @export var bronze_time: int = 0:
@@ -54,7 +54,7 @@ script/source = "extends PanelContainer
 		if not is_inside_tree():
 			await ready
 		bronze_time = value
-		%BronzeTime.text = Replays.human_time(bronze_time, true, false)
+		%BronzeTime.text = Replays.human_time(bronze_time)
 		_update_personal_best()
 
 @export var track_name: String:
@@ -73,7 +73,7 @@ func _update_personal_best() -> void:
 		%PBIconGold.visible = false
 		%PBIconAuthor.visible = false
 	else:
-		%PBTime.text = Replays.human_time(personal_best, true, false)
+		%PBTime.text = Replays.human_time(personal_best)
 		%PBIconBronze.visible = personal_best <= bronze_time
 		%PBIconSilver.visible = personal_best <= silver_time
 		%PBIconGold.visible = personal_best <= gold_time
@@ -81,7 +81,6 @@ func _update_personal_best() -> void:
 
 	%AuthorIcon.visible = %PBIconAuthor.visible
 	%AuthorTime.visible = %PBIconAuthor.visible
-
 "
 
 [sub_resource type="LabelSettings" id="LabelSettings_36sfu"]

@@ -25,7 +25,7 @@ func _enter_tree() -> void:
 		button.set_replay_name(replay_uri.get_file().get_basename())
 		button.set_player_name(replay.player_name)
 		# count - 300 is for the countdown which is not counted for total replay time
-		button.set_replay_time(Replays.human_time(replay.replay.get_count() - 300, true))
+		button.set_replay_time(Replays.human_time(replay.replay.get_count() - 300))
 		button.button_pressed = selected_replay_uris.find(replay_uri) != -1
 		button.toggled.connect(func(toggled: bool): replay_toggled.emit(replay_uri, toggled))
 		%ReplayButtonContainer.add_child(button)
