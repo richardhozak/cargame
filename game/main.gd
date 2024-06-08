@@ -75,6 +75,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			$FlyCamera.priority = 2
 
+	if loaded_track:
+		if event.is_action_pressed("show_scoreboard"):
+			$Scoreboard.visible = true
+		elif event.is_action_released("show_scoreboard"):
+			$Scoreboard.visible = false
+
 
 func change_menu(menu_state: MenuState) -> void:
 	var current_menu := get_node_or_null("menu")
@@ -287,7 +293,8 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 	var spectate_item := PlayerSpectateItem.instantiate()
 	spectate_item.button_group = spectate_group
 	spectate_item.player_name = peer_name
-	$HUD/ScrollContainer/SpectateContainer.add_child(spectate_item)
+	#$HUD/ScrollContainer/SpectateContainer.add_child(spectate_item)
+	$Scoreboard.spectate_container.add_child(spectate_item)
 
 	var spectate_button: BaseButton = spectate_group.get_buttons().back()
 	spectate_button.set_meta("peer_id", id)

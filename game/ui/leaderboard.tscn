@@ -28,14 +28,10 @@ func _ready() -> void:
 script = SubResource("GDScript_d8rcr")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
 offset_left = 10.0
-offset_top = -23.5
-offset_right = 130.0
-offset_bottom = 23.5
-grow_vertical = 2
+offset_top = 10.0
+offset_right = 139.0
+offset_bottom = 57.0
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -49,7 +45,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "Leaderboard"
+text = "Track Records"
 
 [node name="PlayerContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
