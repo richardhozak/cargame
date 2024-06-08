@@ -108,10 +108,8 @@ func spectate() -> void:
 
 	%AudioListener.make_current()
 
-	if name == str(multiplayer.get_unique_id()):
-		$HUD/SpectatingLabel.text = ""
-	else:
-		$HUD/SpectatingLabel.text = "Spectating: %s" % player_name
+	var spectating_me := name == str(multiplayer.get_unique_id())
+	$HUD.spectating_player = player_name if not spectating_me else ""
 
 
 func is_spectated() -> bool:

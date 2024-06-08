@@ -2,12 +2,21 @@
 
 [ext_resource type="Script" path="res://main.gd" id="1_p3uq5"]
 [ext_resource type="PackedScene" uid="uid://evqbcbqvo5gu" path="res://ui/scoreboard.tscn" id="2_cq460"]
-[ext_resource type="PackedScene" uid="uid://cfiu0ul16lw6" path="res://ui/hud.tscn" id="2_ju410"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_m8wjj"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="5_xpi8l"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_c3j8f"]
 [ext_resource type="Script" path="res://addons/phantom_camera/scripts/resources/camera_3d_resource.gd" id="7_pcsyc"]
 [ext_resource type="Texture2D" uid="uid://bdau8ntkwx6cp" path="res://evening_road_01_puresky_4k.hdr" id="7_pdd3v"]
+
+[sub_resource type="GDScript" id="GDScript_q6wnw"]
+script/source = "@tool
+extends Label
+
+@export var player_name: String = \"\":
+	set(value):
+		player_name = value
+		text = \"Playing as: %s\" % player_name
+"
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j14pt"]
 panorama = ExtResource("7_pdd3v")
@@ -186,36 +195,53 @@ auto_translate_mode = 1
 layout_mode = 2
 text = "Load State"
 
-[node name="HUD" parent="." instance=ExtResource("2_ju410")]
-visible = false
+[node name="HUD" type="CanvasLayer" parent="."]
 
-[node name="PlayerName" type="CanvasLayer" parent="."]
-
-[node name="PlayerNameContainer" type="VBoxContainer" parent="PlayerName"]
-auto_translate_mode = 1
+[node name="PanelContainer" type="PanelContainer" parent="HUD"]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -109.0
-offset_top = 5.0
-offset_right = -5.0
-offset_bottom = 55.0
+offset_left = -116.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 53.0
 grow_horizontal = 0
 
-[node name="PlayerNameLabel" type="Label" parent="PlayerName/PlayerNameContainer"]
-auto_translate_mode = 1
+[node name="MarginContainer" type="MarginContainer" parent="HUD/PanelContainer"]
 layout_mode = 2
-theme_override_constants/outline_size = 3
-text = "Player Name"
-horizontal_alignment = 2
-vertical_alignment = 1
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
-[node name="PlayerName" type="Label" parent="PlayerName/PlayerNameContainer"]
-auto_translate_mode = 1
+[node name="PlayingAs" type="Label" parent="HUD/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/outline_size = 3
-horizontal_alignment = 2
-vertical_alignment = 1
+text = "Playing as: "
+script = SubResource("GDScript_q6wnw")
+
+[node name="ValidatingContainer" type="PanelContainer" parent="HUD"]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -49.0
+offset_top = 10.0
+offset_right = 49.0
+offset_bottom = 53.0
+grow_horizontal = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD/ValidatingContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ValidatingLabel" type="Label" parent="HUD/ValidatingContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Validating"
 
 [node name="Camera3D" type="Camera3D" parent="."]
 

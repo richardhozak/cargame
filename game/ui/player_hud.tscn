@@ -1,6 +1,21 @@
-[gd_scene load_steps=5 format=3 uid="uid://hye0njc2gkxn"]
+[gd_scene load_steps=6 format=3 uid="uid://hye0njc2gkxn"]
 
 [ext_resource type="FontFile" uid="uid://dj8wkuvqbimdd" path="res://fonts/FiraMono-Medium.ttf" id="1_bufa8"]
+
+[sub_resource type="GDScript" id="GDScript_rapim"]
+script/source = "@tool
+extends CanvasLayer
+
+@export var spectating_player: String = \"\":
+	set(value):
+		spectating_player = value
+
+		if not is_node_ready():
+			await ready
+
+		%SpectateContainer.visible = not value.is_empty()
+		%SpectateLabel.text = \"Spectating %s\" % value
+"
 
 [sub_resource type="LabelSettings" id="LabelSettings_deulf"]
 font_size = 32
@@ -13,6 +28,8 @@ font = ExtResource("1_bufa8")
 font_size = 32
 
 [node name="PlayerHUD" type="CanvasLayer"]
+script = SubResource("GDScript_rapim")
+spectating_player = "Player"
 
 [node name="CarStats" type="VBoxContainer" parent="."]
 auto_translate_mode = 1
@@ -93,11 +110,29 @@ label_settings = SubResource("LabelSettings_hxgyh")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SpectatingLabel" type="Label" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="."]
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 200.0
+offset_top = 10.0
+offset_bottom = 53.0
 grow_horizontal = 2
-text = "Spectating: Player"
+
+[node name="SpectateContainer" type="PanelContainer" parent="CenterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/SpectateContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="SpectateLabel" type="Label" parent="CenterContainer/SpectateContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Spectating Player"
 horizontal_alignment = 1
 vertical_alignment = 1

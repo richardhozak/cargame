@@ -56,10 +56,11 @@ var peers := Dictionary()
 
 
 func _ready() -> void:
+	%ValidatingContainer.visible = false
 	spectate_group.allow_unpress = false
 	spectate_group.pressed.connect(_on_spectate_pressed)
 	player_name = Session.player_profile.player_name
-	$PlayerName/PlayerNameContainer/PlayerName.text = player_name
+	%PlayingAs.player_name = player_name
 	$DebugMenu/Menu/SaveStateButton.pressed.connect(save_state)
 	$DebugMenu/Menu/LoadStateButton.pressed.connect(load_state)
 	change_menu(MenuState.MAIN_MENU)
@@ -419,7 +420,7 @@ func on_local_step_simulated(driver: LocalPlayerInput, step: CarPhysicsStep) -> 
 			var fastest_time := Replays.human_time(
 				fastest_validation_replay.get_count() - 300, true
 			)
-			$HUD/ValidatingLabel.text = "Validated with" + fastest_time
+			%ValidatingLabel.text = "Validated with " + fastest_time
 			change_menu(MenuState.FINISHED_WITH_VALIDATION)
 			$menu.set_fastest_time(fastest_time)
 			$menu.set_time(Replays.human_time(step.step, true))
@@ -665,8 +666,7 @@ func load_track(track_uri: String) -> void:
 
 func track_ready() -> void:
 	level_loaded.rpc_id(1)
-	$HUD/ValidatingLabel.text = "Validating" if validating else ""
-	$HUD.visible = true
+	%ValidatingContainer.visible = validating
 
 
 func save_state() -> void:
