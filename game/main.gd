@@ -96,7 +96,7 @@ func change_menu(menu_state: MenuState) -> void:
 					prints("Disconnect from game")
 					disconnect_from_game()
 			create_server = false
-			fastest_validation_replay = Replay.new()
+			fastest_validation_replay = null
 
 			var menu := preload("res://menus/main_menu.tscn").instantiate()
 			menu.name = "menu"
@@ -307,7 +307,7 @@ func spawn_player(id: int, peer_name: String, initial_state: PackedByteArray) ->
 		player.driver = LocalPlayerInput.new()
 		loaded_player = player
 		spectate_button.button_pressed = true
-		if is_playing_single_player():
+		if is_playing_single_player() and not validating:
 			var personal_best := Replays.get_personal_best(track.track_id)
 			if personal_best:
 				spawn_player(-id, "Personal Best", PackedByteArray())
@@ -414,7 +414,7 @@ func on_local_step_simulated(driver: LocalPlayerInput, step: CarPhysicsStep) -> 
 		if validating:
 			var current_replay := driver.get_replay()
 			if is_replay_faster(current_replay, fastest_validation_replay):
-				fastest_validation_replay = current_replay
+				fastest_validation_replay = current_replay.duplicate()
 
 			var fastest_time := Replays.human_time(
 				fastest_validation_replay.get_count() - 300, true
@@ -621,9 +621,10 @@ func load_track_from_bytes(buffer: PackedByteArray) -> Error:
 		loaded_track = scene_node
 		loaded_mesh = physics_mesh
 
-		var leaderboard := LeaderboardScene.instantiate()
-		leaderboard.track_id = track.track_id
-		scene_node.add_child(leaderboard)
+		if not validating:
+			var leaderboard := LeaderboardScene.instantiate()
+			leaderboard.track_id = track.track_id
+			scene_node.add_child(leaderboard)
 
 		scene_node.ready.connect(track_ready)
 
