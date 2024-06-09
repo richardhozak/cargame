@@ -10,7 +10,6 @@ var port = PORT
 @onready var server_browser: ServerBrowser = $ServerBrowser
 
 var validating := false
-var create_server := false
 var selected_track_uri := ""
 var loaded_track: Node3D
 var loaded_mesh: CarPhysicsTrackMesh
@@ -96,7 +95,6 @@ func change_menu(menu_state: MenuState) -> void:
 				MenuState.PAUSED, MenuState.FINISHED, MenuState.FINISHED_WITH_VALIDATION:
 					prints("Disconnect from game")
 					disconnect_from_game()
-			create_server = false
 			fastest_validation_replay = null
 
 			var menu := preload("res://menus/main_menu.tscn").instantiate()
@@ -108,13 +106,11 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.quit.connect(_on_main_menu_quit)
 			add_child(menu)
 		MenuState.TRACK_SELECT_HOST:
-			create_server = true
 			var menu := preload("res://menus/select_track_menu.tscn").instantiate()
 			menu.name = "menu"
 			menu.selected.connect(_on_select_track_menu_selected)
 			add_child(menu)
 		MenuState.TRACK_SELECT_SINGLE_PLAYER:
-			create_server = false
 			var menu := preload("res://menus/select_track_menu.tscn").instantiate()
 			menu.name = "menu"
 			menu.selected.connect(_on_select_track_menu_selected)
@@ -190,10 +186,7 @@ func change_menu(menu_state: MenuState) -> void:
 
 
 func pause_children(pause: bool) -> void:
-	if !loaded_track:
-		return
-
-	if !create_server:
+	if is_playing_single_player() and loaded_track:
 		for child in loaded_track.get_children():
 			if child is Player:
 				child.paused = pause
@@ -510,7 +503,7 @@ func disconnect_from_game() -> void:
 	server_browser.unregister()
 
 
-func host_game() -> void:
+func host_game(create_server: bool) -> void:
 	# Create server.
 	assert(multiplayer is SceneMultiplayer)
 	multiplayer.server_relay = false
@@ -689,10 +682,11 @@ func _on_main_menu_quit() -> void:
 
 
 func _on_select_track_menu_selected(track_uri: String) -> void:
+	var create_server := current_menu_state == MenuState.TRACK_SELECT_HOST
 	change_menu(MenuState.NONE)
 	validating = false
 	selected_track_uri = track_uri
-	host_game()
+	host_game(create_server)
 
 
 func _on_join_menu_join(server: ServerInfo) -> void:
@@ -743,7 +737,7 @@ func _on_load_track_model_menu_file_selected(file: String):
 	change_menu(MenuState.NONE)
 	validating = true
 	selected_track_uri = file
-	host_game()
+	host_game(false)
 
 
 func _on_load_track_model_menu_canceled():
