@@ -8,7 +8,6 @@ var validating := false
 var selected_track_uri := ""
 var loaded_track: Node3D
 var loaded_mesh: CarPhysicsTrackMesh
-var player_name: String
 var saved_state: PackedByteArray
 var spectate_group := ButtonGroup.new()
 var fastest_validation_replay: Replay = null
@@ -53,8 +52,7 @@ func _ready() -> void:
 	%ValidatingContainer.visible = false
 	spectate_group.allow_unpress = false
 	spectate_group.pressed.connect(_on_spectate_pressed)
-	player_name = Session.player_profile.player_name
-	%PlayingAs.player_name = player_name
+	%PlayingAs.player_name = Session.player_profile.player_name
 	$DebugMenu/Menu/SaveStateButton.pressed.connect(save_state)
 	$DebugMenu/Menu/LoadStateButton.pressed.connect(load_state)
 	change_menu(MenuState.MAIN_MENU)
@@ -168,7 +166,7 @@ func change_menu(menu_state: MenuState) -> void:
 			menu.name = "menu"
 			menu.track_bytes = loaded_track_bytes
 			menu.author_time = fastest_validation_replay.get_count() - 300
-			menu.author_name = player_name
+			menu.author_name = Session.player_profile.player_name
 			menu.done.connect(_on_create_track_menu_done)
 			add_child(menu)
 		MenuState.JOIN:
@@ -416,6 +414,7 @@ func on_local_step_simulated(driver: LocalPlayerInput, step: CarPhysicsStep) -> 
 			var personal_best_replay := Replays.get_personal_best(track.track_id)
 
 			if is_replay_faster(current_replay, personal_best_replay):
+				var player_name := Session.player_profile.player_name
 				var res := Replays.save_personal_best(track.track_id, player_name, current_replay)
 				if res.result != OK:
 					printerr("Failed to save PB %s", error_string(res.result))
@@ -504,6 +503,8 @@ func host_game(create_server: bool) -> void:
 	multiplayer.server_relay = false
 	multiplayer.allow_object_decoding = true
 
+	var player_name := Session.player_profile.player_name
+
 	if create_server:
 		var peer := ENetMultiplayerPeer.new()
 		peer.create_server(0, MAX_CLIENTS)
@@ -543,7 +544,7 @@ func connected_to_server() -> void:
 		for p: ENetPacketPeer in peer.host.get_peers():
 			p.set_timeout(1000, 2000, 4000)
 
-	hello.rpc_id(1, player_name)
+	hello.rpc_id(1, Session.player_profile.player_name)
 
 
 func server_disconnected() -> void:
@@ -720,6 +721,7 @@ func _on_finish_menu_save_replay() -> void:
 	if loaded_player && track:
 		var driver := loaded_player.driver as LocalPlayerInput
 		var replay := driver.get_replay()
+		var player_name := Session.player_profile.player_name
 		var result := Replays.save_replay(track.track_id, player_name, replay)
 		$menu.set_replay_label(result.message)
 
