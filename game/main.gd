@@ -1,11 +1,6 @@
 extends Node3D
 
 const MAX_CLIENTS = 4
-const PORT = 3535
-const IP_ADDRESS = "127.0.0.1"
-
-var ip_address = IP_ADDRESS
-var port = PORT
 
 @onready var server_browser: ServerBrowser = $ServerBrowser
 
@@ -526,11 +521,11 @@ func is_playing_single_player() -> bool:
 	return multiplayer.multiplayer_peer is OfflineMultiplayerPeer
 
 
-func join_game() -> void:
+func join_game(address: String, port: int) -> void:
 	# Create client.
 	multiplayer.allow_object_decoding = true
 	var peer := ENetMultiplayerPeer.new()
-	peer.create_client(ip_address, port)
+	peer.create_client(address, port)
 
 	for p in peer.host.get_peers():
 		p.set_timeout(500, 1000, 2000)
@@ -691,9 +686,9 @@ func _on_select_track_menu_selected(track_uri: String) -> void:
 
 func _on_join_menu_join(server: ServerInfo) -> void:
 	change_menu(MenuState.NONE)
-	ip_address = server.addresses[0].ip
-	port = server.addresses[0].port
-	join_game()
+	var ip_address = server.addresses[0].ip
+	var port = server.addresses[0].port
+	join_game(ip_address, port)
 
 
 func _on_main_menu_single_player() -> void:
