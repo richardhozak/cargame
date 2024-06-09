@@ -163,7 +163,7 @@ func _save_player_profile(profile: String, player: PlayerProfile) -> Error:
 func _create_new_player_profile():
 	var player := PlayerProfile.new()
 	player.player_name = RandomName.get_random_name()
-	player.player_id = ""
+	player.player_id = UUIDv4.generate()
 	return player
 
 
