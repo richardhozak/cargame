@@ -26,6 +26,9 @@ func _ready() -> void:
 			printerr("Failed to load replay %s" % replay_file)
 			continue
 
+		if replay.player_id != Session.player_profile.player_id:
+			continue
+
 		if personal_best_replays.has(replay.track_id):
 			var stored_replay := personal_best_replays[replay.track_id] as TrackReplay
 			if replay.replay.get_count() <= stored_replay.replay.get_count():

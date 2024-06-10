@@ -17,9 +17,9 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+Session="*res://session.gd"
 Replays="*res://replays.gd"
 Simulation="*res://simulation.gd"
-Session="*res://session.gd"
 
 [display]
 
