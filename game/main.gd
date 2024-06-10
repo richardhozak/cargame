@@ -414,8 +414,9 @@ func on_local_step_simulated(driver: LocalPlayerInput, step: CarPhysicsStep) -> 
 			var personal_best_replay := Replays.get_personal_best(track.track_id)
 
 			if is_replay_faster(current_replay, personal_best_replay):
-				var player_name := Session.player_profile.player_name
-				var res := Replays.save_personal_best(track.track_id, player_name, current_replay)
+				var res := Replays.save_personal_best(
+					track.track_id, Session.player_profile, current_replay
+				)
 				if res.result != OK:
 					printerr("Failed to save PB %s", error_string(res.result))
 
@@ -721,8 +722,7 @@ func _on_finish_menu_save_replay() -> void:
 	if loaded_player && track:
 		var driver := loaded_player.driver as LocalPlayerInput
 		var replay := driver.get_replay()
-		var player_name := Session.player_profile.player_name
-		var result := Replays.save_replay(track.track_id, player_name, replay)
+		var result := Replays.save_replay(track.track_id, Session.player_profile, replay)
 		$menu.set_replay_label(result.message)
 
 

@@ -34,18 +34,20 @@ func _ready() -> void:
 			personal_best_replays[replay.track_id] = replay
 
 
-func save_personal_best(track_id: String, player_name: String, replay: Replay) -> SaveResult:
+func save_personal_best(
+	track_id: String, player_profile: PlayerProfile, replay: Replay
+) -> SaveResult:
 	Session.submit_replay(track_id, replay)
 
-	var result := _save_replay(track_id, player_name, replay, PERSONAL_BESTS_DIR)
+	var result := _save_replay(track_id, player_profile, replay, PERSONAL_BESTS_DIR)
 	if result.result == OK:
 		personal_best_replays[track_id] = result.replay
 
 	return result
 
 
-func save_replay(track_id: String, player_name: String, replay: Replay) -> SaveResult:
-	var result := _save_replay(track_id, player_name, replay, REPLAY_DIR)
+func save_replay(track_id: String, player_profile: PlayerProfile, replay: Replay) -> SaveResult:
+	var result := _save_replay(track_id, player_profile, replay, REPLAY_DIR)
 	if result.result == OK:
 		loaded_replays[result.replay_uri] = result.replay
 
@@ -61,12 +63,11 @@ func get_personal_best(track_id: String) -> Replay:
 
 
 func _save_replay(
-	track_id: String, player_name: String, replay: Replay, directory: String
+	track_id: String, player_profile: PlayerProfile, replay: Replay, directory: String
 ) -> SaveResult:
-	var track_replay := TrackReplay.new()
-	track_replay.track_id = track_id
-	track_replay.player_name = player_name
-	track_replay.replay = replay.duplicate()
+	var track_replay := TrackReplay.new(
+		track_id, player_profile.player_name, player_profile.player_id, replay
+	)
 
 	var result := OK
 	var replay_name := (
